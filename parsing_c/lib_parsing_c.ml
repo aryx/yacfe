@@ -1,4 +1,4 @@
-(* Copyright (C) 2002-2008 Yoann Padioleau
+(* Copyright (C) 2007, 2008 Yoann Padioleau
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License (GPL)
@@ -30,8 +30,8 @@ let strip_info_visitor _ =
     function i -> ctr := !ctr + 1; Ast_c.al_info !ctr i));
 
     Visitor_c.kexpr_s = (fun (k,_) e -> 
-      let (e', _),ii' = k e in
-      (e', Ast_c.noType()), ii'
+      let (e', ty),ii' = k e in
+      (e', Ast_c.noType()(*ref !ty*)), ii' (* keep type - jll *)
     );
 
 (*
@@ -61,8 +61,8 @@ let semi_strip_info_visitor = (* keep position information *)
     Visitor_c.kinfo_s = (fun (k,_) i -> Ast_c.semi_al_info i);
 
     Visitor_c.kexpr_s = (fun (k,_) e -> 
-      let (e', _),ii' = k e in
-      (e', Ast_c.noType()), ii'
+      let (e', ty),ii' = k e in
+      (e', Ast_c.noType()(*ref !ty*)), ii' (* keep type - jll *)
     );
     
   }
@@ -103,9 +103,11 @@ let ii_of_param = extract_info_visitor Visitor_c.vk_param
 let ii_of_params = extract_info_visitor Visitor_c.vk_params_splitted
 let ii_of_struct_fields = extract_info_visitor Visitor_c.vk_struct_fields
 (*let ii_of_struct_field = extract_info_visitor Visitor_c.vk_struct_field*)
+let ii_of_struct_fieldkinds = extract_info_visitor Visitor_c.vk_struct_fieldkinds
 let ii_of_cst = extract_info_visitor Visitor_c.vk_cst
 let ii_of_define_params = 
   extract_info_visitor Visitor_c.vk_define_params_splitted
+let ii_of_toplevel = extract_info_visitor Visitor_c.vk_toplevel
 
 (*****************************************************************************)
 let max_min_ii_by_pos xs = 
@@ -131,7 +133,14 @@ let info_to_fixpos ii =
   
 let max_min_by_pos xs = 
   let (i1, i2) = max_min_ii_by_pos xs in
-  (Ast_c.pos_of_info i1, Ast_c.pos_of_info i2)
+  (info_to_fixpos i1, info_to_fixpos i2)
 
+let lin_col_by_pos xs = 
+  (* put min before max; no idea why they are backwards above *)
+  let (i2, i1) = max_min_ii_by_pos xs in
+  let posf x = Ast_c.col_of_info x in
+  let mposf x = Ast_c.col_of_info x + String.length (Ast_c.str_of_info x) in
+  (Ast_c.file_of_info i1,
+   (Ast_c.line_of_info i1, posf i1), (Ast_c.line_of_info i2, mposf i2))
 
 

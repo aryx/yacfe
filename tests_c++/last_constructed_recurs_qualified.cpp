@@ -1,4 +1,0 @@
-KmPlotPartFactory::KmPlotPartFactory()
-		: KParts::Factory()
-{
-}

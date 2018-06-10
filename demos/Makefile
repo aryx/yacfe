@@ -4,9 +4,10 @@
 SYSLIBS=str.cma unix.cma
 
 LIBS= ../commons/commons.cma ../code_info/code_info.cma \
-      ../parsing_c/parsing_c.cma ../parsing_c++/parsing_cplusplus.cma
+      ../parsing_c/parsing_c.cma ../parsing_c++/parsing_cplusplus.cma \
+      ../analyze_c/analyze_c.cma
 
-INCLUDEDIRS=../commons ../code_info ../parsing_c ../parsing_c++
+INCLUDEDIRS=../commons ../code_info ../parsing_c ../parsing_c++ ../analyze_c
 
 ##############################################################################
 # Generic variables
@@ -35,7 +36,7 @@ OCAMLMKTOP=ocamlmktop -g -custom $(INCLUDES) -thread
 # Top rules
 ##############################################################################
 
-PROGS=c_transducer.byte
+PROGS=c_transducer.byte simple_zero_to_null.byte
 
 all: $(PROGS)
 opt: $(PROGS:.byte=.opt)

@@ -5,19 +5,25 @@
 
 Install both the runtime and the development libraries for:
 
-ocaml
+OCaml (see http://caml.inria.fr/download.en.html)
 make
+
+Then simply type 
+ ./configure
+ make depend
+ make
+
 
 
 * Ubuntu
 ------------
 
-ocaml
+sudo apt-get ocaml
 
 * gentoo
 ------------
 
-ocaml
+emerge ocaml
 
 * godi
 ------------

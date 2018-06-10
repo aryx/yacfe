@@ -31,6 +31,8 @@ val debugger : bool ref
 
 type prof = PALL | PNONE | PSOME of string list
 val profile : prof ref
+val show_trace_profile : bool ref
+
 
 val verbose_level : int ref
 
@@ -63,6 +65,7 @@ val save_tmp_files : bool ref
 (*###########################################################################*)
 
 type filename = string
+type dirname = string
 
 (* Trick in case you dont want to do an 'open Common' while still wanting
  * more pervasive types than the one in Pervasives. Just do the selective
@@ -279,6 +282,7 @@ val laws2 :
 
 (* just wrappers around Marshall *)
 val get_value : filename -> 'a
+val read_value : filename -> 'a (* alias *)
 val write_value : 'a -> filename -> unit
 val write_back : ('a -> 'b) -> filename -> unit
 
@@ -573,6 +577,7 @@ val xor : 'a -> 'a -> bool
 (*****************************************************************************)
 
 val string_of_char : char -> string
+val string_of_chars : char list -> string
 
 val is_single : char -> bool
 val is_symbol : char -> bool
@@ -783,6 +788,8 @@ val showCodeHex : int list -> unit
 val size_mo_ko : int -> string
 val size_ko : int -> string
 
+val edit_distance: string -> string -> int 
+
 val md5sum_of_string : string -> string 
 
 (*****************************************************************************)
@@ -790,6 +797,7 @@ val md5sum_of_string : string -> string
 (*****************************************************************************)
 
 val regexp_alpha : Str.regexp
+val regexp_word : Str.regexp
 
 val _memo_compiled_regexp : (string, Str.regexp) Hashtbl.t
 val ( =~ ) : string -> string -> bool
@@ -820,6 +828,9 @@ val split_list_regexp : string -> string list -> (string * string list) list
 val all_match : string (* regexp *) -> string -> string list
 val global_replace_regexp : 
   string (* regexp *) -> (string -> string) -> string -> string
+
+val regular_words: string -> string list
+val contain_regular_word: string -> bool
 
 (*****************************************************************************)
 (* Filenames *)
@@ -894,6 +905,9 @@ type days = Days of int
 type time_dmy = TimeDMY of day * month * year
 
 
+(* from Unix *)
+type float_time = float
+
 
 val mk_date_dmy : int -> int -> int -> date_dmy
 
@@ -903,7 +917,6 @@ val check_time_dmy : time_dmy -> unit
 val check_time_hms : time_hms -> unit
 
 val int_to_month : int -> string
-
 val int_of_month : month -> int
 val month_of_string : string -> month
 val month_of_string_long : string -> month
@@ -911,21 +924,47 @@ val string_of_month : month -> string
 
 val string_of_date_dmy : date_dmy -> string
 val string_of_unix_time : ?langage:langage -> Unix.tm -> string
-val string_of_unix_time_lfs : Unix.tm -> string
-val string_of_floattime: ?langage:langage -> float -> string
+val short_string_of_unix_time : ?langage:langage -> Unix.tm -> string
+val string_of_floattime: ?langage:langage -> float_time -> string
+val short_string_of_floattime: ?langage:langage -> float_time -> string
+
+val floattime_of_string: string -> float_time
+
+val dmy_to_unixtime: date_dmy -> float_time * Unix.tm
+val unixtime_to_dmy: Unix.tm -> date_dmy
+val unixtime_to_floattime: Unix.tm -> float_time
+
+val sec_to_days : int -> string
+val sec_to_hours : int -> string
+
+val today : unit -> float_time
+val yesterday : unit -> float_time
+val tomorrow : unit -> float_time
+
+val lastweek : unit -> float_time
+val lastmonth : unit -> float_time
+
+val week_before: float_time -> float_time
+val month_before: float_time -> float_time
+val week_after: float_time -> float_time
+
+val days_in_week_of_day : float_time -> float_time list
+
+val first_day_in_week_of_day : float_time -> float_time
+val last_day_in_week_of_day : float_time -> float_time
+
+val day_secs: float_time
 
 val rough_days_since_jesus : date_dmy -> days
 val rough_days_between_dates : date_dmy -> date_dmy -> days
 
-val dmy_to_unixtime: date_dmy -> float * Unix.tm
+val string_of_unix_time_lfs : Unix.tm -> string
 
-val sec_to_days : int -> string
-
-val day_secs: float
-val today : unit -> float
-val yesterday : unit -> float
-val tomorrow : unit -> float
-
+val is_more_recent : date_dmy -> date_dmy -> bool
+val max_dmy : date_dmy -> date_dmy -> date_dmy
+val min_dmy : date_dmy -> date_dmy -> date_dmy
+val maximum_dmy : date_dmy list -> date_dmy
+val minimum_dmy : date_dmy list -> date_dmy
 
 (*****************************************************************************)
 (* Lines/Words/Strings *)
@@ -1094,6 +1133,7 @@ val fpartition : ('a -> 'b option) -> 'a list -> 'b list * 'a list
 
 val groupBy : ('a -> 'a -> bool) -> 'a list -> 'a list list
 val exclude_but_keep_attached: ('a -> bool) -> 'a list -> ('a * 'a list) list
+val group_by_post: ('a -> bool) -> 'a list -> ('a list * 'a) list * 'a list
 
 (* use hash internally to not be in O(n2) *)
 val group_assoc_bykey_eff : ('a * 'b) list -> ('a * 'b list) list
@@ -1236,6 +1276,10 @@ val fusionneListeContenant : 'a * 'a -> 'a list list -> 'a list list
 
 val array_find_index : ('a -> bool) -> 'a array -> int
 
+type 'a matrix = 'a array array
+
+val map_matrix : ('a -> 'b) -> 'a matrix -> 'b matrix
+
 (*****************************************************************************)
 (* Fast array *)
 (*****************************************************************************)
@@ -1357,6 +1401,7 @@ val lookup_list : 'a -> ('a, 'b) assoc list -> 'b
 val lookup_list2 : 'a -> ('a, 'b) assoc list -> 'b * int
 
 val assoc_option : 'a -> ('a, 'b) assoc -> 'b option
+val assoc_with_err_msg : 'a -> ('a, 'b) assoc -> 'b
 
 (*****************************************************************************)
 (* Assoc, specialized. *)
@@ -1674,6 +1719,7 @@ type parse_info = {
   } 
 val fake_parse_info : parse_info
 val string_of_parse_info : parse_info -> string
+val string_of_parse_info_bis : parse_info -> string
 
 (* array[i] will contain the (line x col) of the i char position *)
 val full_charpos_to_pos : filename -> (int * int) array

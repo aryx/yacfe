@@ -1,8 +1,0 @@
-process_start RegleCompiler
-
-process_test "test1"
-process_test "test sur exclusion constrictive"
-process_test "test sur exclusion frontale"
-process_test "test sur exclusion intersticielle"
-process_test "test sur exclusion isophase"
-process_test "test sur exclusion neutre"

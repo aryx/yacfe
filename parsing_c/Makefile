@@ -7,21 +7,22 @@ TARGET=parsing_c
 # to make parsing_c really independent of coccinelle. 
 # control_flow_c have also coccinelle dependencies.
 SRC= flag_parsing_c.ml parsing_stat.ml \
- ast_cocci.ml \
+ type_cocci.ml ast_cocci.ml \
  ast_c.ml control_flow_c.ml \
  visitor_c.ml lib_parsing_c.ml \
+ ast_to_flow.ml \
+ pretty_print_c.ml \
  semantic_c.ml lexer_parser.ml parser_c.ml lexer_c.ml \
- token_helpers.ml parsing_hacks.ml parse_c.ml \
- type_annoter_c.ml  \
- statistics_c.ml  \
- pretty_print_c.ml unparse_c.ml \
+ token_helpers.ml parsing_hacks.ml \
+ unparse_cocci.ml unparse_c.ml \
+ parse_c.ml \
+ cpp_ast_c.ml \
+ compare_c.ml type_annoter_c.ml \
  test_parsing_c.ml
 
-#toreput: comment_annotater.ml compare_c.ml ast_to_flow.ml
-
 SYSLIBS= str.cma unix.cma 
-LIBS=../commons/commons.cma ../code_info/code_info.cma
-INCLUDES= -I ../commons -I ../code_info
+LIBS=../commons/commons.cma
+INCLUDES= -I ../commons
 
 ##############################################################################
 # Generic variables
@@ -29,11 +30,13 @@ INCLUDES= -I ../commons -I ../code_info
 
 #for warning:  -w A 
 #for profiling:  -p -inline 0   with OCAMLOPT
-OCAMLC=ocamlc$(OPTBIN) -g -dtypes   $(INCLUDES) 
-OCAMLOPT=ocamlopt$(OPTBIN)   $(INCLUDES) $(OPTFLAGS)
+OCAMLCFLAGS ?= -g -dtypes
+
+OCAMLC=ocamlc$(OPTBIN) $(OCAMLCFLAGS) $(INCLUDES)
+OCAMLOPT=ocamlopt$(OPTBIN) $(OPTFLAGS) $(INCLUDES)
 OCAMLLEX=ocamllex$(OPTBIN) #-ml
 OCAMLYACC=ocamlyacc -v
-OCAMLDEP=ocamldep$(OPTBIN)  $(INCLUDES)
+OCAMLDEP=ocamldep$(OPTBIN) $(INCLUDES)
 OCAMLMKTOP=ocamlmktop -g -custom $(INCLUDES)
 
 
@@ -83,7 +86,7 @@ beforedepend:: parser_c.ml parser_c.mli
 # statistics_c.ml  \
 # pretty_print_c.ml unparse_c.ml \
 # test_parsing_c.ml
-#toreput: comment_annotater.ml compare_c.ml ast_to_flow.ml
+#toreput: compare_c.ml ast_to_flow.ml
 
 COREPARSING= flag_parsing_c.ml parsing_stat.ml \
  ast_cocci.ml \

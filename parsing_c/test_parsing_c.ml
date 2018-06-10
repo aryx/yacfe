@@ -106,8 +106,6 @@ let test_parse_ch xs =
 (* ---------------------------------------------------------------------- *)
 (* file can be   "foo.c"  or "foo.c:main" *)
 let test_cfg file = 
-  raise Todo
-(* TOREPUT 
   let (file, specific_func) = 
     if file =~ "\\(.*\\.c\\):\\(.*\\)"
     then 
@@ -126,8 +124,8 @@ let test_cfg file =
     let toprocess = 
       match specific_func, e with
       | None, _ -> true
-      | Some s, Ast_c.Definition (((funcs, _, _, c),_))  -> 
-          s = funcs
+      | Some s, Ast_c.Definition (defbis,_)  -> 
+          s = defbis.Ast_c.f_name
       | _, _ -> false 
     in
           
@@ -153,7 +151,6 @@ let test_cfg file =
         with Ast_to_flow.Error (x) -> Ast_to_flow.report_error x
       )
   )
-*)
 
 
 
@@ -187,7 +184,7 @@ let test_type_c infile =
     program2 
     +> Common.unzip 
     +> (fun (program, infos) -> 
-      Type_annoter_c.annotate_program Type_annoter_c.initial_env
+      Type_annoter_c.annotate_program Type_annoter_c.initial_env true
         program +> List.map fst,
       infos
     )
@@ -204,19 +201,14 @@ let test_type_c infile =
 (* ---------------------------------------------------------------------- *)
 (* used by generic_makefile now *)
 let test_compare_c file1 file2 = 
-  raise Todo
-(* TOREPUT 
   let (correct, diffxs) = Compare_c.compare_default file1 file2 in
   let res = Compare_c.compare_result_to_bool correct in
   if res 
   then raise (Common.UnixExit 0)
   else raise (Common.UnixExit (-1))
-*)
 
 
 let test_compare_c_hardcoded () =
-  raise Todo
-(*
   Compare_c.compare_default 
     "tests/compare1.c" 
     "tests/compare2.c" 
@@ -226,7 +218,6 @@ let test_compare_c_hardcoded () =
     *)
   +> Compare_c.compare_result_to_string 
   +> pr2
-*)
 
 
 

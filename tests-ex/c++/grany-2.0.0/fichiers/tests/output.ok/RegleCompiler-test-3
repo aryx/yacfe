@@ -1,9 +1,0 @@
-[TEST************] test sur exclusion frontale ************************
------------ Regle d'exclusion  --------------
-Nom : R_EXCLUSION_FRONTALE
-Valeur de la contrainte NORD = Contrainte nulle ; deplacement = Deplacement possible
-Valeur de la contrainte NE = Contrainte nulle ; deplacement = Deplacement possible
-Valeur de la contrainte SE = Contrainte nulle ; deplacement = Deplacement possible
-Valeur de la contrainte SUD = Contrainte phi inferieur phi solide ; deplacement = Deplacement impossible
-Valeur de la contrainte SW = Contrainte nulle ; deplacement = Deplacement possible
-Valeur de la contrainte NW = Contrainte nulle ; deplacement = Deplacement possible

@@ -1,8 +1,0 @@
-$REGLE:
-ISOPHASE_EXCLUSION=
-((Contrainte_NULLE,Depl_POSSIBLE),
-(Contrainte_NULLE,Depl_POSSIBLE),
-(Contrainte_NULLE,Depl_POSSIBLE),
-(Contrainte_MEMEPHI,Depl_IMPOSSIBLE),
-(Contrainte_NULLE,Depl_POSSIBLE),
-(Contrainte_NULLE,Depl_POSSIBLE));

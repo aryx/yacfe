@@ -7,6 +7,8 @@
    (split-string 
     "commons globals extra 
      parsing_c parsing_c++ parsing_java
+     analyze_c
+     matcher
     ")
 
    pad-ocaml-project-toplevel "yacfe.top"
@@ -15,7 +17,8 @@
    (join-string 
     (list 
      "-debugger"
-     (case 100
+     (case 700
+       (0 "")
 
        (1 "/home/pad/comments/tests/basic.c")
 
@@ -29,6 +32,8 @@
        (10 "/home/pad/software-src/kernels/git/linux-2.6/init")
        (11 "/home/pad/kernels/git/linux-2.6/sound/arm/sa11xx-uda1341.c")
        (12 "/home/pad/software-src/kernels/git/linux-2.6/fs")
+
+       (20 "-parse_c -D /home/pad/c-yacfe/data/test.h /home/pad/c-yacfe/tests_cpp/hints_required.c")
 
        (52 "/home/pad/software-src/devel/sparse-git/")
        (53 "/home/pad/software-os-src/freebsd/vm/")
@@ -60,6 +65,13 @@
 
 
        (300 "-xxx /home/pad/c-yacfe/parsing_java/parser_java.mly")
+
+       (400 "-cc09_null_transfo /home/pad/paper-cc09/simple.c")
+
+       (600 "-test_cpp /home/pad/linux/block/blk-core.c")
+
+       (700 "-test_build_db /home/pad/linux/block")
+
        )
      )
     )

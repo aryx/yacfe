@@ -672,7 +672,6 @@ rule token = parse
         if !Flag_parsing_c.verbose_lexing 
         then pr2_once ("LEXER:unrecognised symbol, in token rule:"^tok lexbuf);
         let info = tokinfo lexbuf in
-        pr2_gen (info);
         TUnknown (info)
       }
 

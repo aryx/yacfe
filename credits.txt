@@ -1,5 +1,5 @@
 Thanks to 
- - eric cooper for the Java parser
+ - Eric Cooper for the Java parser
 
 
 Thanks to 

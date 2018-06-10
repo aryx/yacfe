@@ -32,6 +32,22 @@
 // #define FOO(a, OP, b) a OP b
 // #define FOO(a,b) fn(a,b)
 
+// often used in my tests_xxx/ files so more convenient define it here too.
+#define __init YACFE_ATTRIBUTE
+#define __exit YACFE_ATTRIBUTE
+#define __cpuinit YACFE_ATTRIBUTE
+#define __cpuinitdata YACFE_ATTRIBUTE
+#define __user YACFE_ATTRIBUTE
+#define __kernel YACFE_ATTRIBUTE
+#define __read_mostly YACFE_ATTRIBUTE
+#define __iomem YACFE_ATTRIBUTE
+#define __sched YACFE_ATTRIBUTE
+#define __bitwise YACFE_ATTRIBUTE
+#define __weak YACFE_ATTRIBUTE
+#define __initdata YACFE_ATTRIBUTE
+#define __NORETURN YACFE_ATTRIBUTE
+#define __kprobes YACFE_ATTRIBUTE
+
 // ****************************************************************************
 // Generic macros
 // ****************************************************************************

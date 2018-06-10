@@ -1,6 +1,0 @@
-[TEST************] exception sur 7 ************************
-[EXCEPTION]: valeur de Requete non compris dans le domaine requete 
-exception catche
----------Valeur attendue-------------
-[EXCEPTION]: valeur de Requete non compris dans le domaine requete 
-exception catche

@@ -70,6 +70,7 @@ open Ast_c
 (*****************************************************************************)
 
 
+(* ---------------------------------------------------------------------- *)
 (* The string is for debugging. Used by Ograph_extended.print_graph. 
  * The int list are Labels. Trick used for CTL engine. Must not 
  * transform that in a triple or record because print_graph would
@@ -79,10 +80,13 @@ type node = node1 * string
   and node1 = node2 * nodeinfo 
     and nodeinfo = {
       labels: int list;
+      bclabels: int list; (* parent of a break or continue node *)
       is_loop: bool;
+      is_fake: bool;
     }
     and node2 =
 
+  (* ------------------------ *)
   (* For CTL to work, we need that some nodes loop over itself. We
    * need that every nodes have a successor. Julia also want to go back
    * indefinitely. So must tag some nodes as the beginning and end of
@@ -99,10 +103,12 @@ type node = node1 * string
    | TopNode 
    | EndNode 
 
-   | FunHeader of (string * functionType * storage) wrap
+   (* ------------------------ *)
+   | FunHeader of definition (* but empty body *)
 
    | Decl   of declaration
 
+   (* ------------------------ *)
    (* flow_to_ast: cocci: Need the { and } in the control flow graph also
     * because the coccier can express patterns containing such { }.
     *
@@ -181,6 +187,11 @@ type node = node1 * string
   | Return     of statement * unit wrap
   | ReturnExpr of statement * expression wrap
 
+  (* ------------------------ *)
+  | IfdefHeader of ifdef_directive
+  | IfdefElse of ifdef_directive
+  | IfdefEndif of ifdef_directive
+
 
   (* ------------------------ *)
   | DefineHeader of string wrap * define_kind
@@ -189,7 +200,7 @@ type node = node1 * string
   | DefineType of fullType
   | DefineDoWhileZeroHeader of unit wrap
 
-  | Include of inc_file wrap * (include_rel_pos option ref * bool)
+  | Include of includ
 
   (* obsolete? *)
   | MacroTop of string * argument wrap2 list * il 
@@ -209,8 +220,6 @@ type node = node1 * string
 
   | Asm of statement * asmbody wrap
   | MacroStmt of statement * unit wrap
-
-  | Ifdef of statement * unit wrap
 
   (* ------------------------ *)
   (* some control nodes *)
@@ -251,16 +260,21 @@ type cflow = (node, edge) Ograph_extended.ograph_mutable
 let unwrap ((node, info), nodestr) = node
 let rewrap ((_node, info), nodestr) node = (node, info), nodestr
 let extract_labels ((node, info), nodestr) = info.labels
+let extract_bclabels ((node, info), nodestr) = info.bclabels
 let extract_is_loop ((node, info), nodestr) = info.is_loop 
+let extract_is_fake ((node, info), nodestr) = info.is_fake
 
-let mk_node node labels nodestr =
+let mk_any_node is_fake node labels bclabels nodestr =
   let nodestr = 
     if !Flag_parsing_c.show_flow_labels
     then nodestr ^ ("[" ^ (labels +> List.map i_to_s +> join ",") ^ "]")
     else nodestr
   in
-  ((node, {labels = labels;is_loop=false;}), nodestr)
+  ((node, {labels = labels;is_loop=false;bclabels=bclabels;is_fake=is_fake}),
+   nodestr)
 
+let mk_node = mk_any_node false
+let mk_fake_node = mk_any_node true (* for duplicated braces *)
 
 (* ------------------------------------------------------------------------ *)
 let first_node g = 
@@ -309,11 +323,12 @@ let extract_fullstatement node =
   | MacroStmt (st, _) -> Some st
   | MacroIterHeader (st, _) -> Some st
 
-  | Ifdef _ -> None (* other ? *)
-
   | Include _ 
   | DefineHeader _ | DefineType _ | DefineExpr  _ | DefineDoWhileZeroHeader _
   | MacroTop _
+      -> None
+
+  | IfdefHeader _ | IfdefElse _ | IfdefEndif _ 
       -> None
 
   | SeqStart (st,_,_) 

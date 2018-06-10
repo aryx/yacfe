@@ -1,7 +1,0 @@
-#define AIC7XXX_CONFIGED_TAG_COMMANDS {					\
-	AIC7XXX_CMDS_PER_DEVICE, AIC7XXX_CMDS_PER_DEVICE		\
-}
-
-void main(int i)
-{
-}

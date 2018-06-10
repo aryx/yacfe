@@ -15,13 +15,13 @@ open Common
 module TH = Token_helpers2 
 module LP = Lexer_parser2
 
-module Stat = Parsing_stat2
-
 open Parser_cplusplus
 
 module Flag_parsing_c = Flag_parsing_cplusplus
 module Parser_c = Parser_cplusplus
 module Ast_c = Ast_cplusplus
+
+module Stat = Parsing_stat2
 
 (*****************************************************************************)
 (* Some debugging functions  *)

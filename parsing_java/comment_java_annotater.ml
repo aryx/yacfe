@@ -1,3 +1,15 @@
+(* Copyright (C) 2008 Yoann Padioleau
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License (GPL)
+ * version 2 as published by the Free Software Foundation.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * file license.txt for more details.
+ *)
+
 open Common
 
 module C = Ast_java
@@ -163,6 +175,10 @@ let (compute_comments_around : Parser_java.token list -> pinfo_around_mapping)=
          }
        ) in
        let infot1 = Ast_c.parse_info_of_info (TH.info_of_tok t1) in
+
+       (* debug *)
+       let full = infot1, before', after' in
+       ignore(full);
 
        Hashtbl.add h  infot1 
          ({C.mbefore = before'; C.mafter = after'});

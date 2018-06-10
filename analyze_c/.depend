@@ -1,0 +1,37 @@
+comment_annotater.cmi: ../code_info/statistics_code.cmi \
+    ../code_info/place_code.cmo ../parsing_c/parser_c.cmi \
+    ../parsing_c/parse_c.cmi ../commons/common.cmi ../parsing_c/ast_c.cmo 
+database_c.cmi: ../parsing_c/parse_c.cmi ../commons/oassoc.cmi \
+    ../commons/common.cmi ../parsing_c/ast_c.cmo 
+relation_c.cmi: ../parsing_c/ast_c.cmo 
+statistics_c.cmi: ../code_info/statistics_code.cmi ../parsing_c/ast_c.cmo 
+comment_annotater.cmo: ../parsing_c/visitor_c.cmi \
+    ../parsing_c/token_helpers.cmi ../code_info/statistics_code.cmi \
+    ../code_info/place_code.cmo ../parsing_c/parser_c.cmi \
+    ../parsing_c/parse_c.cmi ../parsing_c/lib_parsing_c.cmo \
+    ../commons/common.cmi ../code_info/ast_generic.cmo ../parsing_c/ast_c.cmo \
+    comment_annotater.cmi 
+comment_annotater.cmx: ../parsing_c/visitor_c.cmx \
+    ../parsing_c/token_helpers.cmx ../code_info/statistics_code.cmx \
+    ../code_info/place_code.cmx ../parsing_c/parser_c.cmx \
+    ../parsing_c/parse_c.cmx ../parsing_c/lib_parsing_c.cmx \
+    ../commons/common.cmx ../code_info/ast_generic.cmx ../parsing_c/ast_c.cmx \
+    comment_annotater.cmi 
+database_c.cmo: ../parsing_c/token_helpers.cmi ../parsing_c/parse_c.cmi \
+    ../commons/oassoch.cmo ../commons/oassocdbm.cmi ../commons/oassoc.cmi \
+    ../parsing_c/lib_parsing_c.cmo ../commons/common.cmi \
+    ../parsing_c/ast_c.cmo database_c.cmi 
+database_c.cmx: ../parsing_c/token_helpers.cmx ../parsing_c/parse_c.cmx \
+    ../commons/oassoch.cmx ../commons/oassocdbm.cmx ../commons/oassoc.cmx \
+    ../parsing_c/lib_parsing_c.cmx ../commons/common.cmx \
+    ../parsing_c/ast_c.cmx database_c.cmi 
+relation_c.cmo: ../parsing_c/visitor_c.cmi ../commons/common.cmi \
+    ../parsing_c/ast_c.cmo relation_c.cmi 
+relation_c.cmx: ../parsing_c/visitor_c.cmx ../commons/common.cmx \
+    ../parsing_c/ast_c.cmx relation_c.cmi 
+statistics_c.cmo: ../parsing_c/visitor_c.cmi ../code_info/statistics_code.cmi \
+    ../parsing_c/parsing_stat.cmo ../parsing_c/lib_parsing_c.cmo \
+    ../commons/common.cmi ../parsing_c/ast_c.cmo statistics_c.cmi 
+statistics_c.cmx: ../parsing_c/visitor_c.cmx ../code_info/statistics_code.cmx \
+    ../parsing_c/parsing_stat.cmx ../parsing_c/lib_parsing_c.cmx \
+    ../commons/common.cmx ../parsing_c/ast_c.cmx statistics_c.cmi 

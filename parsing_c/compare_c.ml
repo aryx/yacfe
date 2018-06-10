@@ -175,7 +175,7 @@ let compare_ast filename1 filename2  =
         | EmptyDef a, EmptyDef b ->       if not (a =*= b) then incr error
         | MacroTop (a1,b1,c1), MacroTop (a2,b2,c2) -> 
             if not ((a1,b1,c1) =*= (a2,b2,c2)) then incr error
-        | CppTop (Include (a,_)), CppTop (Include (b,_)) -> 
+        | CppTop (Include {i_include = a}), CppTop (Include {i_include = b}) -> 
             if not (a =*= b) then incr error
         | CppTop Define _, CppTop Define _ ->   
             raise Todo
@@ -189,7 +189,13 @@ let compare_ast filename1 filename2  =
         | _, NotParsedCorrectly b -> 
             incr pb_notparsed
         | FinalDef a, FinalDef b -> if not (a =*= b) then incr error
-        | _, _ -> incr error
+
+        | IfdefTop a, IfdefTop b -> if not (a =*= b) then incr error
+
+        | (FinalDef _|EmptyDef _|
+           MacroTop (_, _, _)|IfdefTop _|
+           CppTop _|Definition _|Declaration _), _ -> incr error
+    
         );
         (match () with
         | _ when !pb_notparsed > 0 && !error = 0 -> 
@@ -230,6 +236,7 @@ let compare_ast filename1 filename2  =
 let is_normal_space_or_comment = function
   | Parser_c.TComment _ 
   | Parser_c.TCommentSpace _
+  | Parser_c.TCommentNewline _
 
 (*  | Parser_c.TComma _ *) (* UGLY, because of gcc_opt_comma isomorphism  *)
       -> true

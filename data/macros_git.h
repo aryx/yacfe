@@ -1,3 +1,3 @@
 
 // #define NORETURN __attribute__((noreturn))
-#define NORETURN
+#define NORETURN //YACFE_ATTRIBUTE

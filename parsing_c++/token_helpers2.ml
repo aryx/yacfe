@@ -224,8 +224,10 @@ let is_really_cplusplus_keyword = function
   | Tstatic_cast _
   | Treinterpret_cast  _
 
+(* when have some asm volatile, can have some ::
   | TColCol  _
       -> true
+*)
 
   | _ -> false
 

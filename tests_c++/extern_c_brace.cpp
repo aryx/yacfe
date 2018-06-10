@@ -1,3 +1,0 @@
-extern "C" {
-	int foo();
-}

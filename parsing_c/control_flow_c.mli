@@ -3,14 +3,16 @@ open Ast_c
 type node = node1 * string (* For debugging. Used by print_graph *)
   and node1 = node2 * nodeinfo 
    and nodeinfo = {
-      labels: int list;  (* Labels. Trick used for CTL engine *)
+      labels: int list;   (* Labels. Trick used for CTL engine *)
+      bclabels: int list; (* parent of a break or continue node *)
       is_loop: bool;
+      is_fake: bool;
     }
   and node2 =
   | TopNode 
   | EndNode
 
-  | FunHeader     of (string * functionType * storage) wrap
+  | FunHeader     of definition (* but empty body *)
   | Decl          of declaration
 
   | SeqStart      of statement * int * info
@@ -36,13 +38,18 @@ type node = node1 * string (* For debugging. Used by print_graph *)
 
 
   (* ------------------------ *)
+  | IfdefHeader of ifdef_directive
+  | IfdefElse of ifdef_directive
+  | IfdefEndif of ifdef_directive
+
+  (* ------------------------ *)
   | DefineHeader of string wrap * define_kind
 
   | DefineExpr of expression
   | DefineType of fullType
   | DefineDoWhileZeroHeader of unit wrap
 
-  | Include of inc_file wrap * (include_rel_pos option ref * bool)
+  | Include of includ
 
   | MacroTop of string * argument wrap2 list * il 
 
@@ -61,8 +68,6 @@ type node = node1 * string (* For debugging. Used by print_graph *)
 
   | Asm of statement * asmbody wrap
   | MacroStmt of statement * unit wrap
-
-  | Ifdef of statement * unit wrap
 
 
   (* ------------------------ *)
@@ -88,10 +93,13 @@ val unwrap : node -> node2
 val rewrap : node -> node2 -> node
 
 val extract_labels : node -> int list
+val extract_bclabels : node -> int list
 val extract_fullstatement : node -> Ast_c.statement option
 val extract_is_loop : node -> bool
+val extract_is_fake : node -> bool
 
-val mk_node: node2 -> int list -> string -> node
+val mk_node: node2 -> int list -> int list -> string -> node
+val mk_fake_node: node2 -> int list -> int list -> string -> node
 
 val first_node : cflow -> Ograph_extended.nodei
 val find_node : (node2 -> bool) -> cflow -> Ograph_extended.nodei

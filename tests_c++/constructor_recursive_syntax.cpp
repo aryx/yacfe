@@ -1,4 +1,0 @@
-nsApplicationAccessibleWrap::nsApplicationAccessibleWrap():
-     nsApplicationAccessible()
-{
-}

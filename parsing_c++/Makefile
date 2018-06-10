@@ -7,7 +7,7 @@ TARGET=parsing_cplusplus
 # to make parsing_c really independent of coccinelle. 
 # control_flow_c have also coccinelle dependencies.
 SRC= flag_parsing_cplusplus.ml parsing_stat2.ml \
- ast_cocci.ml \
+ ast_cocci_cplusplus.ml \
  ast_cplusplus.ml control_flow_cplusplus.ml \
  semantic_cplusplus.ml lexer_parser2.ml parser_cplusplus.ml lexer_cplusplus.ml \
  token_helpers2.ml parsing_hacks2.ml parse_cplusplus.ml \

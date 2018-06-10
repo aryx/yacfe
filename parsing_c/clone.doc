@@ -2,8 +2,8 @@
 
 master: yacfe
 
-coccinelle
-comment
+coccinelle (darcs and CVS)
+comment (darcs and ../hg)
 
 
 ** update: now use darcs too

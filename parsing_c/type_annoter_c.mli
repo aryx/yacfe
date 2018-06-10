@@ -1,6 +1,6 @@
 
 type namedef = 
-  | VarOrFunc of string * Ast_c.fullType
+  | VarOrFunc of string * Ast_c.exp_type
   | TypeDef   of string * Ast_c.fullType
   | StructUnionNameDef of 
       string * (Ast_c.structUnion * Ast_c.structType) Ast_c.wrap
@@ -13,5 +13,5 @@ val initial_env : environment
  * to None during parsing 
  *)
 val annotate_program : 
-  environment -> Ast_c.toplevel list -> 
+  environment -> bool (*true if types needed*) -> Ast_c.toplevel list -> 
   (Ast_c.toplevel * environment Common.pair) list

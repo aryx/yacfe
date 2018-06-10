@@ -8,12 +8,25 @@ let path = ref
 let std_h   = ref (Filename.concat !path "data/standard.h")
 let common_h   = ref (Filename.concat !path "data/common_macros.h")
 
+
 let cmdline_flags_macrofile () = 
   [
     "-macro_file", Arg.Set_string std_h,
     " <file> (default=" ^ !std_h ^ ")";
-    "-D",   Arg.Set_string std_h,     
-    " short option of -macro_file";
+  ]
+
+
+(*****************************************************************************)
+(* used only by cpp_ast_c, not by the parser *)
+(*****************************************************************************)
+let cpp_i_opts = ref []
+let cpp_d_opts = ref []
+
+let cmdline_flags_cpp () = [
+    "-D",   Arg.String (fun s -> Common.push2 s cpp_d_opts),
+    " <x=y>";
+    "-I", Arg.String (fun s -> Common.push2 s cpp_i_opts),
+    " <dir>"
   ]
 
 (*****************************************************************************)
@@ -103,9 +116,6 @@ let ifdef_directive_passing = ref false
 let disable_two_pass = ref false
 let disable_add_typedef = ref false
 
-(* obsolete ? *)
-let ifdef_to_if = ref false
-
 let if0_passing = ref true
 let add_typedef_root = ref true
 
@@ -115,9 +125,6 @@ let cmdline_flags_parsing_algos () = [
     "   pass most cpp directives, especially when inside function";
     "-ifdef_passing",              Arg.Set ifdef_directive_passing, 
     "   pass ifdef directives ";
-
-    "-ifdef",              Arg.Set ifdef_to_if, 
-    "   convert ifdef to if (buggy!)";
 
     "-noif0_passing",   Arg.Clear if0_passing, 
     " ";

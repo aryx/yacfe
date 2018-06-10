@@ -13,6 +13,7 @@ open Common
 
 module Visitor_c = Visitor_cplusplus
 module Ast_c = Ast_cplusplus
+module Ast_cocci = Ast_cocci_cplusplus
 
 (*****************************************************************************)
 (* Abstract line *)

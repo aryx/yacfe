@@ -1,4 +1,0 @@
-struct xxx;
-class nsHTMLEditUtils;
-
-

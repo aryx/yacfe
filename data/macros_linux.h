@@ -1,73 +1,94 @@
+#define __BEGIN_DECLS
+#define __END_DECLS
+
+#define __P(a) a
+
+#define yyconst const 
+
+#define Q_OBJECT 
+
 // ----------------------------------------------------------------------------
 // Attributes
 // ----------------------------------------------------------------------------
-#define  __init
-#define  __exit
-#define  __user
-#define  __iomem
-#define  __initdata
-#define  __exitdata
-#define  __devinit
-#define  __devexit
-#define  __devinitdata
-#define  __cpuinit
-#define  __cpuinitdata
-#define  __init_or_module
-#define  __initdata_or_module
-#define  __pminit
-#define  __pminitdata
+#define  __init YACFE_ATTRIBUTE
+#define  __exit YACFE_ATTRIBUTE
+#define  __user YACFE_ATTRIBUTE
+#define  __kernel YACFE_ATTRIBUTE
+#define  __iomem YACFE_ATTRIBUTE
+#define  __initdata YACFE_ATTRIBUTE
+#define  __exitdata YACFE_ATTRIBUTE
+#define  __devinit YACFE_ATTRIBUTE
+#define  __devexit YACFE_ATTRIBUTE
+#define  __devinitdata YACFE_ATTRIBUTE
+#define  __cpuinit YACFE_ATTRIBUTE
+#define  __cpuinitdata YACFE_ATTRIBUTE
+#define  __init_or_module YACFE_ATTRIBUTE
+#define  __initdata_or_module YACFE_ATTRIBUTE
+#define  __pminit YACFE_ATTRIBUTE
+#define  __pminitdata YACFE_ATTRIBUTE
 
 #define  __cacheline_aligned
 #define  ____cacheline_aligned
 #define  __cacheline_aligned_in_smp
 #define  ____cacheline_aligned_in_smp
 #define  ____cacheline_internodealigned_in_smp
-
 #define  __ALIGNED__
 #define  __3xp_aligned
 
+#define __packed2__
+
+#define CRYPTO_MINALIGN_ATTR
+
+#define  __read_mostly YACFE_ATTRIBUTE
+
 #define  __pmac
-#define  __force
 #define  __nocast
-#define  __read_mostly
+#define  __force 
 
-#define  __must_check
+#define  __must_check YACFE_ATTRIBUTE
 // pb
-#define  __unused 
-#define  __maybe_unused
+//#define  __unused  YACFE_ATTRIBUTE
+#define  __maybe_unused YACFE_ATTRIBUTE
 
 
-#define  __attribute_used__
-#define  __attribute_pure__
-#define  __attribute_const__
-// #define _attribute__const __attribute__((const))
+// ex: #define _attribute__const __attribute__((const))
+#define  __attribute_used__ YACFE_ATTRIBUTE
+#define  __attribute_pure__ YACFE_ATTRIBUTE
+#define  __attribute_const__ YACFE_ATTRIBUTE
 
 #define  __always_inline
 
 #define  __xipram
 
+#define __initdata_refok YACFE_ATTRIBUTE
+
 // in the other part of the kernel, in arch/, mm/, etc 
-#define  __sched
-#define  __initmv
-#define  __exception
-#define  __cpuexit
-#define  __kprobes
-#define  __meminit
-#define  __meminitdata
-#define  __nosavedata
-#define  __kernel
-#define  __nomods_init
-#define  __apicdebuginit
-#define  __ipc_init
-#define  __modinit
-#define  __lockfunc
-#define  __weak
-#define  __tlb_handler_align
-#define  __lock_aligned
-#define  __force_data
-#define  __nongprelbss
-#define  __nongpreldata
-#define  __noreturn
+#define  __sched YACFE_ATTRIBUTE
+#define  __initmv YACFE_ATTRIBUTE
+#define  __exception YACFE_ATTRIBUTE
+#define  __cpuexit YACFE_ATTRIBUTE
+#define  __kprobes YACFE_ATTRIBUTE
+#define  __meminit YACFE_ATTRIBUTE
+#define  __meminitdata YACFE_ATTRIBUTE
+#define  __nosavedata YACFE_ATTRIBUTE
+#define  __nomods_init YACFE_ATTRIBUTE
+#define  __apicdebuginit YACFE_ATTRIBUTE
+#define  __ipc_init YACFE_ATTRIBUTE
+#define  __modinit YACFE_ATTRIBUTE
+#define  __lockfunc YACFE_ATTRIBUTE
+#define  __weak YACFE_ATTRIBUTE
+#define  __tlb_handler_align YACFE_ATTRIBUTE
+
+#define __net_initdata YACFE_ATTRIBUTE
+#define __net_init YACFE_ATTRIBUTE
+#define __net_exit YACFE_ATTRIBUTE
+
+#define  __lock_aligned YACFE_ATTRIBUTE
+#define  __force_data YACFE_ATTRIBUTE
+#define  __noreturn YACFE_ATTRIBUTE
+
+#define  __nongprelbss YACFE_ATTRIBUTE
+#define  __nongpreldata YACFE_ATTRIBUTE
 
 #define  __section_jiffies
 #define  __vsyscall_fn
@@ -75,13 +96,13 @@
 #define  __section_vsyscall_gtod_data
 
 // in header files
-#define  __bitwise
-#define  __bitwise__
-#define  __deprecated
+#define  __bitwise YACFE_ATTRIBUTE
+#define  __bitwise__ YACFE_ATTRIBUTE
+#define  __deprecated YACFE_ATTRIBUTE
 
 
 // last found
-#define __init_refok
+#define __init_refok YACFE_ATTRIBUTE
 
 
 // maybe only in old kernel
@@ -90,27 +111,36 @@
 
 #define __extension__
 
-#define __thread
-#define __used
-#define __pure 
+#define __thread YACFE_ATTRIBUTE
+#define __used YACFE_ATTRIBUTE
+#define __pure  YACFE_ATTRIBUTE
 
-#define __ref
-#define __refdata
+#define __ref YACFE_ATTRIBUTE
+#define __refdata YACFE_ATTRIBUTE
 
-#define __uses_jump_to_uncached
+#define __uses_jump_to_uncached YACFE_ATTRIBUTE
+
+#define  ATTRIB_NORET YACFE_ATTRIBUTE
+#define  ATTRIBUTE_UNUSED YACFE_ATTRIBUTE
+
+#define PDT_ATTR YACFE_ATTRIBUTE
+
+#define CONSTF YACFE_ATTRIBUTE
+
+#define __ATM_API_ALIGN
 
 // ----------------------------------------------------------------------------
 // String macros
 // ----------------------------------------------------------------------------
  
-#define  KERN_EMERG "KERN_EMERG"
-#define  KERN_ALERT "KERN_ALERT"
-#define  KERN_CRIT "KERN_CRIT"
-#define  KERN_ERR "KERN_ERR"
-#define  KERN_WARNING "KERN_WARNING"
-#define  KERN_NOTICE "KERN_NOTICE"
-#define  KERN_INFO "KERN_INFO"
-#define  KERN_DEBUG "KERN_DEBUG"
+#define  KERN_EMERG		YACFE_STRING
+#define  KERN_ALERT		YACFE_STRING
+#define  KERN_CRIT		YACFE_STRING
+#define  KERN_ERR		YACFE_STRING
+#define  KERN_WARNING	YACFE_STRING
+#define  KERN_NOTICE	YACFE_STRING
+#define  KERN_INFO		YACFE_STRING
+#define  KERN_DEBUG		YACFE_STRING
 
 
 
@@ -142,6 +172,8 @@
 #define  STATIC_INLINE static inline
 #define  __EXTERN_INLINE extern inline
 
+#define __KINLINE inline
+
 #define  AGPEXTERN extern
 
 #define  PNMI_STATIC static
@@ -154,6 +186,7 @@
 
 #define  TRACE_EXIT return
 
+#define const_debug const
 
 // ----------------------------------------------------------------------------
 // linkage
@@ -161,6 +194,7 @@
 
 #define  fastcall
 #define  asmlinkage
+#define  asmregparm
 
 #define  far
 #define  SK_FAR
@@ -202,8 +236,6 @@
 #define  nabi_no_regargs
 
 
-#define  ATTRIB_NORET
-#define  ATTRIBUTE_UNUSED
 #define  BTEXT
 #define  BTDATA
 #define  PAGE_ALIGNED
@@ -222,6 +254,7 @@
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 
+// YACFE_ATTRIBUTE_PARAMS, but maybe can reuse YACFE_ATTRIBUTE
 #define __releases(x) 
 #define __acquires(x) 
 #define __declspec(x) 
@@ -288,6 +321,8 @@ static const struct machine_desc __mach_desc_##_type	\
 #define DECLARE_PER_CPU(type, name) extern __typeof__(type) per_cpu__##name
 
 
+#define DEFINE_PER_CPU_SHARED_ALIGNED(a, b) a b
+
 
 // include/linux/kobject.h
 #define decl_subsys(_name,_type,_uevent_ops) \
@@ -298,6 +333,10 @@ struct subsystem _name##_subsys = { \
                 .uevent_ops =_uevent_ops, \
         } \
 }
+
+
+//BAD:!!!!! DEFINE_SNMP_STAT(struct udp_mib, udp_statistics) __read_mostly;
+#define DEFINE_SNMP_STAT(a, b) a b
 
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
@@ -359,7 +398,10 @@ struct subsystem _name##_subsys = { \
 // also used in other.c that don't do any include :( 
 // but locally redefined in drivers/net/bnx2.c :( with a 
 // #define FNAME	0x8
-#define FNAME(name) name,
+//pb cos also used as:
+//BAD:  static unsigned FNAME(gpte_access)(struct kvm_vcpu *vcpu, pt_element_t gpte)
+
+//#define FNAME(name) name,
 
 
 // drivers/net/tulip/de4x5.c
@@ -373,6 +415,30 @@ struct subsystem _name##_subsys = { \
 // cause false typedef inference if let soc_printk
 #define soc_printk printk
 #define socal_printk printk
+
+
+//BAD:!!!!!     GUEST_HANDLE(ulong) extent_start;
+#define GUEST_HANDLE(a) a
+
+#define SND_CS8404_DECL
+#define SND_CS8403_DECL
+
+
+//BAD:!!!!! 	___DSP_DUAL_16BIT_ALLOC(
+//bad: 	    address1,
+//bad: 	    address2
+//bad: 	)
+#define ___DSP_DUAL_16BIT_ALLOC(a,b)
+
+
+//bad: extern int FASTCALL(queue_work(struct workqueue_struct *wq, struct work_struct *work));
+#define FASTCALL(a) a
+
+#define tc_gen
+
+
+//bad: BUILD_TRAP_HANDLER(fpu_state_restore)
+#define BUILD_TRAP_HANDLER(a) void a(void)
 
 
 // ----------------------------------------------------------------------------
@@ -532,6 +598,8 @@ do {									\
 #define DEBUGPIO(x) MACROSTATEMENT
 #define VDEB(x) MACROSTATEMENT
 
+#define DEBUGPOLL(x) MACROSTATEMENT
+
 #define READ_UNLOCK_IRQRESTORE(x) MACROSTATEMENT
 
 #define TRACE_CATCH(x) MACROSTATEMENT
@@ -616,6 +684,5 @@ do {									\
 
 // rule10
 //#define	 ACPI_MODULE_NAME(x)
-
 
 

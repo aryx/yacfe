@@ -1,0 +1,68 @@
+-*- org -*-
+
+* 0.2
+
+** Features:
+
+- more ifdef in the ast
+- cpp_ast_c.
+- database_c and relation_c (for inter-procedural analysis).
+
+** Bugfix:
+
+- complete cases in pretty_print_c
+
+** Misc:
+
+- packagize a little (a readme.txt, configure, etc)
+
+* 0.1
+
+** first public release of the source code:
+
+* beta 
+
+** 2008: 
+
+parsing_hacks hint in macro file.
+cpp directives and ifdef in ast (less passing) for CC'09 paper.
+some support for attributes. 
+
+statistics_c and comment_annotater for ICSE'08 paper.
+
+first parsing_c++/ tentative.
+
+
+** 2007: 
+
+Parsing_hacks views and fresh tokens support.
+Support for define macro body.
+Many cpp extensions.
+
+type annotater.
+
+Better matcher_c/ for Eurosys'08 paper.
+
+** 2006: 
+
+Parsing_hacks lookahead() and basic typedef handling.
+Many gcc extensions. A few cpp extensions.
+
+matcher_c/ (using monad trick).
+unparsing.
+cfg.
+visitor (using continuation trick).
+
+* alpha
+
+** 2005: 
+
+Error recovery for Eurosys'06 and statistics on Linux (but 
+pass over most cpp directives and macros).
+
+** 2002: 
+
+Basic AST, lexer, grammar, inspired by 
+ http://www.lysator.liu.se/c/ANSI-C-grammar-y.html
+First tentative of C type checker.
+

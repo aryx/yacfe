@@ -2,9 +2,11 @@
 
 * reused, cloned
 
-** commons/ in mercurial (now symlink)
+** commons/ in darcs
 
-** parsing_c/ in mercurial
+** parsing_c/ in darcs
+** analyze_c/ in darcs
+** matcher_c/ in darcs
 
 ** orga
 directories

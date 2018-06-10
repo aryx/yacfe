@@ -1,2 +1,0 @@
-typedef void (APIENTRYP PFNGLAPPLYTEXTUREEXTPROC) (GLenum mode);
-

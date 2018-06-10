@@ -129,6 +129,7 @@ let nMacroStmt = ref 0
 let nMacroString = ref 0
 let nMacroHigherOrder = ref 0 (* actions *)
 let nMacrohigherTypeGrammar = ref 0
+let nMacroAttribute = ref 0
 
 let nIfdefTop = ref 0
 let nIfdefStmt = ref 0
@@ -204,6 +205,7 @@ let assoc_stat_number =
     "nMacroStmt", nMacroStmt;
     "nMacroString", nMacroString;
     "nMacroHigherOrder", nMacroHigherOrder;
+    "nMacroAttribute", nMacroAttribute;
 
     "nMacrohigherTypeGrammar", nMacrohigherTypeGrammar;
 

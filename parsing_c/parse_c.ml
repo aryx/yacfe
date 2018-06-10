@@ -1,4 +1,4 @@
-(* Copyright (C) 2002-2008 Yoann Padioleau
+(* Copyright (C) 2006, 2007, 2008 Yoann Padioleau
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License (GPL)
@@ -203,7 +203,7 @@ let tokens2 file =
  Common.with_open_infile file (fun chan -> 
   let lexbuf = Lexing.from_channel chan in
   try 
-    let rec tokens_aux () = 
+    let rec tokens_aux acc = 
       let tok = Lexer_c.token lexbuf in
       (* fill in the line and col information *)
       let tok = tok +> TH.visitor_info_of_tok (fun ii -> 
@@ -220,10 +220,10 @@ let tokens2 file =
       in
 
       if TH.is_eof tok
-      then [tok]
-      else tok::(tokens_aux ())
+      then List.rev (tok::acc)
+      else tokens_aux (tok::acc)
     in
-    tokens_aux ()
+    tokens_aux []
   with
     | Lexer_c.Lexical s -> 
         failwith ("lexical error " ^ s ^ "\n =" ^ 
@@ -597,6 +597,16 @@ and find_next_synchro_orig next already_passed =
             already_passed, 
           xs
             
+      | Parser_c.TCommentNewline sp::Parser_c.TIdent x::Parser_c.TPtVirg iptvirg
+        ::xs -> 
+          pr2 "ERROR-RECOV: found sync bis, eating ident, }, and ;";
+          (Parser_c.TCommentNewline sp)::
+            (Parser_c.TPtVirg iptvirg)::
+            (Parser_c.TIdent x)::
+            v::
+            already_passed, 
+          xs
+            
       | _ -> 
           v::already_passed, xs
       )
@@ -657,7 +667,7 @@ let rec comment_until_defeol xs =
             (* bugfix: otherwise may lose a TComment token *)
             if TH.is_real_comment x
             then x
-            else Parser_c.TCommentCpp (Ast_c.CppPassingNormal, TH.info_of_tok x)
+            else Parser_c.TCommentCpp (Ast_c.CppPassingNormal (*good?*), TH.info_of_tok x)
           in
           x'::comment_until_defeol xs
       )
@@ -713,6 +723,15 @@ type program2 = toplevel2 list
 
 let program_of_program2 xs = 
   xs +> List.map fst
+
+let with_program2 f program2 = 
+  program2 
+  +> Common.unzip 
+  +> (fun (program, infos) -> 
+    f program, infos
+  )
+  +> Common.uncurry Common.zip
+
 
 
 (* The use of local refs (remaining_tokens, passed_tokens, ...) makes
@@ -777,6 +796,24 @@ let copy_tokens_stat ~src ~dst =
   dst.passed_clean <-  src.passed_clean;
   ()
 
+let rec filter_noise n xs =
+  match n, xs with
+  | _, [] -> []
+  | 0, xs -> xs
+  | n, x::xs -> 
+      (match x with
+      | Parser_c.TMacroAttr _ -> 
+          filter_noise (n-1) xs
+      | _ -> 
+          x::filter_noise (n-1) xs
+      )
+
+let clean_for_lookahead xs = 
+  match xs with
+  | [] -> []
+  | [x] -> [x]
+  | x::xs -> 
+      x::filter_noise 10 xs
 
 
 
@@ -803,7 +840,10 @@ let rec lexer_function ~pass tr = fun lexbuf ->
       assert (x = v);
       
       (match v with
-      (* fix_define1 *)
+      (* fix_define1. Why not in parsing_hacks lookahead and do passing like
+       * I do for some ifdef directives ? Because here I also need to 
+       * generate some tokens sometimes. 
+       *)
       | Parser_c.TDefine (tok) -> 
           if not (LP.current_context () = LP.InTopLevel) && 
             (!Flag_parsing_c.cpp_directive_passing || (pass = 2))
@@ -861,7 +901,8 @@ let rec lexer_function ~pass tr = fun lexbuf ->
           in
           
           let v = Parsing_hacks.lookahead ~pass
-            (v::tr.rest_clean) tr.passed_clean in
+            (clean_for_lookahead (v::tr.rest_clean))
+            tr.passed_clean in
 
           tr.passed <- v::tr.passed;
           
@@ -963,6 +1004,7 @@ let parse_print_error_heuristic2 file =
   (* call lexer and get all the tokens *)
   (* -------------------------------------------------- *)
   LP.lexer_reset_typedef(); 
+  Parsing_hacks.ifdef_paren_cnt := 0;
   let toks_orig = tokens file in
 
   let toks = Parsing_hacks.fix_tokens_define toks_orig in

@@ -1,5 +1,5 @@
 %{
-(* Copyright (C) 2002-2008 Yoann Padioleau
+(* Copyright (C) 2002, 2006, 2007, 2008 Yoann Padioleau
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License (GPL)
@@ -229,9 +229,12 @@ let fixFunc = function
   | ((
       (s,iis), 
       (nQ, (FunctionType (fullt, (params,bool)),iifunc)), 
-      (st,iist)
+      (st,iist),
+      attrs
     ), 
-    (cp,iicp)) -> 
+    (cp,iicp)
+    ) 
+    -> 
       let iistart = Ast_c.fakeInfo () in
       assert (nQ =*= nullQualif);
       (match params with
@@ -243,7 +246,12 @@ let fixFunc = function
                 (* failwith "internal errror: fixOldCDecl not good" *)
           ));
       (* it must be nullQualif,cos parser construct only this*)
-      (s, (fullt, (params, bool)), st, cp), 
+      {f_name = s;
+       f_type = (fullt, (params, bool));
+       f_storage = st;
+       f_body = cp;
+       f_attr = attrs;
+      }, 
       ([iis]++iifunc++iicp++[iistart]++iist) 
   | _ -> 
       raise 
@@ -266,7 +274,7 @@ let et s () =
 
 
 let fix_add_params_ident = function
-  | ((s, (nQ, (FunctionType (fullt, (params, bool)),_)), st)) ->  
+  | ((s, (nQ, (FunctionType (fullt, (params, bool)),_)), st, _attrs)) ->  
 
       (match params with
       | [((reg, None, ((_qua, (BaseType Void,_)))),_), _] ->  ()
@@ -304,7 +312,7 @@ let mk_e e ii = ((e, Ast_c.noType()), ii)
 %token <Ast_c.info> TUnknown /*(* unrecognized token *)*/
 
 /*(* coupling: Token_helpers.is_real_comment *)*/
-%token <Ast_c.info> TComment TCommentSpace 
+%token <Ast_c.info> TCommentSpace TCommentNewline   TComment
 
 /*(*-----------------------------------------*)*/
 /*(* the normal tokens *)*/
@@ -323,7 +331,7 @@ let mk_e e ii = ((e, Ast_c.noType()), ii)
 /*
 (* Some tokens like TOPar and TCPar are used as synchronisation stuff, 
  * in parsing_hack.ml. So if define special tokens like TOParDefine and
- * TCParEOL, then take care to also modify in Token_helpers
+ * TCParEOL, then take care to also modify in Token_helpers.
  *)
 */
   
@@ -351,6 +359,7 @@ let mk_e e ii = ((e, Ast_c.noType()), ii)
        Tbreak Telse Tswitch Tcase Tcontinue Tfor Tdo Tif  Twhile Treturn
        Tgoto Tdefault
        Tsizeof  
+
 /*(* C99 *)*/
 %token <Ast_c.info>
        Trestrict
@@ -370,7 +379,7 @@ let mk_e e ii = ((e, Ast_c.noType()), ii)
 
 
 /*(*---------------*)*/
-/*(* define *)*/
+/*(* define        *)*/
 /*(*---------------*)*/
 
 %token <Ast_c.info> TDefine
@@ -388,7 +397,7 @@ let mk_e e ii = ((e, Ast_c.noType()), ii)
 
 
 /*(*---------------*)*/
-/*(* include *)*/
+/*(* include       *)*/
 /*(*---------------*)*/
 
 
@@ -401,15 +410,17 @@ let mk_e e ii = ((e, Ast_c.noType()), ii)
 
 
 /*(*---------------*)*/
-/*(* ifdef *)*/
+/*(* ifdef         *)*/
 /*(*---------------*)*/
 
 /*(* coupling: Token_helpers.is_cpp_instruction *)*/
-%token <Ast_c.info>          TIfdef TIfdefelse TIfdefelif TEndif
-%token <(bool * Ast_c.info)> TIfdefBool TIfdefMisc TIfdefVersion
+%token <((int * int) option ref * Ast_c.info)> 
+  TIfdef TIfdefelse TIfdefelif TEndif
+%token <(bool * (int * int) option ref * Ast_c.info)> 
+  TIfdefBool TIfdefMisc TIfdefVersion
 
 /*(*---------------*)*/
-/*(* other  *)*/
+/*(* other         *)*/
 /*(*---------------*)*/
 
 
@@ -418,24 +429,26 @@ let mk_e e ii = ((e, Ast_c.noType()), ii)
 %token <Ast_c.info> TCppDirectiveOther
 
 /*(*---------------*)*/
-/*(* macro use  *)*/
+/*(* macro use     *)*/
 /*(*---------------*)*/
 
-/*(* appear  after fix_tokens_cpp *)*/
+/*(* appear  after fix_tokens_cpp, cf also parsing_hacks#hint *)*/
 
-%token <Ast_c.info>            TMacroAttr
-%token <Ast_c.info>            TMacroStmt
+%token <(string * Ast_c.info)>            TMacroAttr
+%token <(string * Ast_c.info)>            TMacroStmt
 /*(* no need value for the moment *)*/
-%token <Ast_c.info>            TMacroString 
+%token <(string * Ast_c.info)>            TMacroString 
 %token <(string * Ast_c.info)> TMacroDecl
 %token <Ast_c.info>            TMacroDeclConst 
 %token <(string * Ast_c.info)> TMacroStructDecl
 %token <(string * Ast_c.info)> TMacroIterator
 /*(* %token <(string * Ast_c.info)> TMacroTop *)*/
 
+%token <(string * Ast_c.info)>            TMacroAttrStorage
+
 
 /*(*---------------*)*/
-/*(* other  *)*/
+/*(* other         *)*/
 /*(*---------------*)*/
 
 /*(* appear after parsing_hack *)*/
@@ -452,6 +465,7 @@ let mk_e e ii = ((e, Ast_c.noType()), ii)
 %token <Ast_c.info> EOF
 
 /*(*-----------------------------------------*)*/
+
 /*(* must be at the top so that it has the lowest priority *)*/
 %nonassoc SHIFTHERE
 
@@ -533,6 +547,9 @@ ident:
  | TypedefIdent { $1 }
 
 
+identifier:
+ | TIdent       { $1 }
+
 /*(*************************************************************************)*/
 /*(* expr *)*/
 /*(*************************************************************************)*/
@@ -611,7 +628,7 @@ postfix_expr:
  | primary_expr               { $1 }
  | postfix_expr TOCro expr TCCro                
      { mk_e(ArrayAccess ($1, $3)) [$2;$4] }
- | postfix_expr TOPar argument_list TCPar  
+ | postfix_expr TOPar argument_list_ne TCPar  
      { mk_e(FunCall ($1, $3)) [$2;$4] }
  | postfix_expr TOPar  TCPar  { mk_e(FunCall ($1, [])) [$2;$3] }
  | postfix_expr TDot   ident  { mk_e(RecordAccess   ($1,fst $3)) [$2;snd $3] }
@@ -626,14 +643,15 @@ postfix_expr:
      { mk_e(Constructor ($2, List.rev $5)) ([$1;$3;$4;$7] ++ $6) }
 
 primary_expr: 
- | TIdent  { mk_e(Ident  (fst $1)) [snd $1] }
+ | identifier  { mk_e(Ident  (fst $1)) [snd $1] }
  | TInt    { mk_e(Constant (Int    (fst $1))) [snd $1] }
  | TFloat  { mk_e(Constant (Float  (fst $1))) [snd $1] }
  | TString { mk_e(Constant (String (fst $1))) [snd $1] }
  | TChar   { mk_e(Constant (Char   (fst $1))) [snd $1] }
  | TOPar expr TCPar { mk_e(ParenExpr ($2)) [$1;$3] }  /*(* forunparser: *)*/
 
- /*(* gccext: cppext: *)*/
+ /*(* gccext: cppext: TODO better ast ? *)*/
+ | TMacroString { mk_e(Constant (MultiString)) [snd $1] }
  | string_elem string_list { mk_e(Constant (MultiString)) ($1 ++ $2) }
 
  /*(* gccext: allow statement as expressions via ({ statement }) *)*/
@@ -646,11 +664,26 @@ primary_expr:
 /*(*----------------------------*)*/
 
 /*(* cppext: *)*/
+/*(* to avoid conflicts have to introduce a _not_empty (ne) version *)*/
+argument_ne: 
+ | assign_expr { Left $1 }
+ | parameter_decl { Right (ArgType $1)  }
+ | action_higherordermacro_ne { Right (ArgAction $1) }
+
+
 argument: 
  | assign_expr { Left $1 }
  | parameter_decl { Right (ArgType $1)  }
  /*(* had conflicts before, but julia fixed them *)*/
  | action_higherordermacro { Right (ArgAction $1) }
+
+action_higherordermacro_ne: 
+ | taction_list_ne 
+     { if null $1
+       then ActMisc [Ast_c.fakeInfo()]
+       else ActMisc $1
+     }
+
 
 action_higherordermacro: 
  | taction_list 
@@ -690,7 +723,7 @@ statement:
  | Tasm Tvolatile TOPar asmbody TCPar TPtVirg   { Asm $4, [$1;$2;$3;$5;$6] }
 
  /*(* cppext: *)*/
- | TMacroStmt { MacroStmt, [$1] }
+ | TMacroStmt { MacroStmt, [snd $1] }
 
 
 
@@ -705,9 +738,12 @@ labeled:
      { CaseRange ($2, $4, $6), [$1;$3;$5] } /*(* gccext: allow range *)*/
  | Tdefault         TDotDot statement   { Default $3,             [$1; $2] } 
 
+end_labeled: 
  /*(* gccext:  allow toto: }
-    * generate each 30 shift/Reduce conflicts,  mais ca va, ca fait ce qu'il
-    * faut
+    * was generating each 30 shift/Reduce conflicts,
+    * mais ca va, ca fait ce qu'il faut.
+    * update: julia fixed the problem by introducing end_labeled 
+    * and modifying below stat_or_decl_list
     *)*/
  | ident            TDotDot 
      { Label (fst $1, (ExprStatement None, [])), [snd $1; $2] }
@@ -733,14 +769,16 @@ compound2:
  |                   { ([]) }
  | stat_or_decl_list { $1 }
 
+
 stat_or_decl_list: 
  | stat_or_decl                   { [$1] }                          
- | stat_or_decl_list stat_or_decl { $1 ++ [$2] }
-
-
+ /*(* gccext: to avoid conflicts, cf end_labeled above *)*/
+ | end_labeled  { [StmtElem (Labeled      (fst $1), snd $1)] }
+ /*(* old: conflicts | stat_or_decl_list stat_or_decl { $1 ++ [$2] } *)*/
+ | stat_or_decl stat_or_decl_list { $1 :: $2 }
 
 stat_or_decl: 
- | decl      { StmtElem (Decl $1, []) }
+ | decl      { StmtElem (Decl ($1 Ast_c.LocalDecl), []) }
  | statement { StmtElem $1 }
 
   /*(* gccext: *)*/
@@ -784,7 +822,7 @@ iteration:
        MacroIteration ("toto", [], $7),[] (* TODOfake ast, TODO need decl2 ? *)
      }
  /*(* cppext: *)*/
- | TMacroIterator TOPar argument_list TCPar statement
+ | TMacroIterator TOPar argument_list_ne TCPar statement
      { MacroIteration (fst $1, $3, $5), [snd $1;$2;$4] }
  | TMacroIterator TOPar TCPar statement
      { MacroIteration (fst $1, [], $4), [snd $1;$2;$3] }
@@ -806,7 +844,7 @@ jump:
 string_elem:
  | TString { [snd $1] }
  /*(* cppext:  ex= printk (KERN_INFO "xxx" UTS_RELEASE)  *)*/
- | TMacroString { [$1] }
+ | TMacroString { [snd $1] }
 
 
 asmbody: 
@@ -820,9 +858,9 @@ colon_option:
  | TString                      { ColonMisc, [snd $1] }
  | TString TOPar asm_expr TCPar { ColonExpr $3, [snd $1; $2;$4] } 
  /*(* cppext: certainly a macro *)*/
- | TOCro TIdent TCCro TString TOPar asm_expr TCPar
+ | TOCro identifier TCCro TString TOPar asm_expr TCPar
      { ColonExpr $6, [$1;snd $2;$3;snd $4; $5; $7 ] }
- | TIdent                           { ColonMisc, [snd $1] }
+ | identifier                       { ColonMisc, [snd $1] }
  | /*(* empty *)*/                  { ColonMisc, [] }
 
 asm_expr: assign_expr { $1 }
@@ -835,7 +873,6 @@ asm_expr: assign_expr { $1 }
 /*(*-----------------------------------------------------------------------*)*/
 /*(* Type spec, left part of a type *)*/
 /*(*-----------------------------------------------------------------------*)*/
-
 type_spec2: 
  | Tvoid                { Right3 (BaseType Void),            [$1] }
  | Tchar                { Right3 (BaseType (IntType CChar)), [$1]}
@@ -884,6 +921,22 @@ type_qualif:
  | Trestrict { (* TODO *) {const=false ; volatile=false},  $1 }
 
 
+/*(*-----------------------------------------------------------------------*)*/
+/*(* gccext: attributes  *)*/
+/*(*-----------------------------------------------------------------------*)*/
+
+attribute:
+ | Tattribute TOPar /*stuff*/ TCPar { raise Todo }
+ /*(* cppext: *)*/
+ | TMacroAttr { Attribute (fst $1), [snd $1] }
+
+
+attribute_storage:
+ | TMacroAttrStorage { $1 }
+
+type_qualif_attr:
+ | type_qualif { $1 }
+ | TMacroAttr { {const=false  ; volatile=false}, snd $1 (*TODO*)  }
 
 /*(*-----------------------------------------------------------------------*)*/
 /*(* Declarator, right part of a type + second part of decl (the ident)  *)*/
@@ -910,7 +963,7 @@ pointer:
 
 
 direct_d: 
- | TIdent                                  
+ | identifier
      { ($1, fun x -> x) }
  | TOPar declarator TCPar      /*(* forunparser: old: $2 *)*/ 
      { (fst $2, fun x -> (nQ, (ParenType ((snd $2) x), [$1;$3]))) }
@@ -976,7 +1029,7 @@ parameter_decl2:
        (hasreg, Some (fst (fst $2)), ((snd $2) returnType)),    
         (iihasreg ++ [snd (fst $2)]) 
      }
- | decl_spec abstract_declarator
+ | decl_spec abstract_declaratorp
      { let ((returnType,hasreg), iihasreg) = fixDeclSpecForParam $1 
        in (hasreg, None, ($2 returnType)),      (iihasreg ++ []) 
      }
@@ -992,9 +1045,16 @@ parameter_decl2:
 
 parameter_decl: parameter_decl2 { et "param" ();  $1 }
 
-declaratorp: declarator  { LP.add_ident (fst (fst $1)); $1 }
+declaratorp: 
+ | declarator  { LP.add_ident (fst (fst $1)); $1 }
+ /*(* gccext: *)*/
+ | attributes declarator   { LP.add_ident (fst (fst $2)); $2 }
+ | declarator attributes   { LP.add_ident (fst (fst $1)); $1 }
 
-
+abstract_declaratorp:
+ | abstract_declarator { $1 }
+ /*(* gccext: *)*/
+ | attributes abstract_declarator { $2 }
 
 /*(*-----------------------------------------------------------------------*)*/
 /*(* helper type rules *)*/
@@ -1013,8 +1073,10 @@ spec_qualif_list: spec_qualif_list2            {  dt "spec_qualif" (); $1 }
 
 /*(* for pointers in direct_declarator and abstract_declarator *)*/
 type_qualif_list: 
- | type_qualif                  { {nullDecl with qualifD = (fst $1,[snd $1])} }
- | type_qualif_list type_qualif { addQualifD ($2,$1) }
+ | type_qualif_attr                  { {nullDecl with qualifD = (fst $1,[snd $1])} }
+ | type_qualif_list type_qualif_attr { addQualifD ($2,$1) }
+
+
 
 
  	     
@@ -1026,10 +1088,15 @@ type_qualif_list:
 type_name: 
  | spec_qualif_list                     
      { let (returnType, _) = fixDeclSpecForDecl $1 in  returnType }
- | spec_qualif_list abstract_declarator 
+ | spec_qualif_list abstract_declaratort
      { let (returnType, _) = fixDeclSpecForDecl $1 in $2 returnType }
 
 
+
+abstract_declaratort: 
+ | abstract_declarator { $1 }
+ /*(* gccext: *)*/
+ | attributes abstract_declarator { $2 }
 
 
 /*(*************************************************************************)*/
@@ -1038,16 +1105,21 @@ type_name:
 
 decl2: 
  | decl_spec TPtVirg
-     { let (returnType,storage) = fixDeclSpecForDecl $1 in 
+     { function local ->
+       let (returnType,storage) = fixDeclSpecForDecl $1 in 
        let iistart = Ast_c.fakeInfo () in
-       DeclList ([(None, returnType, unwrap storage),[]],  
+       DeclList ([{v_namei = None; v_type = returnType; 
+                   v_storage = unwrap storage; v_local = local;
+                   v_attr = Ast_c.noattr;
+                },[]],  
                 ($2::iistart::snd storage))
      } 
  | decl_spec init_declarator_list TPtVirg 
-     { let (returnType,storage) = fixDeclSpecForDecl $1 in
+     { function local ->
+       let (returnType,storage) = fixDeclSpecForDecl $1 in
        let iistart = Ast_c.fakeInfo () in
        DeclList (
-         ($2 +> List.map (fun ((((s,iis),f), ini), iivirg) -> 
+         ($2 +> List.map (fun (((((s,iis),f),attrs), ini), iivirg) -> 
            let ini, iini = 
              match ini with
              | None -> None, []
@@ -1055,18 +1127,27 @@ decl2:
            in
 	   if fst (unwrap storage) = StoTypedef 
 	   then LP.add_typedef s;
-           (Some ((s, ini), iis::iini), f returnType, unwrap storage),
+           {v_namei = Some ((s, ini), iis::iini);
+            v_type = f returnType;
+            v_storage = unwrap storage;
+            v_local = local;
+            v_attr = attrs;
+           },
            iivirg 
          )
          ),  ($3::iistart::snd storage))
      } 
  /*(* cppext: *)*/
+
  | TMacroDecl TOPar argument_list TCPar TPtVirg 
-     { MacroDecl ((fst $1, $3), [snd $1;$2;$4;$5;fakeInfo()]) }
+     { function _ ->
+       MacroDecl ((fst $1, $3), [snd $1;$2;$4;$5;fakeInfo()]) }
  | Tstatic TMacroDecl TOPar argument_list TCPar TPtVirg 
-     { MacroDecl ((fst $2, $4), [snd $2;$3;$5;$6;fakeInfo();$1]) }
+     { function _ ->
+       MacroDecl ((fst $2, $4), [snd $2;$3;$5;$6;fakeInfo();$1]) }
  | Tstatic TMacroDeclConst TMacroDecl TOPar argument_list TCPar TPtVirg 
-     { MacroDecl ((fst $3, $5), [snd $3;$4;$6;$7;fakeInfo();$1;$2])}
+     { function _ ->
+       MacroDecl ((fst $3, $5), [snd $3;$4;$6;$7;fakeInfo();$1;$2])}
 
 
 /*(*-----------------------------------------------------------------------*)*/
@@ -1085,12 +1166,17 @@ decl_spec2:
    *)*/
 
 
-storage_class_spec: 
+storage_class_spec2: 
  | Tstatic      { Sto Static,  $1 }
  | Textern      { Sto Extern,  $1 }
  | Tauto        { Sto Auto,    $1 }
  | Tregister    { Sto Register,$1 }
  | Ttypedef     { StoTypedef,  $1 }
+
+storage_class_spec:
+ /*(* gccext: *)*/
+ | storage_class_spec2 { $1 }
+ | storage_class_spec2 attributes_storage { $1 (* TODO *) }
 
 
 
@@ -1123,9 +1209,12 @@ init_declarator: init_declarator2  { dt "init" (); $1 }
 /*(*----------------------------*)*/
 
 declaratori: 
- | declarator              { LP.add_ident (fst (fst $1)); $1 }
+ | declarator              { LP.add_ident (fst (fst $1)); $1, Ast_c.noattr }
  /*(* gccext: *)*/
- | declarator gcc_asm_decl { LP.add_ident (fst (fst $1)); $1 }
+ | declarator gcc_asm_decl { LP.add_ident (fst (fst $1)); $1, Ast_c.noattr }
+ /*(* gccext: *)*/
+ | attributes declarator   { LP.add_ident (fst (fst $2)); $2, $1 }
+ | declarator attributes   { LP.add_ident (fst (fst $1)); $1, Ast_c.noattr (* TODO *) }
 
 
 
@@ -1219,6 +1308,9 @@ s_or_u_spec2:
 struct_or_union2: 
  | Tstruct   { Struct, $1 }
  | Tunion    { Union, $1 }
+ /*(* gccext: *)*/
+ | Tstruct attributes   { Struct, $1 (* TODO *) }
+ | Tunion  attributes   { Union, $1  (* TODO *) }
 
 
 
@@ -1279,8 +1371,12 @@ struct_declarator:
 /*(*----------------------------*)*/
 /*(* workarounds *)*/
 /*(*----------------------------*)*/
-declaratorsd: declarator 
-  { (*also ? LP.add_ident (fst (fst $1)); *) $1 }
+declaratorsd: 
+ | declarator { (*also ? LP.add_ident (fst (fst $1)); *) $1 }
+ /*(* gccext: *)*/
+ | attributes declarator   { $2 }
+ | declarator attributes   { $1 }
+
 
 
 
@@ -1330,30 +1426,37 @@ decl_list:
  | decl           { [$1]   }
  | decl_list decl { $1 ++ [$2] }
 
-function_def: start_fun compound      { LP.del_scope(); ($1, $2) }
+function_def: 
+ | start_fun compound      { LP.del_scope(); ($1, $2) }
  | start_fun decl_list compound      { 
      pr2 "OLD STYLE DECL NOT WELL SUPPORTED";
      (* TODO: undo the typedef added ? *)
-     LP.del_scope(); ($1, $3) 
+     LP.del_scope(); 
+     ($1, $3) 
    }
 
 start_fun: start_fun2                        
   { LP.new_scope(); 
     fix_add_params_ident $1; 
-    (*!LP._lexer_hint.toplevel <- false;  *)
+    (* toreput? !LP._lexer_hint.toplevel <- false;  *)
     $1 
   }
 
 start_fun2: decl_spec declaratorfd  
      { let (returnType,storage) = fixDeclSpecForFuncDef $1 in
-       (fst $2, fixOldCDecl ((snd $2) returnType) , storage) 
+       let (id, attrs) = $2 in
+       (fst id, fixOldCDecl ((snd id) returnType) , storage, attrs) 
      }
 
 /*(*----------------------------*)*/
 /*(* workarounds *)*/
 /*(*----------------------------*)*/
 
-declaratorfd: declarator { et "declaratorfd" (); $1 }
+declaratorfd: 
+ | declarator { et "declaratorfd" (); $1, Ast_c.noattr }
+ /*(* gccext: *)*/
+ | attributes declarator   { et "declaratorfd" (); $2, $1 }
+ | declarator attributes   { et "declaratorfd" (); $1, Ast_c.noattr }
 
 
 
@@ -1377,7 +1480,11 @@ cpp_directive:
          | _ -> 
              Wierd s 
        in
-       Include ((inc_file, [i1;i2]), (Ast_c.noRelPos(), !in_ifdef)) 
+       Include { i_include = (inc_file, [i1;i2]);
+                 i_rel_pos = Ast_c.noRelPos();
+                 i_is_in_ifdef = !in_ifdef;
+                 i_content = Ast_c.noi_content;
+       }
      }
 
  | TDefine TIdentDefine define_val TDefEOL 
@@ -1402,18 +1509,16 @@ cpp_directive:
 define_val: 
  | expr      { DefineExpr $1 }
  | statement { DefineStmt $1 }
- | decl      { DefineStmt (Decl $1, []) }
-/* | TypedefIdent { DefineType (nQ,(TypeName(fst $1,noTypedefDef()),[snd $1]))}*/
+ | decl      { DefineStmt (Decl ($1 Ast_c.NotLocalDecl), []) }
+
+/*(*old: | TypedefIdent { DefineType (nQ,(TypeName(fst $1,noTypedefDef()),[snd $1]))}*)*/
  | spec_qualif_list { DefineTodo }
  | function_definition { DefineFunction $1 }
+
  | TOBraceDefineInit initialize_list gcc_comma_opt_struct TCBrace comma_opt 
     { DefineInit (InitList (List.rev $2), [$1;$4]++$3++$5)  }
 
- /*(* a few special cases *)*/
- | statement statement { DefineTodo }
- | decl function_definition { DefineTodo }
-
- /*(*had conflict before when were putting TInt instead of expr *)*/
+ /*(* note: had a conflict before when were putting TInt instead of expr *)*/
  | Tdo statement Twhile TOPar expr TCPar 
      {
        (* TOREPUT 
@@ -1422,6 +1527,23 @@ define_val:
        *)
        DefineDoWhileZero (($2,$5),   [$1;$3;$4;$6])
      }
+
+ /*(* a few special cases *)*/
+ | stat_or_decl stat_or_decl_list { DefineTodo }
+/*
+ | statement statement { DefineTodo }
+ | decl function_definition { DefineTodo }
+*/
+
+ | Tasm TOPar asmbody TCPar              { DefineTodo }
+ | Tasm Tvolatile TOPar asmbody TCPar    { DefineTodo }
+
+
+ /*(* aliases macro *)*/
+ | TMacroAttr { DefineTodo }
+ | storage_class_spec { DefineTodo }
+ | Tinline { DefineTodo }
+
  | /*(* empty *)*/ { DefineEmpty }
 
 
@@ -1437,14 +1559,28 @@ param_define:
 
 
 cpp_ifdef_directive: 
- | TIfdef     { IfdefDirective [$1] }
- | TIfdefelse { IfdefDirective [$1] }
- | TIfdefelif { IfdefDirective [$1] }
- | TEndif     { IfdefDirective [$1] }
+ | TIfdef     
+     { let (tag,ii) = $1 in 
+       IfdefDirective ((Ifdef, IfdefTag (Common.some !tag)),  [ii]) }
+ | TIfdefelse 
+     { let (tag,ii) = $1 in  
+       IfdefDirective ((IfdefElse, IfdefTag (Common.some !tag)), [ii]) }
+ | TIfdefelif 
+     { let (tag,ii) = $1 in  
+       IfdefDirective ((IfdefElseif, IfdefTag (Common.some !tag)), [ii]) }
+ | TEndif     
+     { let (tag,ii) = $1 in  
+       IfdefDirective ((IfdefEndif, IfdefTag (Common.some !tag)), [ii]) }
 
- | TIfdefBool  { IfdefDirective [snd $1] }
- | TIfdefMisc  { IfdefDirective [snd $1] }
- | TIfdefVersion { IfdefDirective [snd $1] }
+ | TIfdefBool    
+     { let (_b, tag,ii) = $1 in  
+       IfdefDirective ((Ifdef, IfdefTag (Common.some !tag)), [ii]) }
+ | TIfdefMisc    
+     { let (_b, tag,ii) = $1 in  
+       IfdefDirective ((Ifdef, IfdefTag (Common.some !tag)), [ii]) }
+ | TIfdefVersion 
+     { let (_b, tag,ii) = $1 in  
+       IfdefDirective ((Ifdef, IfdefTag (Common.some !tag)), [ii]) }
 
 
 /*(* cppext: *)*/
@@ -1453,15 +1589,15 @@ cpp_other:
     * the rule are slightly different, they cant be statement and so expr
     * at the top, only decl or function definition.
     *)*/
- | TIdent TOPar argument_list TCPar TPtVirg
+ | identifier TOPar argument_list TCPar TPtVirg
      { MacroTop (fst $1, $3,    [snd $1;$2;$4;$5]) } 
 
  /*(* TCParEOL to fix the end-of-stream bug of ocamlyacc *)*/
- | TIdent TOPar argument_list TCParEOL
+ | identifier TOPar argument_list TCParEOL
      { MacroTop (fst $1, $3,    [snd $1;$2;$4;fakeInfo()]) } 
 
   /*(* ex: EXPORT_NO_SYMBOLS; *)*/
- | TIdent TPtVirg { EmptyDef [snd $1;$2] }
+ | identifier TPtVirg { EmptyDef [snd $1;$2] }
 
 
 
@@ -1471,7 +1607,7 @@ cpp_other:
 
 external_declaration: 
  | function_definition               { Definition $1 }
- | decl                              { Declaration $1 }
+ | decl                              { Declaration ($1 Ast_c.NotLocalDecl) }
 
 
 celem: 
@@ -1486,7 +1622,7 @@ celem:
      { IfdefTop $1 }
 
  /*(* can have asm declaration at toplevel *)*/
- | Tasm TOPar asmbody TCPar TPtVirg             { EmptyDef [] } 
+ | Tasm TOPar asmbody TCPar TPtVirg             { EmptyDef [$1;$2;$4;$5] } 
 
  /*
  (* in ~/kernels/src/linux-2.5.2/drivers/isdn/hisax/isdnl3.c sometimes
@@ -1577,6 +1713,9 @@ colon_option_list:
  | colon_option_list TComma colon_option { $1 ++ [$3, [$2]] }
 
 
+argument_list_ne: 
+ | argument_ne                           { [$1, []] }
+ | argument_list_ne TComma argument { $1 ++ [$3,    [$2]] }
 
 argument_list: 
  | argument                           { [$1, []] }
@@ -1613,10 +1752,18 @@ parameter_list:
  | parameter_decl                       { [$1, []] }
  | parameter_list TComma parameter_decl { $1 ++ [$3,  [$2]] }
 
+taction_list_ne: 
+ | TAction                 { [$1] }
+ | TAction taction_list_ne { $1 :: $2 }
+
 taction_list: 
- | /*(* empty *)*/ { [] }
+/*old: was generating conflict, hence now taction_list_ne 
+    | (* empty *) { [] }
  | TAction { [$1] }
  | taction_list TAction { $1 ++ [$2] }
+*/
+ |                      { [] }
+ | TAction taction_list { $1 :: $2 }
 
 param_define_list: 
  | /*(* empty *)*/ { [] }
@@ -1626,6 +1773,19 @@ param_define_list:
 designator_list: 
  | designator { [$1] }
  | designator_list designator { $1 ++ [$2] }
+
+attribute_list:
+ | attribute { [$1] }
+ | attribute_list attribute { $1 ++ [$2] }
+
+attribute_storage_list:
+ | attribute_storage { [$1] }
+ | attribute_storage_list attribute_storage { $1 ++ [$2] }
+
+
+attributes: attribute_list { $1 }
+
+attributes_storage: attribute_storage_list { $1 }
 
 
 /*(* gccext:  which allow a trailing ',' in enum, as in perl *)*/

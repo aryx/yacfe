@@ -1,6 +1,0 @@
-[TEST************] exception sur RIEN ************************
-[EXCEPTION]: valeur de Direction non compris dans le domaine direction 
-exception catche
----------Valeur attendue-------------
-[EXCEPTION]: valeur de Direction non compris dans le domaine direction 
-exception catche

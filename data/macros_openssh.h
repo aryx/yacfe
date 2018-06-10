@@ -3,7 +3,7 @@
 #define sshpam_const const
 #define SNPRINTF_CONST const
 
-#define __dead
+#define __dead YACFE_ATTRIBUTE
 
 //BAD:!!!!! 	RB_ENTRY(mm_share) next;
 #define RB_ENTRY(a) a
@@ -24,3 +24,8 @@
 
 #define LLONG long
 
+
+//BAD:!!!!! 	const EVP_CIPHER	*(*evptype)(void);
+//#define EVP_CIPHER int?
+//BAD:!!!!! 	const EVP_MD *	(*mdfunc)(void);
+//#define EVP_MD int?

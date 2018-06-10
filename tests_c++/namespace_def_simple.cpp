@@ -1,3 +1,0 @@
-namespace mySTL {
-	int x;
-}

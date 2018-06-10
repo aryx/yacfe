@@ -26,7 +26,7 @@
 #define DISAS_INSN(a) void a(void)
 
 //BAD:!!!!! static int __thread mmap_lock_count;
-#define __thread
+#define __thread YACFE_ATTRIBUTE
 
 
 //bad: GEN_HANDLER(fmr, 0x3F, 0x08, 0x02, 0x001F0000, PPC_FLOAT)
@@ -44,7 +44,7 @@
 
 
 //BAD:!!!!! static void GCC_ATTR ldebug (const char *fmt, ...)
-#define GCC_ATTR
+#define GCC_ATTR YACFE_ATTRIBUTE
 
 //BAD:!!!!! static void GCC_FMT_ATTR (2, 3) oss_logerr (int err, const char *fmt, ...)
 #define GCC_FMT_ATTR(a,b) 
@@ -109,7 +109,7 @@
 #define __unbounded
 
 //BAD:!!!!! void __hidden cpu_loop_exit(void);
-#define __hidden 
+#define __hidden YACFE_ATTRIBUTE
 
 
 

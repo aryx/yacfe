@@ -323,27 +323,39 @@ let expression_of_string = parse_gen Parser_c.expr
 
 let threshold_cplusplus = ref 5 
 
+let verbose_problably = ref false
 let is_problably_cplusplus_file file =
   let toks = tokens file in
   let _length_orig = List.length toks in
 
   let toks_cplusplus = 
-    toks +> List.filter TH.is_cplusplus_keyword +> List.length in
+    toks +> List.filter TH.is_cplusplus_keyword in
   let toks_really_cplusplus = 
-    toks +> List.filter TH.is_really_cplusplus_keyword +> List.length in
+    toks +> List.filter TH.is_really_cplusplus_keyword in
   let toks_cplusplus_no_fp = 
     toks +> List.filter (fun x -> 
-      TH.is_cplusplus_keyword x && not (TH.is_maybenot_cplusplus_keyword x))
-      +> List.length
+      TH.is_cplusplus_keyword x && not (TH.is_maybenot_cplusplus_keyword x)
+    )
   in
 
-  if toks_really_cplusplus > 0
+  let toks_cplusplus_n = List.length toks_cplusplus in
+  let toks_really_cplusplus_n = List.length toks_really_cplusplus in
+  let toks_cplusplus_no_fp_n = List.length toks_cplusplus_no_fp in
+
+  if !verbose_problably then begin
+    pr2_gen toks_cplusplus;
+    pr2_gen toks_really_cplusplus;
+    pr2_gen toks_cplusplus_no_fp;
+  end;
+  
+
+  if toks_really_cplusplus_n > 0
   then true 
   else 
-    if toks_cplusplus_no_fp > 20 
+    if toks_cplusplus_no_fp_n > 20 
     then 
       true 
-    else toks_cplusplus >= !threshold_cplusplus
+    else toks_cplusplus_n >= !threshold_cplusplus
     
 
 

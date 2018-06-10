@@ -57,6 +57,9 @@ type visitor_c_s = {
   kini_s       : initialiser    inout * visitor_c_s -> initialiser    inout;
   kcppdirective_s : (cpp_directive inout * visitor_c_s) -> cpp_directive inout;
   kdefineval_s : (define_val inout * visitor_c_s) -> define_val inout;
+  kstatementseq_s: (statement_sequencable inout * visitor_c_s) -> statement_sequencable inout;
+  kstatementseq_list_s: 
+    (statement_sequencable list inout * visitor_c_s) -> statement_sequencable list inout;
   knode_s      : 
     Control_flow_c.node inout * visitor_c_s -> Control_flow_c.node    inout;
   ktoplevel_s  : toplevel inout * visitor_c_s -> toplevel inout;
@@ -68,6 +71,7 @@ val default_visitor_c_s : visitor_c_s
 val vk_expr_s : visitor_c_s -> expression -> expression
 val vk_argument_s : visitor_c_s -> argument -> argument
 val vk_statement_s : visitor_c_s -> statement -> statement
+val vk_statement_sequencable_s : visitor_c_s -> statement_sequencable -> statement_sequencable
 val vk_type_s : visitor_c_s -> fullType -> fullType
 val vk_decl_s : visitor_c_s -> declaration -> declaration
 val vk_ini_s : visitor_c_s -> initialiser -> initialiser
@@ -75,6 +79,7 @@ val vk_def_s : visitor_c_s -> definition -> definition
 val vk_toplevel_s : visitor_c_s -> toplevel -> toplevel
 val vk_info_s : visitor_c_s -> info -> info
 val vk_node_s : visitor_c_s -> Control_flow_c.node -> Control_flow_c.node
+val vk_program_s  : visitor_c_s -> program -> program
 
 val vk_arguments_s : 
   visitor_c_s -> 

@@ -1,9 +1,0 @@
-[TEST************] test sur exclusion intersticielle ************************
------------ Regle d'exclusion  --------------
-Nom : R_EXCLUSION_INTERSTITIELLE
-Valeur de la contrainte NORD = Contrainte nulle ; deplacement = Deplacement possible
-Valeur de la contrainte NE = Contrainte nulle ; deplacement = Deplacement possible
-Valeur de la contrainte SE = Contrainte phi inferieur ; deplacement = Deplacement possible
-Valeur de la contrainte SUD = Contrainte nulle ; deplacement = Deplacement possible
-Valeur de la contrainte SW = Contrainte phi inferieur ; deplacement = Deplacement possible
-Valeur de la contrainte NW = Contrainte nulle ; deplacement = Deplacement possible

@@ -1,4 +1,4 @@
-(* Copyright (C) 2002-2008 Yoann Padioleau
+(* Copyright (C) 2007, 2008 Yoann Padioleau
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License (GPL)
@@ -191,10 +191,11 @@ let msg_apply_known_macro s =
   incr Stat.nMacroExpand;
   pr2_cpp ("MACRO: found known macro = " ^ s)
 
-
-let msg_macro_statement_hint s = 
+let msg_apply_known_macro_hint s = 
   incr Stat.nMacroHint;
-  ()
+  pr2_cpp ("MACRO: found known macro hint = " ^ s)
+
+
   
 
 let msg_ifdef_bool_passing is_ifdef_positif =      
@@ -216,6 +217,11 @@ let msg_ifdef_passing () =
   pr2_cpp("IFDEF: or related outside function. I treat it as comment");
   incr Stat.nIfdefPassing;
   ()
+
+let msg_attribute s = 
+  incr Stat.nMacroAttribute;
+  pr2_cpp("ATTR:" ^ s)
+  
 
 
 (*****************************************************************************)
@@ -254,12 +260,60 @@ let not_annot s =
 
 
 (* ------------------------------------------------------------------------- *)
-(* cpp part 0 for standard.h *)
+(* cpp part 1 for standard.h *)
 (* ------------------------------------------------------------------------- *)
 
-type define_body = (unit,string list) either * Parser_c.token list
+type define_def = string * define_param * define_body 
+ and define_param = 
+   | NoParam
+   | Params of string list
+ and define_body = 
+   | DefineBody of Parser_c.token list
+   | DefineHint of parsinghack_hint
 
-let (_defs : (string, define_body) Hashtbl.t ref)  = 
+   and parsinghack_hint = 
+     | HintIterator
+     | HintDeclarator
+     | HintMacroString
+     | HintMacroStatement
+     | HintAttribute
+
+
+(* cf also data/test.h *)
+let assoc_hint_string = [
+  "YACFE_ITERATOR"   , HintIterator;
+  "YACFE_DECLARATOR" , HintDeclarator;
+  "YACFE_STRING"     , HintMacroString;
+  "YACFE_STATEMENT"  , HintMacroStatement;
+  "YACFE_ATTRIBUTE"  , HintAttribute;
+  "MACROSTATEMENT"   , HintMacroStatement; (* backward compatibility *)
+]
+
+
+let (parsinghack_hint_of_string: string -> parsinghack_hint option) = fun s -> 
+  Common.assoc_option s assoc_hint_string
+
+let (is_parsinghack_hint: string -> bool) = fun s -> 
+  parsinghack_hint_of_string s <> None
+
+let (token_from_parsinghack_hint: 
+     (string * Ast_c.info) -> parsinghack_hint -> Parser_c.token) = 
+ fun (s,ii) hint ->
+   match hint with
+   | HintIterator -> 
+       Parser_c.TMacroIterator (s, ii)
+   | HintDeclarator -> 
+       Parser_c.TMacroDecl (s, ii)
+   | HintMacroString -> 
+       Parser_c.TMacroString (s, ii)
+   | HintMacroStatement -> 
+       Parser_c.TMacroStmt (s, ii)
+   | HintAttribute -> 
+       Parser_c.TMacroAttr (s, ii)
+  
+
+
+let (_defs : (string, define_def) Hashtbl.t ref)  = 
   ref (Hashtbl.create 101)
 
 
@@ -304,11 +358,6 @@ type token_extended = {
 }
 
 let set_as_comment cppkind x = 
-  (* normally the caller have first filtered the set of tokens to have
-   * a clearer "view" to work on
-   *)
-  assert(not (TH.is_real_comment x.tok));
-
   if TH.is_eof x.tok 
   then () (* otherwise parse_c will be lost if don't find a EOF token *)
   else 
@@ -450,7 +499,7 @@ let rec mk_ifdef xs =
       | TIfdef _ -> 
           let body, extra, xs = mk_ifdef_parameters [x] [] xs in
           Ifdef (body, extra)::mk_ifdef xs
-      | TIfdefBool (b,_) -> 
+      | TIfdefBool (b,_, _) -> 
           let body, extra, xs = mk_ifdef_parameters [x] [] xs in
           
           (* if not passing, then consider a #if 0 as an ordinary #ifdef *)
@@ -458,7 +507,7 @@ let rec mk_ifdef xs =
           then Ifdefbool (b, body, extra)::mk_ifdef xs
           else Ifdef(body, extra)::mk_ifdef xs
 
-      | TIfdefMisc (b,_) | TIfdefVersion (b,_) -> 
+      | TIfdefMisc (b,_,_) | TIfdefVersion (b,_,_) -> 
           let body, extra, xs = mk_ifdef_parameters [x] [] xs in
           Ifdefbool (b, body, extra)::mk_ifdef xs
 
@@ -488,7 +537,7 @@ and mk_ifdef_parameters extras acc_before_sep xs =
           mk_ifdef_parameters 
             extras (Ifdef (body, extrasnest)::acc_before_sep) xs
 
-      | TIfdefBool (b,_) -> 
+      | TIfdefBool (b,_,_) -> 
           let body, extrasnest, xs = mk_ifdef_parameters [x] [] xs in
 
           if !Flag_parsing_c.if0_passing
@@ -500,7 +549,7 @@ and mk_ifdef_parameters extras acc_before_sep xs =
               extras (Ifdef (body, extrasnest)::acc_before_sep) xs
 
 
-      | TIfdefMisc (b,_) | TIfdefVersion (b,_) -> 
+      | TIfdefMisc (b,_,_) | TIfdefVersion (b,_,_) -> 
           let body, extrasnest, xs = mk_ifdef_parameters [x] [] xs in
           mk_ifdef_parameters 
             extras (Ifdefbool (b, body, extrasnest)::acc_before_sep) xs
@@ -734,6 +783,13 @@ let set_context_tag xs =
 (* Helpers *)
 (*****************************************************************************)
 
+(* To expand the parameter of the macro. The env corresponds to the actual
+ * code that is binded to the parameters of the macro.
+ * TODO? recurse ? fixpoint ? the expansion may also contain macro.
+ * Or to macro expansion in a strict manner, that is process first
+ * the parameters, expands macro in params, and then process enclosing
+ * macro call.
+ *)
 let rec (cpp_engine: (string , Parser_c.token list) assoc -> 
           Parser_c.token list -> Parser_c.token list) = 
  fun env xs ->
@@ -775,6 +831,8 @@ let forLOOKAHEAD = 30
   
 (* look if there is a '{' just after the closing ')', and handling the
  * possibility to have nested expressions inside nested parenthesis 
+ * 
+ * todo: use indentation instead of premier(statement) ?
  *)
 let rec is_really_foreach xs = 
   let rec is_foreach_aux = function
@@ -790,6 +848,8 @@ let rec is_really_foreach xs =
     | TCPar _::Twhile _::xs -> true, xs
     | TCPar _::Tfor _::xs -> true, xs
     | TCPar _::Tswitch _::xs -> true, xs
+    | TCPar _::Treturn _::xs -> true, xs
+
 
     | TCPar _::xs -> false, xs
     | TOPar _::xs -> 
@@ -798,6 +858,43 @@ let rec is_really_foreach xs =
     | x::xs -> is_foreach_aux xs
   in
   is_foreach_aux xs +> fst
+
+
+(* ------------------------------------------------------------------------- *)
+let set_ifdef_token_parenthize_info cnt x = 
+    match x with
+    | TIfdef (tag, _)
+    | TIfdefelse (tag, _)
+    | TIfdefelif (tag, _)
+    | TEndif (tag, _)
+
+    | TIfdefBool (_, tag, _)
+    | TIfdefMisc (_, tag, _)   
+    | TIfdefVersion (_, tag, _)
+        -> 
+        tag := Some cnt;
+
+    | _ -> raise Impossible
+  
+
+
+let ifdef_paren_cnt = ref 0 
+
+
+let rec set_ifdef_parenthize_info xs = 
+  xs +> List.iter (function
+  | NotIfdefLine xs -> ()
+  | Ifdefbool (_, xxs, info_ifdef) 
+  | Ifdef (xxs, info_ifdef) -> 
+      
+      incr ifdef_paren_cnt;
+      let total_directives = List.length info_ifdef in
+
+      info_ifdef +> List.iter (fun x -> 
+        set_ifdef_token_parenthize_info (!ifdef_paren_cnt, total_directives)
+          x.tok);
+      xxs +> List.iter set_ifdef_parenthize_info
+  )
 
 
 (*****************************************************************************)
@@ -980,15 +1077,15 @@ let rec adjust_inifdef_include xs =
 
 
 (* ------------------------------------------------------------------------- *)
-(* cpp-builtin part1, macro, using standard.h or other defs *)
+(* cpp-builtin part2, macro, using standard.h or other defs *)
 (* ------------------------------------------------------------------------- *)
 
 (* Thanks to this function many stuff are not anymore hardcoded in ocaml code
  * (but they are now hardcoded in standard.h ...)
- *)
-
-  
-(* no need to take care to not substitute the macro name itself
+ *
+ * 
+ * 
+ * No need to take care to not substitute the macro name itself
  * that occurs in the macro definition because the macro name is
  * after fix_token_define a TDefineIdent, no more a TIdent.
  *)
@@ -997,42 +1094,83 @@ let rec apply_macro_defs xs =
   match xs with
   | [] -> ()
 
+  (* old: "but could do more, could reuse same original token
+   * so that have in the Ast a Dbg, not a MACROSTATEMENT"
+   * 
+   *   | PToken ({tok = TIdent (s,i1)} as id)::xs 
+   *     when s = "MACROSTATEMENT" -> 
+   * 
+   *     msg_macro_statement_hint s;
+   *     id.tok <- TMacroStmt(TH.info_of_tok id.tok);
+   *     find_macro_paren xs
+   * 
+   *  let msg_macro_statement_hint s = 
+   *    incr Stat.nMacroHint;
+   *   ()
+   * 
+   *)
+
   (* recognized macro of standard.h (or other) *)
   | PToken ({tok = TIdent (s,i1)} as id)::Parenthised (xxs,info_parens)::xs 
       when Hashtbl.mem !_defs s -> 
-
+      
       msg_apply_known_macro s;
-      (match Hashtbl.find !_defs s with
-      | Left (), bodymacro -> 
+      let (s, params, body) = Hashtbl.find !_defs s in
+
+      (match params with
+      | NoParam -> 
           pr2 ("WIERD: macro without param used before parenthize: " ^ s);
           (* ex: PRINTP("NCR53C400 card%s detected\n" ANDP(((struct ... *)
-          set_as_comment (Ast_c.CppMacro) id;
-          id.new_tokens_before <- bodymacro;
-      | Right params, bodymacro -> 
-          if List.length params = List.length xxs
-          then
-            let xxs' = xxs +> List.map (fun x -> 
-              (tokens_of_paren_ordered x) +> List.map (fun x -> 
-                TH.visitor_info_of_tok Ast_c.make_expanded x.tok
-              )
-            ) in
-            id.new_tokens_before <-
-              cpp_engine (Common.zip params xxs') bodymacro
 
-          else begin
+          (match body with
+          | DefineBody bodymacro -> 
+              set_as_comment (Ast_c.CppMacro) id;
+              id.new_tokens_before <- bodymacro;
+          | DefineHint hint -> 
+              msg_apply_known_macro_hint s;
+              id.tok <- token_from_parsinghack_hint (s,i1) hint;
+          )
+      | Params params -> 
+          if List.length params != List.length xxs
+          then begin 
             pr2 ("WIERD: macro with wrong number of arguments: " ^ s);
-            id.new_tokens_before <- bodymacro;
-          end;
-          (* important to do that after have apply the macro, otherwise
-           * will pass as argument to the macro some tokens that
-           * are all TCommentCpp
-           *)
-          [Parenthised (xxs, info_parens)] +> 
-            iter_token_paren (set_as_comment Ast_c.CppMacro);
-          set_as_comment Ast_c.CppMacro id;
+            (* old: id.new_tokens_before <- bodymacro; *)
+            ()
+          end
+          else 
+            (match body with
+            | DefineBody bodymacro -> 
+                let xxs' = xxs +> List.map (fun x -> 
+                  (tokens_of_paren_ordered x) +> List.map (fun x -> 
+                    TH.visitor_info_of_tok Ast_c.make_expanded x.tok
+                  )
+                ) in
+                id.new_tokens_before <-
+                  cpp_engine (Common.zip params xxs') bodymacro;
 
-           
+                (* important to do that after have apply the macro, otherwise
+                 * will pass as argument to the macro some tokens that
+                 * are all TCommentCpp
+                 *)
+                [Parenthised (xxs, info_parens)] +> 
+                  iter_token_paren (set_as_comment Ast_c.CppMacro);
+                set_as_comment Ast_c.CppMacro id;
 
+            | DefineHint (HintMacroStatement as hint) -> 
+                (* important to do that after have apply the macro, otherwise
+                 * will pass as argument to the macro some tokens that
+                 * are all TCommentCpp
+                 *)
+                msg_apply_known_macro_hint s;
+                id.tok <- token_from_parsinghack_hint (s,i1) hint;
+                [Parenthised (xxs, info_parens)] +> 
+                  iter_token_paren (set_as_comment Ast_c.CppMacro);
+                
+
+            | DefineHint hint -> 
+                msg_apply_known_macro_hint s;
+                id.tok <- token_from_parsinghack_hint (s,i1) hint;
+            )
       );
       apply_macro_defs xs
 
@@ -1040,21 +1178,25 @@ let rec apply_macro_defs xs =
       when Hashtbl.mem !_defs s -> 
 
       msg_apply_known_macro s;
-      (match Hashtbl.find !_defs s with
-      | Right params, bodymacro -> 
+      let (_s, params, body) = Hashtbl.find !_defs s in
+
+      (match params with
+      | Params params -> 
           pr2 ("WIERD: macro with params but no parens found: " ^ s);
           (* dont apply the macro, perhaps a redefinition *)
           ()
-      | Left (), bodymacro -> 
-          (* special case when 1-1 substitution, we reuse the token *)
-          (match bodymacro with
-          | [newtok] -> 
+      | NoParam -> 
+          (match body with
+          | DefineBody [newtok] -> 
+             (* special case when 1-1 substitution, we reuse the token *)
               id.tok <- (newtok +> TH.visitor_info_of_tok (fun _ -> 
                 TH.info_of_tok id.tok))
-
-          | _ -> 
+          | DefineBody bodymacro -> 
               set_as_comment Ast_c.CppMacro id;
               id.new_tokens_before <- bodymacro;
+          | DefineHint hint -> 
+                msg_apply_known_macro_hint s;
+                id.tok <- token_from_parsinghack_hint (s,i1) hint;
           )
       );
       apply_macro_defs xs
@@ -1082,16 +1224,16 @@ let rec find_string_macro_paren xs =
   | Parenthised(xxs, info_parens)::xs -> 
       xxs +> List.iter (fun xs -> 
         if xs +> List.exists 
-          (function PToken({tok = TString _}) -> true | _ -> false) &&
+          (function PToken({tok = (TString _| TMacroString _)}) -> true | _ -> false) &&
           xs +> List.for_all 
-          (function PToken({tok = TString _}) | PToken({tok = TIdent _}) -> 
+          (function PToken({tok = (TString _| TMacroString _)}) | PToken({tok = TIdent _}) -> 
             true | _ -> false)
         then
           xs +> List.iter (fun tok -> 
             match tok with
             | PToken({tok = TIdent (s,_)} as id) -> 
                 msg_stringification s;
-                id.tok <- TMacroString (TH.info_of_tok id.tok);
+                id.tok <- TMacroString (s, TH.info_of_tok id.tok);
             | _ -> ()
           )
         else 
@@ -1122,6 +1264,37 @@ let rec find_macro_paren xs =
       set_as_comment Ast_c.CppAttr id;
       find_macro_paren xs
 
+(*
+  (* attribute cpp, __xxx id() *)
+  | PToken ({tok = TIdent (s,i1)} as id)
+    ::PToken ({tok = TIdent (s2, i2)})
+    ::Parenthised(xxs,info_parens)
+    ::xs when s ==~ regexp_annot
+     -> 
+      msg_attribute s;
+      id.tok <- TMacroAttr (s, i1);
+      find_macro_paren (Parenthised(xxs,info_parens)::xs)
+
+  (* attribute cpp, id __xxx =  *)
+  | PToken ({tok = TIdent (s,i1)})
+    ::PToken ({tok = TIdent (s2, i2)} as id)
+    ::xs when s2 ==~ regexp_annot
+     -> 
+      msg_attribute s2;
+      id.tok <- TMacroAttr (s2, i2);
+      find_macro_paren (xs)
+*)
+
+  (* storage attribute *)
+  | PToken ({tok = (Tstatic _ | Textern _)} as tok1)
+    ::PToken ({tok = TMacroAttr (s,i1)} as attr)::xs 
+    -> 
+      pr2_cpp ("storage attribute: " ^ s);
+      attr.tok <- TMacroAttrStorage (s,i1);
+      (* recurse, may have other storage attributes *)
+      find_macro_paren (PToken (tok1)::xs)
+      
+
   (* stringification
    * 
    * the order of the matching clause is important
@@ -1129,12 +1302,12 @@ let rec find_macro_paren xs =
    *)
 
   (* string macro with params, before case *)
-  | PToken ({tok = TString _})::PToken ({tok = TIdent (s,_)} as id)
+  | PToken ({tok = (TString _| TMacroString _)})::PToken ({tok = TIdent (s,_)} as id)
     ::Parenthised (xxs, info_parens)
     ::xs -> 
 
       msg_stringification_params s;
-      id.tok <- TMacroString (TH.info_of_tok id.tok);
+      id.tok <- TMacroString (s, TH.info_of_tok id.tok);
       [Parenthised (xxs, info_parens)] +> 
         iter_token_paren (set_as_comment Ast_c.CppMacro);
       find_macro_paren xs
@@ -1142,11 +1315,11 @@ let rec find_macro_paren xs =
   (* after case *)
   | PToken ({tok = TIdent (s,_)} as id)
     ::Parenthised (xxs, info_parens)
-    ::PToken ({tok = TString _})
+    ::PToken ({tok = (TString _ | TMacroString _)})
     ::xs -> 
 
       msg_stringification_params s;
-      id.tok <- TMacroString (TH.info_of_tok id.tok);
+      id.tok <- TMacroString (s, TH.info_of_tok id.tok);
       [Parenthised (xxs, info_parens)] +> 
         iter_token_paren (set_as_comment Ast_c.CppMacro);
       find_macro_paren xs
@@ -1157,33 +1330,24 @@ let rec find_macro_paren xs =
    *)
         
   (* string macro variable, before case *)
-  | PToken ({tok = TString _})::PToken ({tok = TIdent (s,_)} as id)
+  | PToken ({tok = (TString _ | TMacroString _)})::PToken ({tok = TIdent (s,_)} as id)
       ::xs -> 
 
       msg_stringification s;
-      id.tok <- TMacroString (TH.info_of_tok id.tok);
+      id.tok <- TMacroString (s, TH.info_of_tok id.tok);
       find_macro_paren xs
 
   (* after case *)
-  | PToken ({tok = TIdent (s,_)} as id)::PToken ({tok = TString _})
+  | PToken ({tok = TIdent (s,_)} as id)
+      ::PToken ({tok = (TString _ | TMacroString _)})
       ::xs -> 
 
       msg_stringification s;
-      id.tok <- TMacroString (TH.info_of_tok id.tok);
+      id.tok <- TMacroString (s, TH.info_of_tok id.tok);
       find_macro_paren xs
 
 
-
-  (* cooperating with standard.h 
-   * TODO but could do more, could reuse same original token
-   * so that have in the Ast a Dbg, not a MACROSTATEMENT *)
-  | PToken ({tok = TIdent (s,i1)} as id)::xs 
-      when s = "MACROSTATEMENT" -> 
-
-      msg_macro_statement_hint s;
-      id.tok <- TMacroStmt(TH.info_of_tok id.tok);
-      find_macro_paren xs
-        
+    
 
 
   (* recurse *)
@@ -1419,7 +1583,7 @@ let rec find_macro_lineparen xs =
         if col1 = 0 then ()
         else begin
           msg_macro_noptvirg s;
-          macro.tok <- TMacroStmt (TH.info_of_tok macro.tok);
+          macro.tok <- TMacroStmt (s, TH.info_of_tok macro.tok);
           [Parenthised (xxs, info_parens)] +> 
             iter_token_paren (set_as_comment Ast_c.CppMacro);
         end;
@@ -1465,7 +1629,7 @@ let rec find_macro_lineparen xs =
       if condition
       then begin
         msg_macro_noptvirg_single s;
-        macro.tok <- TMacroStmt (TH.info_of_tok macro.tok);
+        macro.tok <- TMacroStmt (s, TH.info_of_tok macro.tok);
       end;
       find_macro_lineparen (line2::xs)
         
@@ -1616,7 +1780,6 @@ let filter_cpp_stuff xs =
         )
   in
   aux xs
-          
 
 let insert_virtual_positions l =
   let strlen x = String.length (Ast_c.str_of_info x) in
@@ -1670,9 +1833,12 @@ let fix_tokens_cpp2 tokens =
       not (TH.is_comment x.tok) (* could filter also #define/#include *)
     ) in
     let ifdef_grouped = mk_ifdef cleaner in
+    set_ifdef_parenthize_info ifdef_grouped;
+
     find_ifdef_funheaders ifdef_grouped;
     find_ifdef_bool       ifdef_grouped;
     find_ifdef_mid        ifdef_grouped;
+    adjust_inifdef_include ifdef_grouped;
 
 
     (* macro 1 *)
@@ -1689,6 +1855,7 @@ let fix_tokens_cpp2 tokens =
     let cleaner = !tokens2 +> List.filter (fun x -> 
       not (TH.is_comment x.tok) (* could filter also #define/#include *)
     ) in
+
     let brace_grouped = mk_braceised cleaner in
     set_context_tag   brace_grouped;
 
@@ -1754,48 +1921,50 @@ let mark_end_define ii =
   in
   TDefEOL (ii')
 
-
 (* put the TDefEOL at the good place *)
-let rec define_line_1 xs = 
+let rec define_line_1 acc xs = 
   match xs with
-  | [] -> []
-  | TDefine ii::xs -> 
+  | [] -> List.rev acc
+  | TDefine ii::xs ->
       let line = Ast_c.line_of_info ii in
-      TDefine ii::define_line_2 line ii xs
-  | TCppEscapedNewline ii::xs -> 
+      let acc = (TDefine ii) :: acc in
+      define_line_2 acc line ii xs
+  | TCppEscapedNewline ii::xs ->
       pr2 "WIERD: a \\ outside a #define";
-      TCommentSpace ii::define_line_1 xs
-  | x::xs -> 
-      x::define_line_1 xs
+      let acc = (TCommentSpace ii) :: acc in
+      define_line_1 acc xs
+  | x::xs -> define_line_1 (x::acc) xs
 
-and define_line_2 line lastinfo xs = 
+and define_line_2 acc line lastinfo xs = 
   match xs with 
   | [] -> 
       (* should not happened, should meet EOF before *)
       pr2 "PB: WIERD";   
-      mark_end_define lastinfo::[]
+      List.rev (mark_end_define lastinfo::acc)
   | x::xs -> 
       let line' = TH.line_of_tok x in
       let info = TH.info_of_tok x in
 
       (match x with
       | EOF ii -> 
-          mark_end_define lastinfo::EOF ii::define_line_1 xs
+	  let acc = (mark_end_define lastinfo) :: acc in
+	  let acc = (EOF ii) :: acc in
+          define_line_1 acc xs
       | TCppEscapedNewline ii -> 
           if (line' <> line) then pr2 "PB: WIERD: not same line number";
-          TCommentSpace ii::define_line_2 (line+1) info xs
+	  let acc = (TCommentSpace ii) :: acc in
+          define_line_2 acc (line+1) info xs
       | x -> 
           if line' = line
-          then x::define_line_2 line info xs 
-          else 
-            mark_end_define lastinfo::define_line_1 (x::xs)
+          then define_line_2 (x::acc) line info xs 
+          else define_line_1 (mark_end_define lastinfo::acc) (x::xs)
       )
 
-let rec define_ident xs = 
+let rec define_ident acc xs = 
   match xs with
-  | [] -> []
+  | [] -> List.rev acc
   | TDefine ii::xs -> 
-      TDefine ii::
+      let acc = TDefine ii :: acc in
       (match xs with
       | TCommentSpace i1::TIdent (s,i2)::TOPar (i3)::xs -> 
           (* Change also the kind of TIdent to avoid bad interaction
@@ -1807,29 +1976,45 @@ let rec define_ident xs =
            * it's a macro-function. Change token to avoid ambiguity
            * between #define foo(x)  and   #define foo   (x)
            *)
-          TCommentSpace i1::TIdentDefine (s,i2)::TOParDefine i3
-          ::define_ident xs
+	  let acc = (TCommentSpace i1) :: acc in
+	  let acc = (TIdentDefine (s,i2)) :: acc in
+	  let acc = (TOParDefine i3) :: acc in
+          define_ident acc xs
       | TCommentSpace i1::TIdent (s,i2)::xs -> 
-          TCommentSpace i1::TIdentDefine (s,i2)::define_ident xs
+	  let acc = (TCommentSpace i1) :: acc in
+	  let acc = (TIdentDefine (s,i2)) :: acc in
+          define_ident acc xs
       | _ -> 
           pr2 "WIERD: wierd #define body"; 
-          define_ident xs
+          define_ident acc xs
       )
-  | x::xs -> 
-      x::define_ident xs
+  | x::xs ->
+      let acc = x :: acc in
+      define_ident acc xs
   
 
 
 let fix_tokens_define2 xs = 
-  define_ident (define_line_1 xs)
+  define_ident [] (define_line_1 [] xs)
 
 let fix_tokens_define a = 
   Common.profile_code "C parsing.fix_define" (fun () -> fix_tokens_define2 a)
       
 
 (*****************************************************************************)
-(* for the cpp-builtin *)
+(* for the cpp-builtin, standard.h, part 0 *)
 (*****************************************************************************)
+
+let macro_body_to_maybe_hint body = 
+  match body with
+  | [] -> DefineBody body
+  | [TIdent (s,i1)] -> 
+      (match parsinghack_hint_of_string s with
+      | Some hint -> DefineHint hint
+      | None -> DefineBody body
+      )
+  | xs -> DefineBody body
+
 
 let rec define_parse xs = 
   match xs with
@@ -1847,7 +2032,7 @@ let rec define_parse xs =
         ) in
       let body = body +> List.map 
         (TH.visitor_info_of_tok Ast_c.make_expanded) in
-      let def = (s, (Right params, body)) in
+      let def = (s, (s, Params params, macro_body_to_maybe_hint body)) in
       def::define_parse xs
 
   | TDefine i1::TIdentDefine (s,i2)::xs -> 
@@ -1855,7 +2040,7 @@ let rec define_parse xs =
         xs +> Common.split_when (function TDefEOL _ -> true | _ -> false) in
       let body = body +> List.map 
         (TH.visitor_info_of_tok Ast_c.make_expanded) in
-      let def = (s, (Left (), body)) in
+      let def = (s, (s, NoParam, macro_body_to_maybe_hint body)) in
       def::define_parse xs
 
   | TDefine i1::_ -> 
@@ -2265,8 +2450,8 @@ let lookahead2 ~pass next before =
   (*-------------------------------------------------------------*)
   (* CPP *)
   (*-------------------------------------------------------------*)
-  | ((TIfdef ii |TIfdefelse ii |TIfdefelif ii |TEndif ii |
-      TIfdefBool (_,ii)|TIfdefMisc(_,ii)|TIfdefVersion(_,ii))
+  | ((TIfdef (_,ii) |TIfdefelse (_,ii) |TIfdefelif (_,ii) |TEndif (_,ii) |
+      TIfdefBool (_,_,ii)|TIfdefMisc(_,_,ii)|TIfdefVersion(_,_,ii))
         as x)
     ::_, _ 
       -> 
@@ -2289,6 +2474,15 @@ let lookahead2 ~pass next before =
           else msg_ifdef_passing ()
           ;
 
+          TCommentCpp (Ast_c.CppDirective, ii)
+        end
+        else x
+
+  | (TUndef (id, ii) as x)::_, _ 
+      -> 
+        if (pass = 2)
+        then begin
+          pr2_once ("CPP-UNDEF: I treat it as comment");
           TCommentCpp (Ast_c.CppDirective, ii)
         end
         else x

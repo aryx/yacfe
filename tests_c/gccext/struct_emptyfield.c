@@ -1,6 +1,0 @@
-struct xx {
-	int a;
-	;
-	;
-};
-

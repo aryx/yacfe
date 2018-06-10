@@ -1,4 +1,7 @@
 %{
+(* src: ocamlyaccified from 
+ *  http://www.lysator.liu.se/c/ANSI-C-grammar-y.html 
+ *)
 open Common
 open AbstractSyntax
 exception Parsing of string

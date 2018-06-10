@@ -29,8 +29,8 @@ let action = ref ""
 (* Main action *)
 (*****************************************************************************)
 
-let visit asts = 
-  let asts2 = asts +> List.map fst in
+let visit asts2 = 
+  let asts = Parse_c.program_of_program2 asts2 in
   let props = ref [] in 
 
   let bigf = { Visitor_c.default_visitor_c with
@@ -41,8 +41,8 @@ let visit asts =
       (* handled by kdecl *)
       | C.Declaration decl -> 
           ()
-      | C.Definition def -> 
-          let (s, (returnt, (paramst, (b, iib))), sto, statxs), ii = def in
+      | C.Definition (defbis,_ii) -> 
+          let s = defbis.C.f_name in
           Common.push2 ("function:" ^s) props;
       | C.MacroTop (s,_,_ii) -> 
           Common.push2 ("macrotop:" ^s) props;
@@ -51,9 +51,9 @@ let visit asts =
           ()
     );
   } in
-  asts2 +> List.iter (Visitor_c.vk_toplevel bigf);
+  asts +> List.iter (Visitor_c.vk_toplevel bigf);
 
-  let stats = Statistics_c.statistics_of_program asts2 in
+  let stats = Statistics_c.statistics_of_program asts in
   stats +> Statistics_code.assoc_of_entities_stat +> List.iter (fun (s,v) -> 
     Common.push2 (spf "nb_%s:%d" s v) props
   );
@@ -106,8 +106,6 @@ let options () =
 
 
 let main () = 
-  Flag_parsing_c.std_h := "/home/pad/c-yacfe/data/standard.h";
-
   let usage_msg = 
     "Usage: " ^ basename Sys.argv.(0) ^ 
       " [options] <file> " ^ "\n" ^ "Options are:"

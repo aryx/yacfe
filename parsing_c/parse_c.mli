@@ -1,4 +1,4 @@
-(* Copyright (C) 2002-2008 Yoann Padioleau
+(* Copyright (C) 2007, 2008 Yoann Padioleau
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License (GPL)
@@ -23,6 +23,7 @@ type program2 = toplevel2 list
     and info_item = (string * Parser_c.token list)
 
 val program_of_program2 : program2 -> Ast_c.program
+val with_program2: (Ast_c.program -> Ast_c.program) -> program2 -> program2
 
 
 (* This is the main function *)
@@ -32,7 +33,7 @@ val parse_c_and_cpp : (* alias of previous func *)
   filename (*cfile*) -> (program2 * Parsing_stat.parsing_stat)
 
 val parse_cpp_define_file : 
-  filename -> (string, Parsing_hacks.define_body) assoc
+  filename -> (string, Parsing_hacks.define_def) assoc
 
 val init_defs : filename -> unit
 
