@@ -159,11 +159,17 @@ let test_parse xs =
 
 
 
+(* ---------------------------------------------------------------------- *)
 
-
-
-
-
+let test_dump_c file =
+  (*
+  Parse_c.init_defs !Flag.macros_h;
+  *)
+  let (program2, _stat) = Parse_c.parse_c_and_cpp file in
+  let program = Parse_c.program_of_program2 program2 in
+  let v = Meta_ast_c.vof_program program in
+  let s = Ocaml.string_of_v v in
+  pr s
 
 (* ---------------------------------------------------------------------- *)
 (* file can be   "foo.c"  or "foo.c:main" *)
@@ -460,6 +466,8 @@ let actions () = [
   Common.mk_action_n_arg test_parse_h;
   "-parse_ch", "   <file or dir>", 
   Common.mk_action_n_arg test_parse_ch;
+  "-dump_c", "   <file>", 
+  Common.mk_action_1_arg test_dump_c;
 
   "-parse", "   <file or dir>", 
   Common.mk_action_n_arg test_parse;

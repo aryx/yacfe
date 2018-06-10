@@ -6,7 +6,7 @@ TARGET=parsing_c
 SRC= flag_parsing_c.ml parsing_stat.ml \
  type_cocci.ml ast_cocci.ml \
  token_c.ml ast_c.ml control_flow_c.ml type_c.ml \
- visitor_c.ml lib_parsing_c.ml \
+ meta_ast_c.ml visitor_c.ml lib_parsing_c.ml \
  ast_to_flow.ml \
  pretty_print_c.ml \
  semantic_c.ml lexer_parser.ml parser_c.ml lexer_c.ml \
