@@ -20,7 +20,7 @@ val init_env : Common.filename -> unit
 
 val annotate_type_and_localvar : 
   environment -> Ast_c.toplevel list -> 
-  (Ast_c.toplevel * environment Common.pair) list
+  (Ast_c.toplevel * environment Common2.pair) list
 
 (* julia: cocci *)
 val annotate_test_expressions : 
@@ -33,5 +33,5 @@ val annotate_test_expressions :
  *)
 val annotate_program : 
   environment -> Ast_c.toplevel list -> 
-  (Ast_c.toplevel * environment Common.pair) list
+  (Ast_c.toplevel * environment Common2.pair) list
 

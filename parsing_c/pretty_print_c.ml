@@ -15,6 +15,8 @@ open Common
 
 open Ast_c
 
+let (++) = (@)
+let pp s = Format.print_string s
 
 type pr_elem_func = Ast_c.info -> unit
 type pr_space_func = unit -> unit
@@ -176,7 +178,7 @@ let pretty_print_c pr_elem pr_space pr_nl pr_indent pr_outdent pr_unindent =
 (* ---------------------- *)
   and pp_name = function
     | RegularName (s, ii) -> 
-        let (i1) = Common.tuple_of_list1 ii in
+        let (i1) = Common2.tuple_of_list1 ii in
         pr_elem i1
     | CppConcatenatedName xs -> 
         xs +> List.iter (fun ((x,ii1), ii2) -> 
@@ -186,7 +188,7 @@ let pretty_print_c pr_elem pr_space pr_nl pr_indent pr_outdent pr_unindent =
     | CppVariadicName (s, ii) -> 
         ii +> List.iter pr_elem
     | CppIdentBuilder ((s,iis), xs) -> 
-        let (iis, iop, icp) = Common.tuple_of_list3 iis in
+        let (iis, iop, icp) = Common2.tuple_of_list3 iis in
         pr_elem iis;
         pr_elem iop;
         xs +> List.iter (fun ((x,iix), iicomma) -> 
@@ -198,7 +200,7 @@ let pretty_print_c pr_elem pr_space pr_nl pr_indent pr_outdent pr_unindent =
 (* ---------------------- *)
   and pp_statement = function
     | Labeled (Label (name, st)), ii ->
-        let (i2) = Common.tuple_of_list1 ii in
+        let (i2) = Common2.tuple_of_list1 ii in
 	pr_outdent(); pp_name name; pr_elem i2; pr_nl(); pp_statement st
     | Labeled (Case  (e, st)), [i1;i2] -> 
 	pr_unindent();
@@ -214,7 +216,7 @@ let pretty_print_c pr_elem pr_space pr_nl pr_indent pr_outdent pr_unindent =
 	pp_statement st
     | Compound statxs, [i1;i2] -> 
         pr_elem i1; start_block();
-        statxs +> Common.print_between pr_nl pp_statement_seq;
+        statxs +> Common2.print_between pr_nl pp_statement_seq;
         end_block(); pr_elem i2;
         
     | ExprStatement (None), [i] -> pr_elem i;
@@ -276,7 +278,7 @@ let pretty_print_c pr_elem pr_space pr_nl pr_indent pr_outdent pr_unindent =
         pr_elem iifakend
           
     | Jump (Goto name), ii               -> 
-        let (i1, i3) = Common.tuple_of_list2 ii in
+        let (i1, i3) = Common2.tuple_of_list2 ii in
         pr_elem i1; pr_space(); pp_name name; pr_elem i3;
     | Jump ((Continue|Break|Return)), [i1;i2] -> pr_elem i1; pr_elem i2;
     | Jump (ReturnExpr e), [i1;i2] ->
@@ -332,7 +334,7 @@ let pretty_print_c pr_elem pr_space pr_nl pr_indent pr_outdent pr_unindent =
 	  
 (* XXX elsif YYY elsif ZZZ endif *)
   and pp_ifdef_tree_sequence_aux ifdefs xxs = 
-    Common.zip ifdefs xxs +> List.iter (fun (ifdef, xs) -> 
+    Common2.zip ifdefs xxs +> List.iter (fun (ifdef, xs) -> 
       xs +> List.iter pp_statement_seq;
       pp_ifdef ifdef
     )
@@ -391,14 +393,14 @@ let pretty_print_c pr_elem pr_space pr_nl pr_indent pr_outdent pr_unindent =
         | None -> [] | Some (s, iis) -> (*assert (List.length iis = 1);*) iis
       in
       let print_sto_qu (sto, (qu, iiqu)) = 
-        let all_ii = get_sto sto ++ iiqu in
+        let all_ii = get_sto sto @ iiqu in
         all_ii 
           +> List.sort Ast_c.compare_pos
-          +> Common.print_between pr_space pr_elem
+          +> Common2.print_between pr_space pr_elem
           
       in
       let print_sto_qu_ty (sto, (qu, iiqu), iity) = 
-        let all_ii = get_sto sto ++ iiqu ++ iity in
+        let all_ii = get_sto sto @ iiqu @ iity in
         let all_ii2 = all_ii +> List.sort Ast_c.compare_pos in
 	  
         if all_ii <> all_ii2
@@ -407,9 +409,9 @@ let pretty_print_c pr_elem pr_space pr_nl pr_indent pr_outdent pr_unindent =
              * cf -test strangeorder
              *)
           pr2 "STRANGEORDER";
-          all_ii2 +> Common.print_between pr_space pr_elem
+          all_ii2 +> Common2.print_between pr_space pr_elem
         end
-        else all_ii2 +> Common.print_between pr_space pr_elem
+        else all_ii2 +> Common2.print_between pr_space pr_elem
       in
 	
       match ty, iity with
@@ -499,7 +501,7 @@ let pretty_print_c pr_elem pr_space pr_nl pr_indent pr_outdent pr_unindent =
 		    
 	      | MacroDeclField ((s, es), ii)  -> 
                  let (iis, lp, rp, iiend, ifakestart) = 
-                   Common.tuple_of_list5 ii in
+                   Common2.tuple_of_list5 ii in
                  (* iis::lp::rp::iiend::ifakestart::iisto
 	         iisto +> List.iter pr_elem; (* static and const *)
                  *)
@@ -999,10 +1001,10 @@ and pp_init (init, iinit) =
 	  
   and pp_directive = function
     | Include {i_include = (s, ii);} -> 
-	let (i1,i2) = Common.tuple_of_list2 ii in
+	let (i1,i2) = Common2.tuple_of_list2 ii in
 	pr_elem i1; pr_elem i2
     | Define ((s,ii), (defkind, defval)) -> 
-	let (idefine,iident,ieol) = Common.tuple_of_list3 ii in
+	let (idefine,iident,ieol) = Common2.tuple_of_list3 ii in
 	pr_elem idefine;
 	pr_elem iident;
         
@@ -1031,7 +1033,7 @@ and pp_init (init, iinit) =
 	(match defkind with
 	| DefineVar -> ()
 	| DefineFunc (params, ii) -> 
-            let (i1,i2) = tuple_of_list2 ii in
+            let (i1,i2) = Common2.tuple_of_list2 ii in
             pr_elem i1; 
             params +> List.iter (fun ((s,iis), iicomma) -> 
               assert (List.length iicomma <= 1);
@@ -1274,7 +1276,7 @@ let pr_elem info =
     if not (null before) then begin
       pp "-->";
       before +> List.iter (fun (comment_like, pinfo) -> 
-        let s = pinfo.Common.str in
+        let s = pinfo.Parse_info.str in
         pp s
       );
       pp "<--";
@@ -1332,7 +1334,7 @@ let pp_program_gen pr_elem pr_space =
 
 
 let string_of_expression e = 
-  Common.format_to_string (fun () ->
+  Common2.format_to_string (fun () ->
     pp_expression_simple e
       )
     
@@ -1340,9 +1342,9 @@ let (debug_info_of_node:
        Ograph_extended.nodei -> Control_flow_c.cflow -> string) = 
   fun nodei flow -> 
     let node = flow#nodes#assoc nodei in
-    let s = Common.format_to_string (fun () ->
+    let s = Common2.format_to_string (fun () ->
       pp_flow_simple node
     ) in
     let pos = Lib_parsing_c.min_pinfo_of_node node in
-    (spf "%s(n%d)--> %s" (Common.string_of_parse_info_bis pos) nodei s)
+    (spf "%s(n%d)--> %s" (Parse_info.string_of_parse_info_bis pos) nodei s)
       

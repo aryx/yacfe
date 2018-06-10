@@ -13,11 +13,15 @@
  *)
 
 open Common
+open Common2
 
 module TH = Token_helpers
 
 open Parser_c
 open Token_views_c
+
+let assoc_option  k l = 
+  Common2.optionise (fun () -> List.assoc k l)
 
 (*****************************************************************************)
 (* Prelude *)
@@ -98,7 +102,7 @@ let assoc_hint_string = [
 
 
 let (parsinghack_hint_of_string: string -> parsinghack_hint option) = fun s -> 
-  Common.assoc_option s assoc_hint_string
+  assoc_option s assoc_hint_string
 
 let (is_parsinghack_hint: string -> bool) = fun s -> 
   parsinghack_hint_of_string s <> None
@@ -151,7 +155,7 @@ let rec remap_keyword_tokens xs =
 
           let s = TH.str_of_tok y in
           let ii = TH.info_of_tok y in
-          if s ==~ Common.regexp_alpha
+          if s ==~ Common2.regexp_alpha
           then begin
             pr2 (spf "remaping: %s to an ident in expanded code" s);
             x::(Parser_c.TIdent (s, ii))::remap_keyword_tokens xs
@@ -162,7 +166,7 @@ let rec remap_keyword_tokens xs =
       | _, Parser_c.TCppConcatOp (i1) -> 
           let s = TH.str_of_tok x in
           let ii = TH.info_of_tok x in
-          if s ==~ Common.regexp_alpha
+          if s ==~ Common2.regexp_alpha
           then begin
             pr2 (spf "remaping: %s to an ident in expanded code" s);
             (Parser_c.TIdent (s, ii))::remap_keyword_tokens (y::xs)
@@ -206,7 +210,7 @@ let rec (cpp_engine: (string , Parser_c.token list) assoc ->
      * the job right and already replaced the macro parameter with a TIdent.
      *)
     match tok with
-    | TIdent (s,i1) when List.mem_assoc s env -> Common.assoc s env
+    | TIdent (s,i1) when List.mem_assoc s env -> Common2.assoc s env
     | x -> [x]
   )
   +> List.flatten
@@ -301,7 +305,7 @@ let rec apply_macro_defs
                 ) in
                 id.new_tokens_before <-
                   (* !!! cpp expansion job here  !!! *)
-                  cpp_engine (Common.zip params xxs') bodymacro;
+                  cpp_engine (Common2.zip params xxs') bodymacro;
 
                 (* important to do that after have apply the macro, otherwise
                  * will pass as argument to the macro some tokens that
@@ -425,8 +429,8 @@ let rec apply_macro_defs
 let mark_end_define ii = 
   let ii' = 
     { Ast_c.pinfo = Ast_c.OriginTok { (Ast_c.parse_info_of_info ii) with 
-        Common.str = ""; 
-        Common.charpos = Ast_c.pos_of_info ii + 1
+        Parse_info.str = ""; 
+        Parse_info.charpos = Ast_c.pos_of_info ii + 1
       };
       cocci_tag = ref Ast_c.emptyAnnot;
       comments_tag = ref Ast_c.emptyComments;
@@ -510,7 +514,7 @@ let rec define_ident acc xs =
 
           let s = TH.str_of_tok t in
           let ii = TH.info_of_tok t in
-          if s ==~ Common.regexp_alpha
+          if s ==~ Common2.regexp_alpha
           then begin
             pr2 (spf "remaping: %s to an ident in macro name" s);
 	    let acc = (TCommentSpace i1) :: acc in
@@ -560,9 +564,9 @@ let rec define_parse xs =
   | [] -> []
   | TDefine i1::TIdentDefine (s,i2)::TOParDefine i3::xs -> 
       let (tokparams, _, xs) = 
-        xs +> Common.split_when (function TCPar _ -> true | _ -> false) in
+        xs +> Common2.split_when (function TCPar _ -> true | _ -> false) in
       let (body, _, xs) = 
-        xs +> Common.split_when (function TDefEOL _ -> true | _ -> false) in
+        xs +> Common2.split_when (function TDefEOL _ -> true | _ -> false) in
       let params = 
         tokparams +> Common.map_filter (function
         | TComma _ -> None
@@ -576,7 +580,7 @@ let rec define_parse xs =
         | x -> 
             (* bugfix: param of macros can be tricky *)
             let s = TH.str_of_tok x in
-            if s ==~ Common.regexp_alpha
+            if s ==~ Common2.regexp_alpha
             then begin
               pr2 (spf "remaping: %s to a macro parameter" s);
               Some s
@@ -593,7 +597,7 @@ let rec define_parse xs =
         | _ -> 
             let s = TH.str_of_tok tok in
             let ii = TH.info_of_tok tok in 
-            if s ==~ Common.regexp_alpha && List.mem s params
+            if s ==~ Common2.regexp_alpha && List.mem s params
             then begin
               pr2 (spf "remaping: %s to an ident in macro body" s);
               TIdent (s, ii)
@@ -605,7 +609,7 @@ let rec define_parse xs =
 
   | TDefine i1::TIdentDefine (s,i2)::xs -> 
       let (body, _, xs) = 
-        xs +> Common.split_when (function TDefEOL _ -> true | _ -> false) in
+        xs +> Common2.split_when (function TDefEOL _ -> true | _ -> false) in
       let body = body +> List.map 
         (TH.visitor_info_of_tok Ast_c.make_expanded) in
       let def = (s, (s, NoParam, macro_body_to_maybe_hint body)) in

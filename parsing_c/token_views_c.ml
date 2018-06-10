@@ -85,11 +85,11 @@ let mk_token_extended x =
 let rebuild_tokens_extented toks_ext = 
   let _tokens = ref [] in
   toks_ext +> List.iter (fun tok -> 
-    tok.new_tokens_before +> List.iter (fun x -> push2 x _tokens);
-    push2 tok.tok _tokens 
+    tok.new_tokens_before +> List.iter (fun x -> Common.push x _tokens);
+    Common.push tok.tok _tokens 
   );
   let tokens = List.rev !_tokens in
-  (tokens +> acc_map mk_token_extended)
+  (tokens +> Common2.acc_map mk_token_extended)
 
 
 
@@ -380,7 +380,7 @@ let rec iter_token_ifdef f xs =
 
 let tokens_of_paren xs = 
   let g = ref [] in
-  xs +> iter_token_paren (fun tok -> push2 tok g);
+  xs +> iter_token_paren (fun tok -> Common.push tok g);
   List.rev !g
 
 
@@ -388,7 +388,7 @@ let tokens_of_paren_ordered xs =
   let g = ref [] in
 
   let rec aux_tokens_ordered = function
-    | PToken tok -> push2 tok g;
+    | PToken tok -> Common.push tok g;
     | Parenthised (xxs, info_parens) -> 
         let (opar, cpar, commas) = 
           match info_parens with
@@ -400,9 +400,9 @@ let tokens_of_paren_ordered xs =
               )
           | _ -> raise Impossible
         in
-        push2 opar g;
+        Common.push opar g;
         aux_args (xxs,commas);
-        push2 cpar g;
+        Common.push cpar g;
 
   and aux_args (xxs, commas) =
     match xxs, commas with
@@ -410,7 +410,7 @@ let tokens_of_paren_ordered xs =
     | [xs], [] -> xs +> List.iter aux_tokens_ordered
     | xs::ys::xxs, comma::commas -> 
         xs +> List.iter aux_tokens_ordered;
-        push2 comma g;
+        Common.push comma g;
         aux_args (ys::xxs, commas)
     | _ -> raise Impossible
 

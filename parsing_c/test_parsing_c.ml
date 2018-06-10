@@ -1,4 +1,5 @@
 open Common
+open Common2
 
 open Ast_c
 
@@ -34,7 +35,7 @@ let test_parse_gen xs ext =
 
   let dirname_opt = 
     match xs with
-    | [x] when is_directory x -> Some x
+    | [x] when Common2.is_directory x -> Some x
     | _ -> None
   in
 
@@ -42,12 +43,12 @@ let test_parse_gen xs ext =
      let xs = if !Flag.dir then 
      process_output_to_list ("find " ^ x ^" -name \"*.c\"") else x::xs in
   *)
-  let fullxs = Common.files_of_dir_or_files_no_vcs ext xs in
+  let fullxs = Common2.files_of_dir_or_files_no_vcs ext xs in
 
   let stat_list = ref [] in
-  let newscore  = Common.empty_score () in
+  let newscore  = Common2.empty_score () in
 
-  Common.check_stack_nbfiles (List.length fullxs);
+  Common2.check_stack_nbfiles (List.length fullxs);
 
   fullxs +> List.iter (fun file -> 
     if not (file =~ (".*\\."^ext))
@@ -62,24 +63,24 @@ let test_parse_gen xs ext =
       Parse_c.print_commentized toks
     );
 
-    Common.push2 stat stat_list;
+    Common.push stat stat_list;
     let s = 
-      sprintf "bad = %d, timeout = %B" 
+      spf "bad = %d, timeout = %B" 
         stat.Parsing_stat.bad stat.Parsing_stat.have_timeout
     in
     if stat.Parsing_stat.bad =|= 0 && not stat.Parsing_stat.have_timeout
-    then Hashtbl.add newscore file (Common.Ok)
-    else Hashtbl.add newscore file (Common.Pb s)
+    then Hashtbl.add newscore file (Common2.Ok)
+    else Hashtbl.add newscore file (Common2.Pb s)
   );
   
   dirname_opt +> Common.do_option (fun dirname -> 
-    pr2_xxxxxxxxxxxxxxxxx();
+    Common2.pr2_xxxxxxxxxxxxxxxxx();
     pr2 "regression testing  information";
-    pr2_xxxxxxxxxxxxxxxxx();
+    Common2.pr2_xxxxxxxxxxxxxxxxx();
     let str = Str.global_replace (Str.regexp "/") "__" dirname in
     let def = if !Flag_parsing_c.filter_define_error then "_def_" else "" in
     let ext = if ext =$= "c" then "" else ext in
-    Common.regression_testing newscore 
+    Common2.regression_testing newscore 
       (Filename.concat score_path
        ("score_parsing__" ^str ^ def ^ ext ^ ".marshalled"))
   );
@@ -111,13 +112,13 @@ let test_parse xs =
 
   let dirname_opt = 
     match xs with
-    | [x] when is_directory x -> Some x
+    | [x] when Common2.is_directory x -> Some x
     | _ -> None
   in
   dirname_opt +> Common.do_option (fun dir -> 
 
     let ext = "h" in 
-    let fullxs = Common.files_of_dir_or_files_no_vcs ext [dir] in
+    let fullxs = Common2.files_of_dir_or_files_no_vcs ext [dir] in
     fullxs +> List.iter (fun file -> 
       let xs = Parse_c.parse_cpp_define_file file in
       xs +> List.iter (fun (x, def) -> 
@@ -129,10 +130,10 @@ let test_parse xs =
 
   let ext = "[ch]" in
 
-  let fullxs = Common.files_of_dir_or_files_no_vcs ext xs in
+  let fullxs = Common2.files_of_dir_or_files_no_vcs ext xs in
 
   let stat_list = ref [] in
-  Common.check_stack_nbfiles (List.length fullxs);
+  Common2.check_stack_nbfiles (List.length fullxs);
 
   fullxs +> List.iter (fun file -> 
     if not (file =~ (".*\\."^ext))
@@ -146,7 +147,7 @@ let test_parse xs =
       Parse_c.print_commentized toks
     );
 
-    Common.push2 stat stat_list;
+    Common.push stat stat_list;
   );
   
   if not (null !stat_list) 
@@ -262,13 +263,13 @@ let test_type_c infile =
   let (program2, _stat) =  Parse_c.parse_print_error_heuristic infile in
   let _program2 =
     program2 
-    +> Common.unzip 
+    +> Common2.unzip 
     +> (fun (program, infos) -> 
       Type_annoter_c.annotate_program !Type_annoter_c.initial_env 
         program +> List.map fst,
       infos
     )
-    +> Common.uncurry Common.zip
+    +> Common2.uncurry Common2.zip
   in
   let program2_with_ppmethod = 
     program2 +> List.map (fun x -> x, Unparse_c.PPnormal)
@@ -289,7 +290,7 @@ let test_comment_annotater infile =
   Flag_parsing_c.pretty_print_comment_info := true;
 
   pr2 "pretty print, before comment annotation: --->";
-  Common.adjust_pp_with_indent (fun () -> 
+  Common2.adjust_pp_with_indent (fun () -> 
   asts +> List.iter (fun ast -> 
     Pretty_print_c.pp_toplevel_simple ast;
   );
@@ -297,7 +298,7 @@ let test_comment_annotater infile =
 
   let _ = Comment_annotater_c.annotate_program toks asts in
 
-  Common.adjust_pp_with_indent (fun () -> 
+  Common2.adjust_pp_with_indent (fun () -> 
   pr2 "pretty print, after comment annotation: --->";
   asts +> List.iter (fun ast -> 
     Pretty_print_c.pp_toplevel_simple ast;
@@ -383,7 +384,7 @@ let extract_macros ~selection x =
    *)
 
   let ext = "h" in 
-  let fullxs = Common.files_of_dir_or_files_no_vcs ext [x] in
+  let fullxs = Common2.files_of_dir_or_files_no_vcs ext [x] in
   fullxs +> List.iter (fun file -> 
    
     pr ("/* PARSING: " ^ file ^ " */");

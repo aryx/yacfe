@@ -12,6 +12,7 @@
  * file license.txt for more details.
  *)
 open Common
+open Common2
 
 open Ast_c
 
@@ -72,7 +73,7 @@ let normal_form_program xs =
       match e with
       (* todo: should also do something for multistrings *)
       | (Constant (String (s,kind)), typ), [ii] 
-          when Common.string_match_substring cvs_keyword_regexp s -> 
+          when Common2.string_match_substring cvs_keyword_regexp s -> 
           let newstr = cvs_compute_newstr s in
           (Constant (String (newstr,kind)), typ), [rewrap_str newstr ii]
       | _ -> k e    
@@ -122,7 +123,7 @@ let normal_form_token x =
   x' +> Token_helpers.visitor_info_of_tok (fun info -> 
     let info = Ast_c.al_info 0 info in
     let str = Ast_c.str_of_info info in
-    if Common.string_match_substring cvs_keyword_regexp str
+    if Common2.string_match_substring cvs_keyword_regexp str
     then 
       let newstr = cvs_compute_newstr str in
       rewrap_str newstr info
@@ -289,8 +290,8 @@ let compare_token filename1 filename2 =
           let str2, pos2 = 
             Token_helpers.str_of_tok y, Token_helpers.pos_of_tok y in
           Some ("diff token: " ^ str1 ^" VS " ^ str2 ^ "\n" ^
-                   Common.error_message filename1 (str1, pos1) ^ "\n" ^
-                   Common.error_message filename2 (str2, pos2) ^ "\n"
+                   Parse_info.error_message filename1 (str1, pos1) ^ "\n" ^
+                   Parse_info.error_message filename2 (str2, pos2) ^ "\n"
           )
             
   in
@@ -313,7 +314,7 @@ let compare_token filename1 filename2 =
     if List.length c1 <> List.length c2 
     then Pb "not same number of entities (func, decl, ...)"
     else 
-        zip c1 c2 +> Common.fold_k (fun acc ((a,infoa),(b,infob)) k -> 
+        zip c1 c2 +> Common2.fold_k (fun acc ((a,infoa),(b,infob)) k -> 
           match a, b with
           | NotParsedCorrectly a, NotParsedCorrectly b -> 
               (match final_loop (snd infoa) (snd infob) with

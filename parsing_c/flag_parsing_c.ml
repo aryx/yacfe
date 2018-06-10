@@ -34,9 +34,9 @@ let cpp_i_opts = ref []
 let cpp_d_opts = ref []
 
 let cmdline_flags_cpp () = [
-    "-D",   Arg.String (fun s -> Common.push2 s cpp_d_opts),
+    "-D",   Arg.String (fun s -> Common.push s cpp_d_opts),
     " <x=y>";
-    "-I", Arg.String (fun s -> Common.push2 s cpp_i_opts),
+    "-I", Arg.String (fun s -> Common.push s cpp_i_opts),
     " <dir>"
   ]
 

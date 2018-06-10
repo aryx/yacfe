@@ -99,7 +99,7 @@ let annotate_program toks asts =
 
    (* before phase *)
    let toks_with_before = 
-     Common.exclude_but_keep_attached is_comment_or_space_or_stuff
+     Common2.exclude_but_keep_attached is_comment_or_space_or_stuff
        toks 
    in
 
@@ -108,14 +108,14 @@ let annotate_program toks asts =
      List.rev
        (List.map
 	  (function (x,l) -> (x,List.rev l))
-	  (Common.exclude_but_keep_attached is_comment_or_space_or_stuff 
+	  (Common2.exclude_but_keep_attached is_comment_or_space_or_stuff 
              (List.rev toks)))
    in
 
   (* merge *)
    assert(List.length toks_with_after =|= List.length toks_with_before);
 
-   Common.zip toks_with_before toks_with_after 
+   Common2.zip toks_with_before toks_with_after 
    +> List.iter (fun ((t1, before), (t2, after)) -> 
 
      assert(t1 =*= t2);

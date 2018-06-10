@@ -8,7 +8,7 @@ type pl =
 
 (* todo detect false C file, look for "Mode: Objective-C++" string in file ?*)
 let detect_pl_of_file file = 
-  let (d,b,e) = Common.dbe_of_filename file in
+  let (d,b,e) = Common2.dbe_of_filename file in
   match e with
   | "c" -> C
   (* can also be a c++, use Parser_cplusplus.is_problably_cplusplus_file *)

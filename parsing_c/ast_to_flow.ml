@@ -12,6 +12,7 @@
  * file license.txt for more details.
  *)
 open Common
+open Parse_info
 
 open Ast_c
 open Control_flow_c
@@ -44,16 +45,16 @@ open Oassocb
 (*****************************************************************************)
 
 type error = 
-  | DeadCode          of Common.parse_info option
-  | CaseNoSwitch      of Common.parse_info
-  | OnlyBreakInSwitch of Common.parse_info
-  | NoEnclosingLoop   of Common.parse_info
-  | GotoCantFindLabel of string * Common.parse_info
-  | NoExit of Common.parse_info
+  | DeadCode          of Parse_info.t option
+  | CaseNoSwitch      of Parse_info.t
+  | OnlyBreakInSwitch of Parse_info.t
+  | NoEnclosingLoop   of Parse_info.t
+  | GotoCantFindLabel of string * Parse_info.t
+  | NoExit of Parse_info.t
   | DuplicatedLabel of string
   | NestedFunc
   | ComputedGoto
-  | Define of Common.parse_info
+  | Define of Parse_info.t
 
 exception Error of error
 
@@ -289,7 +290,7 @@ let rec (aux_statement: (nodei option * xinfo) -> statement -> nodei option) =
   (*  coupling: the Switch case copy paste parts of the Compound case *)
   | Ast_c.Compound statxs, ii -> 
       (* flow_to_ast: *)
-      let (i1, i2) = tuple_of_list2 ii in
+      let (i1, i2) = Common2.tuple_of_list2 ii in
 
       (* ctl_braces: *)
       incr counter_for_braces;
@@ -327,7 +328,7 @@ let rec (aux_statement: (nodei option * xinfo) -> statement -> nodei option) =
       aux_statement_list starti (xi, newxi) statxs
 
       (* braces: *)
-      +> Common.fmap (fun starti -> 
+      +> Common2.fmap (fun starti -> 
             (* subtil: not always return a Some.
              * Note that if starti is None, alors forcement ca veut dire
              * qu'il y'a eu un return (ou goto), et donc forcement les 
@@ -374,7 +375,7 @@ let rec (aux_statement: (nodei option * xinfo) -> statement -> nodei option) =
       * todo?: can perhaps report when a goto is not a classic error_goto ? 
       * that is when it does not jump to the toplevel of the function.
       *)
-     let newi = insert_all_braces (Common.list_init xi.braces) newi in
+     let newi = insert_all_braces (Common2.list_init xi.braces) newi in
      !g#add_arc ((newi, ilabel), Direct);
      None
       
@@ -417,7 +418,7 @@ let rec (aux_statement: (nodei option * xinfo) -> statement -> nodei option) =
        * so must force to have [] in the ii associated with ExprStatement 
        *)
       
-      let (i1,i2,i3, iifakeend) = tuple_of_list4 ii in
+      let (i1,i2,i3, iifakeend) = Common2.tuple_of_list4 ii in
       let ii = [i1;i2;i3] in
      (* starti -> newi --->   newfakethen -> ... -> finalthen --> lasti
       *                  |                                      |
@@ -493,7 +494,7 @@ let rec (aux_statement: (nodei option * xinfo) -> statement -> nodei option) =
       
    (* ------------------------- *)        
   | Selection  (Ast_c.Switch (e, st)), ii -> 
-      let (i1,i2,i3, iifakeend) = tuple_of_list4 ii in
+      let (i1,i2,i3, iifakeend) = Common2.tuple_of_list4 ii in
       let ii = [i1;i2;i3] in
 
       (* The newswitchi is for the labels to know where to attach.
@@ -612,7 +613,7 @@ let rec (aux_statement: (nodei option * xinfo) -> statement -> nodei option) =
 
       let newi = !g +> add_node node  lbl "case:" in
 
-      (match Common.optionise (fun () -> 
+      (match Common2.optionise (fun () -> 
         (* old: xi.ctx *)
         (xi.ctx::xi.ctx_stack) +> Common.find_some (function 
         | SwitchInfo (a, b, c, _) -> Some (a, b, c)
@@ -665,7 +666,7 @@ let rec (aux_statement: (nodei option * xinfo) -> statement -> nodei option) =
       *                 |-> newfakelse 
       *)
 
-      let (i1,i2,i3, iifakeend) = tuple_of_list4 ii in
+      let (i1,i2,i3, iifakeend) = Common2.tuple_of_list4 ii in
       let ii = [i1;i2;i3] in
 
       let newi = !g +> add_node (WhileHeader (stmt, (e,ii))) lbl "while" in
@@ -751,7 +752,7 @@ let rec (aux_statement: (nodei option * xinfo) -> statement -> nodei option) =
 
 
   | Iteration  (Ast_c.For (e1opt, e2opt, e3opt, st)), ii -> 
-      let (i1,i2,i3, iifakeend) = tuple_of_list4 ii in
+      let (i1,i2,i3, iifakeend) = Common2.tuple_of_list4 ii in
       let ii = [i1;i2;i3] in
 
       let newi = 
@@ -786,7 +787,7 @@ let rec (aux_statement: (nodei option * xinfo) -> statement -> nodei option) =
    * update: now I recognize the list_for_each macro so no more problems.
    *)
   | Iteration  (Ast_c.MacroIteration (s, es, st)), ii -> 
-      let (i1,i2,i3, iifakeend) = tuple_of_list4 ii in
+      let (i1,i2,i3, iifakeend) = Common2.tuple_of_list4 ii in
       let ii = [i1;i2;i3] in
 
       let newi = 
@@ -978,7 +979,7 @@ and aux_statement_list starti (xi, newxi) statxs =
 
     | Ast_c.IfdefStmt2 (ifdefs, xxs) -> 
 
-        let (head, body, tail) = Common.head_middle_tail ifdefs in
+        let (head, body, tail) = Common2.head_middle_tail ifdefs in
 
         let newi = !g +> add_node (IfdefHeader (head)) newxi'.labels "[ifdef]" in
         let taili = !g +> add_node (IfdefEndif (tail)) newxi'.labels "[endif]" in
@@ -993,7 +994,7 @@ and aux_statement_list starti (xi, newxi) statxs =
           ) in
 
         let _finalxs = 
-          Common.zip (newi::elsenodes) xxs +> List.map (fun (start_nodei, xs)-> 
+          Common2.zip (newi::elsenodes) xxs +> List.map (fun (start_nodei, xs)-> 
             let finalthen = 
               aux_statement_list (Some start_nodei) (newxi, newxi) xs in
             !g +> add_arc_opt (finalthen, taili);
@@ -1076,7 +1077,7 @@ let (aux_definition: nodei -> definition -> unit) = fun topi funcdef ->
  * todo: update: now I do what I just described, so can remove this code ?
  *)
 let specialdeclmacro_to_stmt (s, args, ii) =
-  let (iis, iiopar, iicpar, iiptvirg) = tuple_of_list4 ii in
+  let (iis, iiopar, iicpar, iiptvirg) = Common2.tuple_of_list4 ii in
   let ident = Ast_c.RegularName (s, [iis]) in
   let identfinal = (Ast_c.Ident (ident), Ast_c.noType()), [] in
   let f = (Ast_c.FunCall (identfinal, args), Ast_c.noType()), [iiopar;iicpar] in
@@ -1304,7 +1305,7 @@ let (check_control_flow: cflow -> unit) = fun g ->
       if  (*(depth = depth2)*) startbraces <> startbraces2
       then  
         begin 
-          pr2 (sprintf "PB with flow: the node %d has not same braces count" 
+          pr2 (spf "PB with flow: the node %d has not same braces count" 
                  nodei);  
           print_trace_error trace2  
         end
@@ -1329,12 +1330,12 @@ let (check_control_flow: cflow -> unit) = fun g ->
             then xs
             else 
               begin 
-                pr2 (sprintf ("PB with flow: not corresponding match between }%d and excpeted }%d at node %d") i j nodei); 
+                pr2 (spf ("PB with flow: not corresponding match between }%d and excpeted }%d at node %d") i j nodei); 
                 print_trace_error trace2; 
                 xs 
               end
         | SeqEnd (i,_), [] -> 
-            pr2 (sprintf "PB with flow: too much } at }%d " i);
+            pr2 (spf "PB with flow: too much } at }%d " i);
             print_trace_error trace2; 
             []
         | _, xs ->  xs
@@ -1360,7 +1361,7 @@ let (check_control_flow: cflow -> unit) = fun g ->
 
 let report_error error = 
   let error_from_info info = 
-    Common.error_message_short info.file ("", info.charpos)
+    Parse_info.error_message_short info.Parse_info.file ("", info.charpos)
   in
   match error with
   | DeadCode          infoopt -> 

@@ -7,16 +7,16 @@ val check_control_flow : Control_flow_c.cflow -> unit
 val annotate_loop_nodes : Control_flow_c.cflow -> Control_flow_c.cflow
 
 type error = 
-  | DeadCode          of Common.parse_info option
-  | CaseNoSwitch      of Common.parse_info
-  | OnlyBreakInSwitch of Common.parse_info
-  | NoEnclosingLoop   of Common.parse_info
-  | GotoCantFindLabel of string * Common.parse_info
-  | NoExit of Common.parse_info
+  | DeadCode          of Parse_info.t option
+  | CaseNoSwitch      of Parse_info.t
+  | OnlyBreakInSwitch of Parse_info.t
+  | NoEnclosingLoop   of Parse_info.t
+  | GotoCantFindLabel of string * Parse_info.t
+  | NoExit of Parse_info.t
   | DuplicatedLabel of string
   | NestedFunc
   | ComputedGoto
-  | Define of Common.parse_info
+  | Define of Parse_info.t
 
 exception Error of error
 

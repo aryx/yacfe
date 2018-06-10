@@ -3,7 +3,6 @@
 ##############################################################################
 TARGET=parsing_c
 
-
 SRC= flag_parsing_c.ml parsing_stat.ml \
  type_cocci.ml ast_cocci.ml \
  token_c.ml ast_c.ml control_flow_c.ml type_c.ml \
@@ -21,7 +20,6 @@ SRC= flag_parsing_c.ml parsing_stat.ml \
  test_parsing_c.ml
 
 
-
 # ast_cocci.ml and unparse_cocci.ml should be deleted in the futur
 # to make parsing_c really independent of coccinelle. 
 # control_flow_c have also coccinelle dependencies.
@@ -34,7 +32,7 @@ SRC= flag_parsing_c.ml parsing_stat.ml \
 #INCLUDES= -I ../commons -I ../globals -I  ../parsing_cocci 
 
 LIBS=../commons/commons.cma
-INCLUDES= -I ../commons -I ../commons/ocollection
+INCLUDES= -I ../commons -I ../commons_ocollection -I ../pl_info
 SYSLIBS= str.cma unix.cma 
 
 ##############################################################################

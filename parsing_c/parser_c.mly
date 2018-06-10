@@ -23,12 +23,14 @@ open Semantic_c (* Semantic exn *)
 
 module Stat = Parsing_stat
 
+let (++) = (@)
+
 (*****************************************************************************)
 (* Wrappers *)
 (*****************************************************************************)
 let warning s v = 
   if !Flag_parsing_c.verbose_parsing 
-  then Common.warning ("PARSING: " ^ s) v
+  then Common2.warning ("PARSING: " ^ s) v
   else v
 
 
@@ -62,7 +64,7 @@ let nullDecl = {
   qualifD = nullQualif;
   inlineD = false, [];
 }
-let fake_pi = Common.fake_parse_info
+let fake_pi = Parse_info.fake_parse_info
 
 let addStorageD  = function 
   | ((x,ii), ({storageD = (NoSto,[])} as v)) -> { v with storageD = (x, [ii]) }
@@ -84,7 +86,7 @@ let addTypeD     = function
   | ((Left3 _,ii),        ({typeD = ((Some _,b,c),ii2)} as _v)) -> 
       raise (Semantic ("both signed and unsigned specified", fake_pi))
   | ((Left3 x,ii),        ({typeD = ((None,b,c),ii2)} as v))   -> 
-      {v with typeD = (Some x,b,c),ii ++ ii2}
+      {v with typeD = (Some x,b,c),ii @ ii2}
 
   | ((Middle3 Short,ii),  ({typeD = ((a,Some Short,c),ii2)} as v)) -> 
       warning "duplicate 'short'" v
@@ -114,7 +116,7 @@ let addQualif = function
   | ({const=true},    v) -> {v with const=true}
   | ({volatile=true}, v) -> {v with volatile=true}
   | _ -> 
-      internal_error "there is no noconst or novolatile keyword"
+      Common2.internal_error "there is no noconst or novolatile keyword"
 
 let addQualifD ((qu,ii), ({qualifD = (v,ii2)} as x)) =
   { x with qualifD = (addQualif (qu, v),ii::ii2) }
@@ -1458,7 +1460,7 @@ field_declaration:
      { 
        let (returnType,storage) = fixDeclSpecForDecl $1 in
        if fst (unwrap storage) <> NoSto 
-       then internal_error "parsing dont allow this";
+       then Common2.internal_error "parsing dont allow this";
        
        FieldDeclList ($2 +> (List.map (fun (f, iivirg) ->     
          f returnType, iivirg))
@@ -1473,7 +1475,7 @@ field_declaration:
        (* gccext: allow empty elements if it is a structdef or enumdef *)
        let (returnType,storage) = fixDeclSpecForDecl $1 in
        if fst (unwrap storage) <> NoSto 
-       then internal_error "parsing dont allow this";
+       then Common2.internal_error "parsing dont allow this";
        
        FieldDeclList ([(Simple (None, returnType)) , []], [$2])
      }
@@ -1709,26 +1711,26 @@ param_define:
 cpp_ifdef_directive: 
  | TIfdef     
      { let (tag,ii) = $1 in 
-       IfdefDirective ((Ifdef, IfdefTag (Common.some !tag)),  [ii]) }
+       IfdefDirective ((Ifdef, IfdefTag (Common2.some !tag)),  [ii]) }
  | TIfdefelse 
      { let (tag,ii) = $1 in  
-       IfdefDirective ((IfdefElse, IfdefTag (Common.some !tag)), [ii]) }
+       IfdefDirective ((IfdefElse, IfdefTag (Common2.some !tag)), [ii]) }
  | TIfdefelif 
      { let (tag,ii) = $1 in  
-       IfdefDirective ((IfdefElseif, IfdefTag (Common.some !tag)), [ii]) }
+       IfdefDirective ((IfdefElseif, IfdefTag (Common2.some !tag)), [ii]) }
  | TEndif     
      { let (tag,ii) = $1 in  
-       IfdefDirective ((IfdefEndif, IfdefTag (Common.some !tag)), [ii]) }
+       IfdefDirective ((IfdefEndif, IfdefTag (Common2.some !tag)), [ii]) }
 
  | TIfdefBool    
      { let (_b, tag,ii) = $1 in  
-       IfdefDirective ((Ifdef, IfdefTag (Common.some !tag)), [ii]) }
+       IfdefDirective ((Ifdef, IfdefTag (Common2.some !tag)), [ii]) }
  | TIfdefMisc    
      { let (_b, tag,ii) = $1 in  
-       IfdefDirective ((Ifdef, IfdefTag (Common.some !tag)), [ii]) }
+       IfdefDirective ((Ifdef, IfdefTag (Common2.some !tag)), [ii]) }
  | TIfdefVersion 
      { let (_b, tag,ii) = $1 in  
-       IfdefDirective ((Ifdef, IfdefTag (Common.some !tag)), [ii]) }
+       IfdefDirective ((Ifdef, IfdefTag (Common2.some !tag)), [ii]) }
 
 
 /*(* cppext: *)*/

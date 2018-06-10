@@ -1,1 +1,1 @@
-exception Semantic of string * Common.parse_info
+exception Semantic of string * Parse_info.t

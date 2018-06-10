@@ -81,7 +81,7 @@ let i_of_cpp_options xs =
   )
 
 let cpp_option_of_cmdline (xs, ys) = 
-  (xs +> List.map (fun s -> I s)) ++
+  (xs +> List.map (fun s -> I s)) @
   (ys +> List.map (fun s -> 
     if s =~ "\\([A-Z][A-Z0-9_]*\\)=\\(.*\\)"
     then
@@ -99,7 +99,7 @@ let _hcandidates = Hashtbl.create 101
 
 let init_adjust_candidate_header_files dir = 
   let ext = "[h]" in
-  let files = Common.files_of_dir_or_files ext [dir] in
+  let files = Common2.files_of_dir_or_files ext [dir] in
 
   files +> List.iter (fun file -> 
     let base = Filename.basename file in
@@ -167,7 +167,7 @@ let find_header_file cppopts dirname inc_file =
 (* ---------------------------------------------------------------------- *)
 let trace_cpp_process depth mark inc_file =
   pr2 (spf "%s>%s %s" 
-          (Common.repeat "-" depth +> Common.join "")
+          (Common2.repeat "-" depth +> Common.join "")
           mark
           (s_of_inc_file_bis inc_file));
   ()
@@ -221,7 +221,7 @@ let (cpp_expand_include2:
  cpp_option list -> Common.dirname -> Ast_c.program -> Ast_c.program) =
  fun ?(depth_limit=None) iops dirname ast -> 
 
-  pr2_xxxxxxxxxxxxxxxxx();
+  Common2.pr2_xxxxxxxxxxxxxxxxx();
   let already_included = ref [] in
 
   let rec aux stack dirname ast = 
@@ -249,7 +249,7 @@ let (cpp_expand_include2:
                   k cpp
                 end else begin
                   trace_cpp_process depth "" inc_file;
-                  Common.push2 file already_included;
+                  Common.push file already_included;
                   (* CONFIG *)
                   Flag_parsing_c.verbose_parsing := false; 
                   Flag_parsing_c.verbose_lexing := false; 
@@ -336,7 +336,7 @@ let should_ifdefize tag ifdefs_directives xxs =
  * => [elsif, else, endif], [XXX1 XXX2; YYY1; ZZZ1], [WWW1 WWW2]
  *)
 let group_ifdef tag xs = 
-  let (xxs, xs) = group_by_post (is_ifdef_and_same_tag tag) xs in
+  let (xxs, xs) = Common2.group_by_post (is_ifdef_and_same_tag tag) xs in
   
   xxs +> List.map snd +> List.map (fun x -> 
     match x with 

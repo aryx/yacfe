@@ -1,4 +1,4 @@
-open Common.BasicType
+open Common
 
 val test_tokens_c : filename -> unit
 

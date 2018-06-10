@@ -625,7 +625,7 @@ let set_pos_var vr (a,b,c,_) = (a,b,c,vr)
 let drop_pos (a,b,c,_)     = (a,b,c,NoMetaPos)
 
 let get_wcfvs (whencode : ('a wrap, 'b wrap) whencode list) =
-  Common.union_all
+  Common2.union_all
     (List.map
        (function
 	   WhenNot(a) -> get_fvs a

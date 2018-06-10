@@ -70,23 +70,23 @@ type posl = int * int (* line-col, for MetaPosValList, for position variables *)
  (* with sexp *)
 
 (* the virtual position is set in Parsing_hacks.insert_virtual_positions *)
-type virtual_position = Common.parse_info * int (* character offset *)
+type virtual_position = Parse_info.t * int (* character offset *)
  (* with sexp *)
 
 type parse_info = 
   (* Present both in ast and list of tokens *)
-  | OriginTok of Common.parse_info
+  | OriginTok of Parse_info.t
   (* Present only in ast and generated after parsing. Used mainly
    * by Julia, to add stuff at virtual places, beginning of func or decl *)
   | FakeTok of string * virtual_position
   (* Present both in ast and list of tokens.  *)
-  | ExpandedTok of Common.parse_info * virtual_position
+  | ExpandedTok of Parse_info.t * virtual_position
 
   (* Present neither in ast nor in list of tokens
    * but only in the '+' of the mcode of some tokens. Those kind of tokens
    * are used to be able to use '=' to compare big ast portions.
    *)
-  | AbstractLineTok of Common.parse_info (* local to the abstracted thing *)
+  | AbstractLineTok of Parse_info.t (* local to the abstracted thing *)
  (* with sexp *)
 
 type info = { 
@@ -707,7 +707,7 @@ and comments_around = {
   }
   and comment_and_relative_pos = {
 
-   minfo: Common.parse_info;
+   minfo: Parse_info.t;
    (* the int represent the number of lines of difference between the
     * current token and the comment. When on same line, this number is 0.
     * When previous line, -1. In some way the after/before in previous
@@ -721,7 +721,7 @@ and comments_around = {
    *)
   }
 
-and comment = Common.parse_info
+and comment = Parse_info.t
 and com = comment list ref
 
  (* with sexp *)
@@ -777,7 +777,7 @@ let noInIfdef () =
  * old: or when don't want 'synchronize' on it in unparse_c.ml
  * (now have other mark for tha matter).
  *)
-let no_virt_pos = ({str="";charpos=0;line=0;column=0;file=""},-1)
+let no_virt_pos = ({Parse_info.str="";charpos=0;line=0;column=0;file=""},-1)
 
 let fakeInfo pi  = 
   { pinfo = FakeTok ("",no_virt_pos);
@@ -825,10 +825,10 @@ let rewrap_typeC (qu, (typeC, ii)) newtypeC  = (qu, (newtypeC, ii))
 let rewrap_str s ii =  
   {ii with pinfo =
     (match ii.pinfo with
-      OriginTok pi -> OriginTok { pi with Common.str = s;}
-    | ExpandedTok (pi,vpi) -> ExpandedTok ({ pi with Common.str = s;},vpi)
+      OriginTok pi -> OriginTok { pi with Parse_info.str = s;}
+    | ExpandedTok (pi,vpi) -> ExpandedTok ({ pi with Parse_info.str = s;},vpi)
     | FakeTok (_,vpi) -> FakeTok (s,vpi)
-    | AbstractLineTok pi -> OriginTok { pi with Common.str = s;})}
+    | AbstractLineTok pi -> OriginTok { pi with Parse_info.str = s;})}
 
 let rewrap_pinfo pi ii =  
   {ii with pinfo = pi}
@@ -849,10 +849,10 @@ let get_opi = function
 
 let str_of_info ii =
   match ii.pinfo with
-    OriginTok pi -> pi.Common.str
-  | ExpandedTok (pi,_) -> pi.Common.str
+    OriginTok pi -> pi.Parse_info.str
+  | ExpandedTok (pi,_) -> pi.Parse_info.str
   | FakeTok (s,_) -> s
-  | AbstractLineTok pi -> pi.Common.str
+  | AbstractLineTok pi -> pi.Parse_info.str
 
 let get_info f ii =
   match ii.pinfo with
@@ -871,11 +871,11 @@ let get_orig_info f ii =
 let make_expanded ii =
   {ii with pinfo = ExpandedTok (get_opi ii.pinfo,no_virt_pos)}
 
-let pos_of_info   ii = get_info      (function x -> x.Common.charpos) ii
-let opos_of_info  ii = get_orig_info (function x -> x.Common.charpos) ii
-let line_of_info  ii = get_orig_info (function x -> x.Common.line)    ii
-let col_of_info   ii = get_orig_info (function x -> x.Common.column)  ii
-let file_of_info  ii = get_orig_info (function x -> x.Common.file)    ii
+let pos_of_info   ii = get_info      (function x -> x.Parse_info.charpos) ii
+let opos_of_info  ii = get_orig_info (function x -> x.Parse_info.charpos) ii
+let line_of_info  ii = get_orig_info (function x -> x.Parse_info.line)    ii
+let col_of_info   ii = get_orig_info (function x -> x.Parse_info.column)  ii
+let file_of_info  ii = get_orig_info (function x -> x.Parse_info.file)    ii
 let mcode_of_info ii = fst (mcode_and_env_of_cocciref ii.cocci_tag)
 let pinfo_of_info ii = ii.pinfo
 let parse_info_of_info ii = get_pi ii.pinfo
@@ -891,7 +891,7 @@ let is_origintok ii =
   | _ -> false
 
 (* ------------------------------------------------------------------------- *)
-type posrv = Real of Common.parse_info | Virt of virtual_position
+type posrv = Real of Parse_info.t | Virt of virtual_position
 
 let compare_pos ii1 ii2 =
   let get_pos = function
@@ -903,14 +903,14 @@ let compare_pos ii1 ii2 =
   let pos2 = get_pos (pinfo_of_info ii2) in
   match (pos1,pos2) with
     (Real p1, Real p2) ->
-      compare p1.Common.charpos p2.Common.charpos
+      compare p1.Parse_info.charpos p2.Parse_info.charpos
   | (Virt (p1,_), Real p2) ->
-      if (compare p1.Common.charpos p2.Common.charpos) =|= (-1) then (-1) else 1
+      if (compare p1.Parse_info.charpos p2.Parse_info.charpos) =|= (-1) then (-1) else 1
   | (Real p1, Virt (p2,_)) ->
-      if (compare p1.Common.charpos p2.Common.charpos) =|= 1 then 1 else (-1)
+      if (compare p1.Parse_info.charpos p2.Parse_info.charpos) =|= 1 then 1 else (-1)
   | (Virt (p1,o1), Virt (p2,o2)) ->
-      let poi1 = p1.Common.charpos in
-      let poi2 = p2.Common.charpos in
+      let poi1 = p1.Parse_info.charpos in
+      let poi2 = p2.Parse_info.charpos in
       match compare poi1 poi2 with
 	-1 -> -1
       |	0 -> compare o1 o2
@@ -921,11 +921,11 @@ let equal_posl (l1,c1) (l2,c2) =
 
 let info_to_fixpos ii =
   match pinfo_of_info ii with
-    OriginTok pi -> Ast_cocci.Real pi.Common.charpos
+    OriginTok pi -> Ast_cocci.Real pi.Parse_info.charpos
   | ExpandedTok (_,(pi,offset)) ->
-      Ast_cocci.Virt (pi.Common.charpos,offset)
+      Ast_cocci.Virt (pi.Parse_info.charpos,offset)
   | FakeTok (_,(pi,offset)) ->
-      Ast_cocci.Virt (pi.Common.charpos,offset)
+      Ast_cocci.Virt (pi.Parse_info.charpos,offset)
   | AbstractLineTok pi -> failwith "unexpected abstract"
 
 (* cocci: *)
@@ -951,7 +951,7 @@ let is_test (e : expression) =
 let al_info tokenindex x = 
   { pinfo =
     (AbstractLineTok
-       {charpos = tokenindex;
+       {Parse_info.charpos = tokenindex;
 	 line = tokenindex;
 	 column = tokenindex;
 	 file = "";
@@ -971,7 +971,7 @@ let magic_real_number = -10
 let real_al_info x = 
   { pinfo =
     (AbstractLineTok
-       {charpos = magic_real_number;
+       {Parse_info.charpos = magic_real_number;
 	 line = magic_real_number;
 	 column = magic_real_number;
 	 file = "";
@@ -984,9 +984,9 @@ let al_comments x =
   let keep_cpp l =
     List.filter (function (Token_c.TCommentCpp _,_) -> true | _ -> false) l in
   let al_com (x,i) =
-    (x,{i with Common.charpos = magic_real_number;
-	 Common.line = magic_real_number;
-	 Common.column = magic_real_number}) in
+    (x,{i with Parse_info.charpos = magic_real_number;
+	 Parse_info.line = magic_real_number;
+	 Parse_info.column = magic_real_number}) in
   {mbefore = []; (* duplicates mafter of the previous token *)
    mafter = List.map al_com (keep_cpp x.mafter);
    mbefore2=[];
@@ -996,7 +996,7 @@ let al_comments x =
 let al_info_cpp tokenindex x = 
   { pinfo =
     (AbstractLineTok
-       {charpos = tokenindex;
+       {Parse_info.charpos = tokenindex;
 	 line = tokenindex;
 	 column = tokenindex;
 	 file = "";
@@ -1014,7 +1014,7 @@ let semi_al_info_cpp x =
 let real_al_info_cpp x = 
   { pinfo =
     (AbstractLineTok
-       {charpos = magic_real_number;
+       {Parse_info.charpos = magic_real_number;
 	 line = magic_real_number;
 	 column = magic_real_number;
 	 file = "";
@@ -1063,7 +1063,7 @@ let rec (unsplit_comma: ('a, il) either list -> 'a wrap2 list) =
 (*****************************************************************************)
 
 let rec stmt_elems_of_sequencable xs = 
-  xs +> Common.map (fun x -> 
+  xs +> List.map (fun x -> 
     match x with
     | StmtElem e -> [e]
     | CppDirectiveStmt _
@@ -1128,7 +1128,7 @@ let info_of_name ident =
           List.hd ii1
       )
   | CppVariadicName (s, ii) -> 
-      let (iihash, iis) = Common.tuple_of_list2 ii in 
+      let (iihash, iis) = Common2.tuple_of_list2 ii in 
       iihash
   | CppIdentBuilder ((s,iis),xs) -> 
       List.hd iis
@@ -1138,7 +1138,7 @@ let get_s_and_ii_of_name name =
   | RegularName (s, iis) -> s, List.hd iis 
   | CppIdentBuilder ((s, iis), xs) -> s, List.hd iis
   | CppVariadicName (s,iis)  -> 
-      let (iop, iis) = Common.tuple_of_list2 iis in
+      let (iop, iis) = Common2.tuple_of_list2 iis in
       s, iis
   | CppConcatenatedName xs -> 
       (match xs with
@@ -1149,5 +1149,5 @@ let get_s_and_ii_of_name name =
 
 
 let name_of_parameter param = 
-  param.p_namei +> Common.map_option (str_of_name)
+  param.p_namei +> Common2.map_option (str_of_name)
 

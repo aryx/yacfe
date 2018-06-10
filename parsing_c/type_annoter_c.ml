@@ -526,7 +526,7 @@ let do_in_new_scope f =
   end
 
 let add_in_scope namedef =
-  let (current, older) = Common.uncons !_scoped_env in
+  let (current, older) = Common2.uncons !_scoped_env in
   _scoped_env := (namedef::current)::older
 
 
@@ -552,7 +552,7 @@ let islocal info =
  * 
  *)
 let add_binding2 namedef warning = 
-  let (current_scope, _older_scope) = Common.uncons !_scoped_env in
+  let (current_scope, _older_scope) = Common2.uncons !_scoped_env in
 
   if !Flag_parsing_c.check_annotater then begin
     (match namedef with
@@ -594,7 +594,7 @@ let add_binding namedef warning =
 (*****************************************************************************)
 
 let lookup_opt_env lookupf s = 
-  Common.optionise (fun () ->
+  Common2.optionise (fun () ->
     lookupf s !_scoped_env
   )
 
@@ -632,7 +632,7 @@ let annotater_expr_visitor_subpart = (fun (k,bigf) expr ->
     | Constant (Char   (s,kind)) -> make_info_def (type_of_s "char")
     | Constant (Int (s))         -> make_info_def (type_of_s "int")
     | Constant (Float (s,kind)) -> 
-        let fake = Ast_c.fakeInfo (Common.fake_parse_info) in
+        let fake = Ast_c.fakeInfo (Parse_info.fake_parse_info) in
         let fake = Ast_c.rewrap_str "float" fake in
         let iinull = [fake] in
         make_info_def
@@ -798,7 +798,7 @@ let annotater_expr_visitor_subpart = (fun (k,bigf) expr ->
           (* must generate an element so that '=' can be used 
            * to compare type ?
            *)
-          let fake = Ast_c.fakeInfo Common.fake_parse_info in
+          let fake = Ast_c.fakeInfo Parse_info.fake_parse_info in
           let fake = Ast_c.rewrap_str "*" fake in
           
           let ft = (Ast_c.nQ, (Pointer t, [fake])) in
@@ -935,6 +935,12 @@ let annotater_expr_visitor_subpart = (fun (k,bigf) expr ->
 (* Visitor *)
 (*****************************************************************************)
 
+let save_excursion reference f = 
+  let old = !reference in
+  let res = f() in
+  reference := old;
+  res
+
 (* Processing includes that were added after a cpp_ast_c makes the
  * type annotater quite slow, especially when the depth of cpp_ast_c is
  * big. But for such includes the only thing we really want is to modify
@@ -977,7 +983,7 @@ let rec visit_toplevel ~just_add_in_env ~depth elem =
        *)
       | Include {i_content = opt} -> 
           opt +> Common.do_option (fun (filename, program) -> 
-            Common.save_excursion Flag_parsing_c.verbose_type (fun () -> 
+            save_excursion Flag_parsing_c.verbose_type (fun () -> 
               Flag_parsing_c.verbose_type := false;
 
               (* old: Visitor_c.vk_program bigf program; 
@@ -1209,7 +1215,7 @@ let rec visit_toplevel ~just_add_in_env ~depth elem =
 
 
 let rec (annotate_program2 : 
-  environment -> toplevel list -> (toplevel * environment Common.pair) list) =
+  environment -> toplevel list -> (toplevel * environment Common2.pair) list) =
  fun env prog ->
 
   (* globals (re)initialialisation *) 
@@ -1300,6 +1306,6 @@ let init_env filename =
   match List.rev res with
   | [] -> pr2 "empty environment"
   | (_top,(env1,env2))::xs -> 
-      initial_env := !initial_env ++ env2;
+      initial_env := !initial_env @ env2;
       ()
 

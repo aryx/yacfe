@@ -1004,7 +1004,7 @@ let rec vk_expr_s = fun bigf expr ->
                     vk_argument_s bigf e, iif ii
                   ))
             
-      | CondExpr (e1, e2, e3)   -> CondExpr (exprf e1, fmap exprf e2, exprf e3)
+      | CondExpr (e1, e2, e3)   -> CondExpr (exprf e1, Common2.fmap exprf e2, exprf e3)
       | Sequence (e1, e2)        -> Sequence (exprf e1, exprf e2)
       | Assignment (e1, op, e2)  -> Assignment (exprf e1, op, exprf e2)
           
@@ -1202,7 +1202,7 @@ and vk_type_s = fun bigf t ->
       match unwrap_t with
       | BaseType x -> BaseType x
       | Pointer t  -> Pointer (typef t)
-      | Array (eopt, t) -> Array (fmap (vk_expr_s bigf) eopt, typef t) 
+      | Array (eopt, t) -> Array (Common2.fmap (vk_expr_s bigf) eopt, typef t) 
       | FunctionType (returnt, paramst) -> 
           FunctionType 
             (typef returnt, 
@@ -1218,7 +1218,7 @@ and vk_type_s = fun bigf t ->
                enumt +> List.map (fun ((name, eopt), iicomma) -> 
                  
                  ((vk_name_s bigf name, 
-                  eopt +> Common.fmap (fun (info, e) -> 
+                  eopt +> Common2.fmap (fun (info, e) -> 
                     vk_info_s bigf info,
                     vk_expr_s bigf e
                  )), 
@@ -1272,9 +1272,9 @@ and vk_decl_s = fun bigf d ->
             v_local= local; 
             v_attr = attrs}, iicomma) = 
     {v_namei = 
-      (var +> map_option (fun (name, iniopt) -> 
+      (var +> Common2.map_option (fun (name, iniopt) -> 
         vk_name_s bigf name, 
-        iniopt +> map_option (fun (info, init) -> 
+        iniopt +> Common2.map_option (fun (info, init) -> 
           vk_info_s bigf info,
           vk_ini_s bigf init
         )));
@@ -1333,10 +1333,10 @@ and vk_struct_fieldkinds_s = fun bigf onefield_multivars ->
   onefield_multivars +> List.map (fun (field, iicomma) ->
     (match field with
     | Simple (nameopt, t) -> 
-        Simple (Common.map_option (vk_name_s bigf) nameopt, 
+        Simple (Common2.map_option (vk_name_s bigf) nameopt, 
                vk_type_s bigf t)
     | BitField (nameopt, t, info, expr) -> 
-        BitField (Common.map_option (vk_name_s bigf) nameopt, 
+        BitField (Common2.map_option (vk_name_s bigf) nameopt, 
                  vk_type_s bigf t, 
                  vk_info_s bigf info,
                  vk_expr_s bigf expr)
@@ -1395,7 +1395,7 @@ and vk_def_s = fun bigf d ->
          f_attr = 
             attrs +> List.map (vk_attribute_s bigf);
          f_old_c_style = 
-            oldstyle +> Common.map_option (fun decls -> 
+            oldstyle +> Common2.map_option (fun decls -> 
               decls +> List.map (vk_decl_s bigf)
             );
         },
@@ -1444,7 +1444,7 @@ and vk_cpp_directive_s = fun bigf top ->
       -> Include {i_include = (s, iif ii);
                   i_rel_pos = h_rel_pos;
                   i_is_in_ifdef = b;
-                  i_content = copt +> Common.map_option (fun (file, asts) -> 
+                  i_content = copt +> Common2.map_option (fun (file, asts) -> 
                     file, vk_program_s bigf asts
                   );
       }
@@ -1523,7 +1523,7 @@ and vk_node_s = fun bigf node ->
           
     | F.Decl declb -> F.Decl (vk_decl_s bigf declb)
     | F.ExprStatement (st, (eopt, ii)) ->  
-        F.ExprStatement (st, (eopt +> map_option (vk_expr_s bigf), iif ii))
+        F.ExprStatement (st, (eopt +> Common2.map_option (vk_expr_s bigf), iif ii))
           
     | F.IfHeader (st, (e,ii))     -> 
         F.IfHeader    (st, (vk_expr_s bigf e, iif ii))
@@ -1536,9 +1536,9 @@ and vk_node_s = fun bigf node ->
 
     | F.ForHeader (st, (((e1opt,i1), (e2opt,i2), (e3opt,i3)), ii)) -> 
         F.ForHeader (st,
-                    (((e1opt +> Common.map_option (vk_expr_s bigf), iif i1),
-                     (e2opt +> Common.map_option (vk_expr_s bigf), iif i2),
-                     (e3opt +> Common.map_option (vk_expr_s bigf), iif i3)),
+                    (((e1opt +> Common2.map_option (vk_expr_s bigf), iif i1),
+                     (e2opt +> Common2.map_option (vk_expr_s bigf), iif i2),
+                     (e3opt +> Common2.map_option (vk_expr_s bigf), iif i3)),
                     iif ii))
 
     | F.MacroIterHeader (st, ((s,es), ii)) -> 
@@ -1597,7 +1597,7 @@ and vk_node_s = fun bigf node ->
         F.Goto  (st, vk_name_s bigf name, ((),iif ii))
     | F.Label (st, name, ((),ii)) -> 
         F.Label (st, vk_name_s bigf name, ((),iif ii))
-    | F.EndStatement iopt -> F.EndStatement (map_option infof iopt)
+    | F.EndStatement iopt -> F.EndStatement (Common2.map_option infof iopt)
     | F.DoHeader (st, info) -> F.DoHeader (st, infof info)
     | F.Else info -> F.Else (infof info)
     | F.SeqEnd (i, info) -> F.SeqEnd (i, infof info)
@@ -1624,7 +1624,7 @@ and vk_node_s = fun bigf node ->
 and vk_param_s = fun bigf param -> 
   let iif ii = vk_ii_s bigf ii in
   let {p_namei = swrapopt; p_register = (b, iib); p_type=ft} = param in
-  { p_namei = swrapopt +> Common.map_option (vk_name_s bigf);
+  { p_namei = swrapopt +> Common2.map_option (vk_name_s bigf);
     p_register = (b, iif iib);
     p_type = vk_type_s bigf ft;
   }

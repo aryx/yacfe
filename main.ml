@@ -57,14 +57,14 @@ let main_action xs =
 
         let ext = "[ch]" in
 
-        let files = Common.files_of_dir_or_files ext (x::xs) in
+        let files = Common2.files_of_dir_or_files ext (x::xs) in
         let nbfiles = List.length files in
 
         let parsing_stat_list = ref [] in
         (* let comment_stat_list = ref [] in *)
         (* let entities_stat_list = ref [] in *)
 
-        Common.check_stack_nbfiles nbfiles; 
+        Common2.check_stack_nbfiles nbfiles; 
 
         files +> Common.index_list +> List.iter (fun (file, i) -> 
 
@@ -89,7 +89,7 @@ let main_action xs =
           Parse_c_comments_only.check_extraction file info_comments;
           *)
 
-          Common.push2 parsing_stat  parsing_stat_list;
+          Common.push parsing_stat  parsing_stat_list;
           (*
             Common.push2 comment_stat  comment_stat_list;
             Common.push2 entities_stat entities_stat_list;
@@ -129,9 +129,9 @@ let parse_all xs =
 
   let dirname_opt = 
     match xs with
-    | [x] when is_directory x -> Some x
+    | [x] when Common2.is_directory x -> Some x
     | xs -> 
-        Some (xs +> Common.join "" +> md5sum_of_string)
+        Some (xs +> Common.join "" +> Common2.md5sum_of_string)
   in
 
   (*
@@ -149,27 +149,27 @@ let parse_all xs =
   (* sure ? *)
   Flag_parsing_c.filter_define_error := false;
 
-  let newscore  = Common.empty_score () in
+  let newscore  = Common2.empty_score () in
   let parsing_stat_list = ref [] in
 
   let biglist = (fun () -> 
 
     let files = 
-      if (xs +> List.for_all Common.is_directory)
+      if (xs +> List.for_all Common2.is_directory)
       then
         let ext = "[ch]" in
         let ext2 = "java" in
         let ext3 = ".*\\.\\(cpp\\|cc\\|C\\|cxx\\|hpp\\|hxx\\)$" in
         
-        let files1 = Common.files_of_dir_or_files ext (xs) in
-        let files2 = Common.files_of_dir_or_files ext2 (xs) in
-        let files3 = Common.files_of_dir_or_files_no_vcs_post_filter ext3 xs in
-        let files = files3 ++ files2 ++ files1 in
+        let files1 = Common2.files_of_dir_or_files ext (xs) in
+        let files2 = Common2.files_of_dir_or_files ext2 (xs) in
+        let files3 = Common2.files_of_dir_or_files_no_vcs_post_filter ext3 xs in
+        let files = files3 @ files2 @ files1 in
         files
       else xs
     in
     let nbfiles = List.length files in
-    Common.check_stack_nbfiles nbfiles; 
+    Common2.check_stack_nbfiles nbfiles; 
 
     files +> Common.index_list +> List.map (fun (i,j) -> (i,j,nbfiles))
   )
@@ -181,16 +181,16 @@ let parse_all xs =
 
     stats_parse +> List.iter (fun (file, stat) -> 
       let s = 
-        sprintf "bad = %d, timeout = %B" 
+        spf "bad = %d, timeout = %B" 
           stat.Statistics_parsing.bad stat.Statistics_parsing.have_timeout
       in
       
-      Common.push2 stat  parsing_stat_list;
+      Common.push stat  parsing_stat_list;
 
       if stat.Statistics_parsing.bad = 0 && 
         not stat.Statistics_parsing.have_timeout
-      then Hashtbl.add newscore file (Common.Ok)
-      else Hashtbl.add newscore file (Common.Pb s)
+      then Hashtbl.add newscore file (Common2.Ok)
+      else Hashtbl.add newscore file (Common2.Pb s)
     );
 
  
@@ -201,12 +201,12 @@ let parse_all xs =
       let str = Str.global_replace (Str.regexp "/") "__" dirname in
       let def = if !Flag_parsing_c.filter_define_error then "_def_" else "" in
       let ext = "_all_" in
-      Common.regression_testing newscore 
+      Common2.regression_testing newscore 
         (Filename.concat score_path
             ("score_parsing__" ^str ^ def ^ ext ^ ".marshalled"))
     );
     
-    pr2_xxxxxxxxxxxxxxxxx();
+    Common2.pr2_xxxxxxxxxxxxxxxxx();
     Parsing_stat.print_stat_numbers ();
     Statistics_parsing.print_parsing_stat_list !parsing_stat_list;
     
@@ -227,6 +227,7 @@ let yacfe_extra_actions () = [
 (*****************************************************************************)
 (* The options *)
 (*****************************************************************************)
+let (++) = (@)
 
 let all_actions () = 
    yacfe_extra_actions() ++
@@ -250,9 +251,9 @@ let options () =
     " <file>";
   ] ++
   Common.options_of_actions action (all_actions()) ++
-  Common.cmdline_flags_devel () ++
-  Common.cmdline_flags_verbose () ++
-  Common.cmdline_flags_other () ++
+  Common2.cmdline_flags_devel () ++
+  Common2.cmdline_flags_verbose () ++
+  Common2.cmdline_flags_other () ++
   [
   "-version",   Arg.Unit (fun () -> 
     pr2 (spf "yacfe version: %s" Config.version);
@@ -274,13 +275,13 @@ let options () =
 (*****************************************************************************)
 
 let main () = 
-  Common_extra.set_link();
-
-  let argv = Features.Distribution.mpi_adjust_argv Sys.argv in
+  (*Common_extra.set_link(); *)
+  (*let argv = Features.Distribution.mpi_adjust_argv Sys.argv in *)
+  let argv = Sys.argv in
 
 
   let usage_msg = 
-    "Usage: " ^ basename Sys.argv.(0) ^ 
+    "Usage: " ^ Filename.basename Sys.argv.(0) ^ 
       " [options] <file or dir> " ^ "\n" ^ "Options are:"
   in
   (* does side effect on many global flags *)

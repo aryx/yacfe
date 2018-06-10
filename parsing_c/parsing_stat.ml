@@ -99,15 +99,15 @@ let print_parsing_stat_list ?(verbose=false) = fun statxs ->
   end;
 
   pr (
-  (sprintf "NB total files = %d; " total) ^
-  (sprintf "perfect = %d; " perfect) ^
-  (sprintf "pbs = %d; "     (statxs +> List.filter (function 
+  (spf "NB total files = %d; " total) ^
+  (spf "perfect = %d; " perfect) ^
+  (spf "pbs = %d; "     (statxs +> List.filter (function 
       {have_timeout = b; bad = n} when n > 0 -> true | _ -> false) 
                                +> List.length)) ^
-  (sprintf "timeout = %d; " (statxs +> List.filter (function 
+  (spf "timeout = %d; " (statxs +> List.filter (function 
       {have_timeout = true; bad = n} -> true | _ -> false) 
                                +> List.length)) ^
-  (sprintf "=========> %d" ((100 * perfect) / total)) ^ "%"
+  (spf "=========> %d" ((100 * perfect) / total)) ^ "%"
                                                           
   );
   let good = statxs +> List.fold_left (fun acc {correct = x} -> acc+x) 0 in
@@ -117,12 +117,12 @@ let print_parsing_stat_list ?(verbose=false) = fun statxs ->
   let gf, badf = float_of_int good, float_of_int bad in
   let passedf = float_of_int passed in
   pr (
-  (sprintf "nb good = %d,  nb passed = %d " good passed) ^
-  (sprintf "=========> %f"  (100.0 *. (passedf /. gf)) ^ "% passed")
+  (spf "nb good = %d,  nb passed = %d " good passed) ^
+  (spf "=========> %f"  (100.0 *. (passedf /. gf)) ^ "% passed")
    );
   pr (
-  (sprintf "nb good = %d,  nb bad = %d " good bad) ^
-  (sprintf "=========> %f"  (100.0 *. (gf /. (gf +. badf))) ^ "% good"
+  (spf "nb good = %d,  nb bad = %d " good bad) ^
+  (spf "=========> %f"  (100.0 *. (gf /. (gf +. badf))) ^ "% good"
    )
   )
 
@@ -132,14 +132,14 @@ let print_parsing_stat_list ?(verbose=false) = fun statxs ->
 (* asked/inspired by reviewer of CC'09 *)
 
 let lines_around_error_line ~context (file, line) = 
-  let arr = Common.cat_array file in
+  let arr = Common2.cat_array file in
   
   let startl = max 0 (line - context) in
   let endl   = min (Array.length arr) (line + context) in
   let res = ref [] in 
 
   for i = startl to endl -1 do 
-    Common.push2 arr.(i) res
+    Common.push arr.(i) res
   done;
   List.rev !res
 
@@ -151,13 +151,13 @@ let print_recurring_problematic_tokens xs =
     let file = x.filename in 
     x.problematic_lines +> List.iter (fun (xs, line_error) -> 
       xs +> List.iter (fun s -> 
-        Common.hupdate_default s
+        Common2.hupdate_default s
           (fun (old, example)  -> old + 1, example) 
           (fun() -> 0, (file, line_error)) h;
       )));
-  pr2_xxxxxxxxxxxxxxxxx();
+  Common2.pr2_xxxxxxxxxxxxxxxxx();
   pr2 ("maybe 10 most problematic tokens");
-  pr2_xxxxxxxxxxxxxxxxx();
+  Common2.pr2_xxxxxxxxxxxxxxxxx();
   Common.hash_to_list h
   +> List.sort (fun (k1,(v1,_)) (k2,(v2,_)) -> compare v2 v1) 
   +> Common.take_safe 10
@@ -168,7 +168,7 @@ let print_recurring_problematic_tokens xs =
     lines +> List.iter (fun s -> pr2 ("       " ^ s));
     
   );
-  pr2_xxxxxxxxxxxxxxxxx();
+  Common2.pr2_xxxxxxxxxxxxxxxxx();
   ()
 
   

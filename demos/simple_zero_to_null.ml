@@ -37,7 +37,7 @@ let null_transfo file =
           (match Ast_c.get_onlytype_expr e1 with 
           | Some (qu, (Pointer _,_ii)) -> 
 
-              let idzero = Common.tuple_of_list1 ii in
+              let idzero = Common2.tuple_of_list1 ii in
               idzero.cocci_tag := 
                 Some (Ast_cocci.MINUS (Ast_cocci.NoPos, [[null_addon]]), []);
 

@@ -187,9 +187,9 @@ let type_of_function (def,ii) =
 
   (* could use the info in the 'ii' ? *)
 
-  let fake = Ast_c.fakeInfo (Common.fake_parse_info) in
+  let fake = Ast_c.fakeInfo (Parse_info.fake_parse_info) in
   let fake_oparen = Ast_c.rewrap_str "(" fake in
-  let fake = Ast_c.fakeInfo (Common.fake_parse_info) in
+  let fake = Ast_c.fakeInfo (Parse_info.fake_parse_info) in
   let fake_cparen = Ast_c.rewrap_str ")" fake in
 
   Ast_c.nQ, (FunctionType ftyp, [fake_oparen;fake_cparen])
@@ -248,9 +248,9 @@ let (fake_function_type:
    fullType option -> argument wrap2 list -> fullType option) = 
  fun rettype args ->
 
-  let fake = Ast_c.fakeInfo (Common.fake_parse_info) in
+  let fake = Ast_c.fakeInfo (Parse_info.fake_parse_info) in
   let fake_oparen = Ast_c.rewrap_str "(" fake in
-  let fake = Ast_c.fakeInfo (Common.fake_parse_info) in
+  let fake = Ast_c.fakeInfo (Parse_info.fake_parse_info) in
   let fake_cparen = Ast_c.rewrap_str ")" fake in
 
   let (tyargs: parameterType wrap2 list) = 
@@ -274,7 +274,7 @@ let (fake_function_type:
   if List.length args <> List.length tyargs
   then None
   else
-    rettype +> Common.map_option (fun rettype -> 
+    rettype +> Common2.map_option (fun rettype -> 
       let (ftyp: functionType) = (rettype, (tyargs, (false,[]))) in
       let (t: fullType) = 
         (Ast_c.nQ, (FunctionType ftyp, [fake_oparen;fake_cparen]))  
@@ -356,7 +356,7 @@ let (type_field:
             | Simple (Some name, t) | BitField (Some name, t, _, _) -> 
                 let s = Ast_c.str_of_name name in
                 if s =$= fld 
-                then Common.push2 t res
+                then Common.push t res
                 else ()
                   
             | Simple (None, t) -> 

@@ -80,7 +80,7 @@ type cppcommentkind =
  * tokens.
  *) 
 
-type info = Common.parse_info 
+type info = Parse_info.t 
 
 (* I try to be consistent with the names in parser_c.mli *)
 type token = token_tag * info

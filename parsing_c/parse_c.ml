@@ -11,8 +11,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * file license.txt for more details.
  *)
-
 open Common
+open Common2
 
 module TH = Token_helpers 
 module LP = Lexer_parser
@@ -44,7 +44,7 @@ let token_to_strpos tok =
 let error_msg_tok tok = 
   let file = TH.file_of_tok tok in
   if !Flag_parsing_c.verbose_parsing
-  then Common.error_message file (token_to_strpos tok) 
+  then Parse_info.error_message file (token_to_strpos tok) 
   else ("error in " ^ file  ^ "; set verbose_parsing for more info")
 
 
@@ -157,7 +157,7 @@ let count_lines_commentized xs =
     List.iter
       (function
 	  Ast_c.OriginTok pinfo | Ast_c.ExpandedTok (_,(pinfo,_)) -> 
-	    let newline = pinfo.Common.line in
+	    let newline = pinfo.Parse_info.line in
 	    if newline <> !line
 	    then begin
               line := newline;
@@ -177,8 +177,8 @@ let print_commentized xs =
     List.iter
       (function
 	  Ast_c.OriginTok pinfo | Ast_c.ExpandedTok (_,(pinfo,_)) -> 
-	    let newline = pinfo.Common.line in
-	    let s = pinfo.Common.str in
+	    let newline = pinfo.Parse_info.line in
+	    let s = pinfo.Parse_info.str in
 	    let s = Str.global_substitute 
 		(Str.regexp "\n") (fun s -> "") s 
 	    in
@@ -186,10 +186,10 @@ let print_commentized xs =
 	    then prerr_string (s ^ " ")
 	    else begin
               if !line =|= -1 
-              then pr2_no_nl "passed:" 
-              else pr2_no_nl "\npassed:";
+              then Common2.pr2_no_nl "passed:" 
+              else Common2.pr2_no_nl "\npassed:";
               line := newline;
-              pr2_no_nl (s ^ " ");
+              Common2.pr2_no_nl (s ^ " ");
 	    end
 	| _ -> ());
     if not (null ys) then pr2 "";
@@ -204,7 +204,7 @@ let print_commentized xs =
 
 (* called by parse_print_error_heuristic *)
 let tokens2 file = 
- let table     = Common.full_charpos_to_pos_large file in
+ let table     = Parse_info.full_charpos_to_pos_large file in
 
  Common.with_open_infile file (fun chan -> 
   let lexbuf = Lexing.from_channel chan in
@@ -217,9 +217,9 @@ let tokens2 file =
           (* could assert pinfo.filename = file ? *)
 	  match Ast_c.pinfo_of_info ii with
 	    Ast_c.OriginTok pi ->
-              Ast_c.OriginTok (Common.complete_parse_info_large file table pi)
+              Ast_c.OriginTok (Parse_info.complete_parse_info_large file table pi)
 	  | Ast_c.ExpandedTok (pi,vpi) ->
-              Ast_c.ExpandedTok((Common.complete_parse_info_large file table pi),vpi)
+              Ast_c.ExpandedTok((Parse_info.complete_parse_info_large file table pi),vpi)
 	  | Ast_c.FakeTok (s,vpi) -> Ast_c.FakeTok (s,vpi)
 	  | Ast_c.AbstractLineTok pi -> failwith "should not occur"
       })
@@ -233,7 +233,7 @@ let tokens2 file =
   with
     | Lexer_c.Lexical s -> 
         failwith ("lexical error " ^ s ^ "\n =" ^ 
-                  (Common.error_message file (lexbuf_to_strpos lexbuf)))
+                  (Parse_info.error_message file (lexbuf_to_strpos lexbuf)))
     | e -> raise e
  )
 
@@ -282,7 +282,7 @@ let parse_print_error file =
   let chan = (open_in file) in
   let lexbuf = Lexing.from_channel chan in
 
-  let error_msg () = Common.error_message file (lexbuf_to_strpos lexbuf) in
+  let error_msg () = Parse_info.error_message file (lexbuf_to_strpos lexbuf) in
   try 
     lexbuf +> Parser_c.main Lexer_c.token
   with 
@@ -331,7 +331,7 @@ let parse_gen parsefunc s =
       if TH.is_eof !cur_tok
       then (pr2_err "LEXER: ALREADY AT END"; !cur_tok)
       else
-        let v = Common.pop2 all_tokens in
+        let v = Common2.pop2 all_tokens in
         cur_tok := v;
         !cur_tok
     ) 
@@ -418,7 +418,7 @@ let consistency_checking2 xs =
       | Ast_c.Ident (id) -> 
           let s = Ast_c.str_of_name id in
           stat +> 
-            Common.hfind_default s v1 +> Common.hfind_default CIdent v2 +> 
+            Common2.hfind_default s v1 +> Common2.hfind_default CIdent v2 +> 
             (fun aref -> incr aref)
 
       | _ -> k x
@@ -428,7 +428,7 @@ let consistency_checking2 xs =
       | Ast_c.TypeName (name,_typ) -> 
           let s = Ast_c.str_of_name name in
           stat +> 
-            Common.hfind_default s v1 +> Common.hfind_default CTypedef v2 +> 
+            Common2.hfind_default s v1 +> Common2.hfind_default CTypedef v2 +> 
             (fun aref -> incr aref)
 
       | _ -> k t
@@ -460,7 +460,7 @@ let consistency_checking2 xs =
       match sorted with
       | [CTypedef, i1;CIdent, i2] -> 
           pr2_err ("transforming some ident in typedef");
-          push2 k ident_to_type;
+          Common.push k ident_to_type;
       | _ -> 
           pr2_err ("TODO:other transforming?");
       
@@ -494,7 +494,7 @@ let consistency_checking2 xs =
       Visitor_c.kexpr_s = (fun (k, bigf) x -> 
         match x with
         | (Ast_c.SizeOfExpr e, tref), isizeof -> 
-            let i1 = tuple_of_list1 isizeof in
+            let i1 = Common2.tuple_of_list1 isizeof in
             (match e with
             | (Ast_c.ParenExpr e, _), iiparen -> 
                 (match e with
@@ -504,7 +504,7 @@ let consistency_checking2 xs =
                     if List.mem s !ident_to_type
                     then
                       let t = ident_to_typename ident in
-                      let (i2, i3) = tuple_of_list2 iiparen in
+                      let (i2, i3) = Common2.tuple_of_list2 iiparen in
                       (Ast_c.SizeOfType t, tref), [i1;i2;i3]
                     else  k x
                 | _ -> k x
@@ -532,7 +532,7 @@ let is_define_passed passed =
   let xs = passed +> List.rev +> List.filter TH.is_not_comment in
   if List.length xs >= 2 
   then 
-    (match Common.head_middle_tail xs with
+    (match Common2.head_middle_tail xs with
     | Parser_c.TDefine _, _, Parser_c.TDefEOL _ -> 
         true
     | _ -> false
@@ -573,7 +573,7 @@ let rec find_next_synchro next already_passed =
 
   let last_round = List.rev already_passed in
   if is_defined_passed_bis last_round 
-  then find_next_synchro_define (last_round ++ next) []
+  then find_next_synchro_define (last_round @ next) []
   else 
 
   let (before, after) = 
@@ -587,7 +587,7 @@ let rec find_next_synchro next already_passed =
       | _ -> true
     ) 
   in
-  find_next_synchro_orig (after ++ next)  (List.rev before)
+  find_next_synchro_orig (after @ next)  (List.rev before)
 
     
 
@@ -673,14 +673,14 @@ let candidate_macros_in_passed2 passed defs_optional =
   | Parser_c.TMacroIterator (s,_)
   | Parser_c.TypedefIdent (s,_)
     -> 
-      (match Common.hfind_option s defs_optional with
+      (match Common2.hfind_option s defs_optional with
       | Some def -> 
           if s ==~ Parsing_hacks.regexp_macro 
           then
             (* pr2 (spf "candidate: %s" s); *)
-            Common.push2 (s, def) res 
+            Common.push (s, def) res 
           else 
-            Common.push2 (s, def) res2
+            Common.push (s, def) res2
         | None -> ()
         )
 
@@ -700,7 +700,7 @@ let find_optional_macro_to_expand2 ~defs toks =
 
   let defs = Common.hash_of_list defs in
 
-  let toks = toks +> Common.map (function
+  let toks = toks +> List.map (function
 
     (* special cases to undo *)
     | Parser_c.TMacroIterator (s, ii) -> 
@@ -770,7 +770,7 @@ let find_optional_macro_to_expand ~defs a =
 let new_info posadd str ii =
   { Ast_c.pinfo = 
       Ast_c.OriginTok { (Ast_c.parse_info_of_info ii) with 
-        charpos = Ast_c.pos_of_info ii + posadd;
+        Parse_info.charpos = Ast_c.pos_of_info ii + posadd;
         str     = str;
         column = Ast_c.col_of_info ii + posadd;
       };
@@ -800,7 +800,7 @@ let rec comment_until_defeol xs =
 
 let drop_until_defeol xs = 
   List.tl 
-    (Common.drop_until (function Parser_c.TDefEOL _ -> true | _ -> false) xs)
+    (Common2.drop_until (function Parser_c.TDefEOL _ -> true | _ -> false) xs)
 
 
 
@@ -818,8 +818,14 @@ let tokens_include (info, includes, filename, inifdef) =
 (* Parsing default define macros, usually in a standard.h file *)
 (*****************************************************************************)
 
+let save_excursion reference f = 
+  let old = !reference in
+  let res = f() in
+  reference := old;
+  res
+
 let parse_cpp_define_file2 file = 
-  Common.save_excursion Flag_parsing_c.verbose_lexing (fun () -> 
+  save_excursion Flag_parsing_c.verbose_lexing (fun () -> 
     Flag_parsing_c.verbose_lexing := false;
     let toks = tokens ~profile:false file in
     let toks = Cpp_token_c.fix_tokens_define toks in
@@ -842,7 +848,7 @@ let (_defs_builtins : (string, Cpp_token_c.define_def) Hashtbl.t ref)  =
  * we also want to parse the standard.h file.
  *)
 let init_defs std_h =     
-  if not (Common.lfile_exists std_h)
+  if not (Common2.lfile_exists std_h)
   then pr2 ("warning: Can't find default macro file: " ^ std_h)
   else begin
     pr2 ("init_defs: " ^ std_h);
@@ -850,7 +856,7 @@ let init_defs std_h =
   end
 
 let init_defs_builtins file_h =     
-  if not (Common.lfile_exists file_h)
+  if not (Common2.lfile_exists file_h)
   then pr2 ("warning: Can't find macro file: " ^ file_h)
   else begin
     pr2 ("init_defs_builtins: " ^ file_h);
@@ -873,11 +879,11 @@ let program_of_program2 xs =
 
 let with_program2 f program2 = 
   program2 
-  +> Common.unzip 
+  +> Common2.unzip 
   +> (fun (program, infos) -> 
     f program, infos
   )
-  +> Common.uncurry Common.zip
+  +> Common2.uncurry Common2.zip
 
 
 
@@ -1130,7 +1136,7 @@ let get_one_elem ~pass tr (file, filelines) =
       tr.rest_clean <- (tr.rest +> List.filter TH.is_not_comment);
       
       
-      let info_of_bads = Common.map_eff_rev TH.info_of_tok tr.passed in 
+      let info_of_bads = Common2.map_eff_rev TH.info_of_tok tr.passed in 
       Right (info_of_bads,  line_error, 
             tr.passed, passed_before_error, 
             current, e)
@@ -1153,7 +1159,7 @@ let get_one_elem ~pass tr (file, filelines) =
 
 let parse_print_error_heuristic2 file = 
 
-  let filelines = Common.cat_array file in
+  let filelines = Common2.cat_array file in
   let stat = Parsing_stat.default_stat file in
 
   (* -------------------------------------------------- *)
@@ -1314,8 +1320,8 @@ let parse_print_error_heuristic2 file =
             
             let pbline = 
               toks_of_bads 
-              +> Common.filter (TH.is_same_line_or_close line_error)
-              +> Common.filter TH.is_ident_like 
+              +> Common2.filter (TH.is_same_line_or_close line_error)
+              +> Common2.filter TH.is_ident_like 
             in
             let error_info = 
               (pbline +> List.map TH.str_of_tok), line_error
@@ -1382,7 +1388,7 @@ let parse_cache file =
     (* could add some of the flags of flag_parsing_c.ml *)
     [] 
   in
-  Common.cache_computation_robust 
+  Common2.cache_computation_robust 
     file ".ast_raw" 
     (need_no_changed_files, need_no_changed_variables) ".depend_raw" 
     (fun () -> parse_print_error_heuristic file)

@@ -59,12 +59,12 @@ let tok     lexbuf  = Lexing.lexeme lexbuf
 let tokinfo lexbuf  = 
   { 
     pinfo = Ast_c.OriginTok {
-      Common.charpos = Lexing.lexeme_start lexbuf; 
-      Common.str     = Lexing.lexeme lexbuf;
+      Parse_info.charpos = Lexing.lexeme_start lexbuf; 
+      Parse_info.str     = Lexing.lexeme lexbuf;
       (* info filled in a post-lexing phase *)
-      Common.line = -1; 
-      Common.column = -1; 
-      Common.file = "";
+      Parse_info.line = -1; 
+      Parse_info.column = -1; 
+      Parse_info.file = "";
     };
    (* must generate a new ref each time, otherwise share *)
     cocci_tag = ref Ast_c.emptyAnnot;
@@ -577,7 +577,7 @@ rule token = parse
       { let info = tokinfo lexbuf in
         let s = tok lexbuf in
         Common.profile_code "C parsing.lex_ident" (fun () -> 
-          match Common.optionise (fun () -> Hashtbl.find keyword_table s)
+          match Common2.optionise (fun () -> Hashtbl.find keyword_table s)
           with
           | Some f -> f info
 
@@ -727,7 +727,7 @@ and char = parse
 (* todo? factorise code with char ? but not same ending token so hard. *)
 and string  = parse
   | '"'                                       { "" }
-  | (_ as x)                                  { string_of_char x^string lexbuf}
+  | (_ as x)                                  { Common2.string_of_char x^string lexbuf}
   | ("\\" (oct | oct oct | oct oct oct)) as x { x ^ string lexbuf }
   | ("\\x" (hex | hex hex)) as x              { x ^ string lexbuf }
   | ("\\" (_ as v)) as x  

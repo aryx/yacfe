@@ -33,7 +33,7 @@ let end_block () = unindent(); force_newline () in
 let print_string_box s = print_string s in
 
 let print_option = Common.do_option in
-let print_between = Common.print_between in
+let print_between = Common2.print_between in
 
 let outdent _ = () (* should go to leftmost col, does nothing now *) in
 
@@ -134,7 +134,7 @@ in
 (* --------------------------------------------------------------------- *)
 
 let handle_metavar name fn =
-  match (Common.optionise (fun () -> List.assoc (term name) env)) with
+  match (Common2.optionise (fun () -> List.assoc (term name) env)) with
   | None ->
       let name_string (_,s) = s in
       if generating

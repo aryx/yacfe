@@ -15,6 +15,7 @@
  * Modifications by Julia Lawall for better newline handling.
  *)
 open Common
+open Common2
 
 open Ast_c
 
@@ -121,8 +122,8 @@ let mk_token_extended x =
 let rebuild_tokens_extented toks_ext = 
   let _tokens = ref [] in
   toks_ext +> List.iter (fun tok -> 
-    tok.new_tokens_before +> List.iter (fun x -> push2 x _tokens);
-    if not tok.remove then push2 tok.tok2 _tokens;
+    tok.new_tokens_before +> List.iter (fun x -> Common.push x _tokens);
+    if not tok.remove then Common.push tok.tok2 _tokens;
   );
   let tokens = List.rev !_tokens in
   (tokens +> List.map mk_token_extended)
@@ -191,10 +192,10 @@ let get_fakeInfo_and_tokens celem toks =
   let pr_elem info = 
     match Ast_c.pinfo_of_info info with
     | FakeTok _ -> 
-        Common.push2 (Fake1 info) toks_out
+        Common.push (Fake1 info) toks_out
     | OriginTok _ | ExpandedTok _ -> 
         (* get the associated comments/space/cppcomment tokens *)
-        let (before, x, after) = !toks_in +> Common.split_when (fun tok -> 
+        let (before, x, after) = !toks_in +> Common2.split_when (fun tok -> 
 	  info =*= TH.info_of_tok tok)
         in
         assert(info =*= TH.info_of_tok x);
@@ -204,13 +205,13 @@ let get_fakeInfo_and_tokens celem toks =
           then pr2 ("WEIRD: not a comment:" ^ TH.str_of_tok x)
           (* case such as  int asm d3("x"); not yet in ast *)
         );
-        before +> List.iter (fun x -> Common.push2 (T1 x) toks_out);
-        push2 (T1 x) toks_out;
+        before +> List.iter (fun x -> Common.push (T1 x) toks_out);
+        Common.push (T1 x) toks_out;
         toks_in := after;
     | AbstractLineTok _ -> 
         (* can be called on type info when for instance use -type_c *)
         if !Flag_parsing_c.pretty_print_type_info
-        then Common.push2 (Fake1 info) toks_out
+        then Common.push (Fake1 info) toks_out
         else raise Impossible (* at this stage *) 
   in
 
@@ -237,7 +238,7 @@ let displace_fake_nodes toks =
     | _ -> false in
   let rec loop toks =
     let fake_info =
-      try Some (Common.split_when is_fake toks)
+      try Some (Common2.split_when is_fake toks)
       with Not_found -> None in
     match fake_info with
       Some(bef,((Fake1 info) as fake),aft) ->
@@ -274,7 +275,7 @@ let displace_fake_nodes toks =
 
 let comment2t2 = function
     (Token_c.TCommentCpp x,(info : Token_c.info)) ->
-      C2("\n"^info.Common.str^"\n")
+      C2("\n"^info.Parse_info.str^"\n")
   | x -> failwith (Printf.sprintf "unexpected comment %s" (Common.dump x))
 
 let expand_mcode toks = 
@@ -287,9 +288,9 @@ let expand_mcode toks =
     | Fake1 info -> 
         let str = Ast_c.str_of_info info in
         if str =$= ""
-        then push2 (Fake2) toks_out
+        then Common.push (Fake2) toks_out
         (* perhaps the fake ',' *)
-        else push2 (C2 str) toks_out
+        else Common.push (C2 str) toks_out
           
   
     | T1 tok -> 
@@ -316,7 +317,7 @@ let expand_mcode toks =
           else None
         in
 
-        push2 (T2 (tok', minus, optindex)) toks_out
+        Common.push (T2 (tok', minus, optindex)) toks_out
   in
 
   let expand_info t = 
@@ -324,26 +325,26 @@ let expand_mcode toks =
       Ast_c.mcode_and_env_of_cocciref ((info_of_token1 t).cocci_tag) in
 
     let pr_cocci s = 
-      push2 (Cocci2 s) toks_out 
+      Common.push (Cocci2 s) toks_out 
     in
     let pr_c info = 
       (match Ast_c.pinfo_of_info info with
 	Ast_c.AbstractLineTok _ ->
-	  push2 (C2 (Ast_c.str_of_info info)) toks_out
+	  Common.push (C2 (Ast_c.str_of_info info)) toks_out
       |	Ast_c.FakeTok (s,_) ->
-	  push2 (C2 s) toks_out
+	  Common.push (C2 s) toks_out
       |	_ ->
 	  Printf.printf "line: %s\n" (Common.dump info);
 	  failwith "not an abstract line");
       (!(info.Ast_c.comments_tag)).Ast_c.mafter +>
-      List.iter (fun x -> Common.push2 (comment2t2 x) toks_out) in
+      List.iter (fun x -> Common.push (comment2t2 x) toks_out) in
 
 
 
-    let pr_space _ = push2 (C2 " ") toks_out in
+    let pr_space _ = Common.push (C2 " ") toks_out in
 
-    let indent _   = push2 Indent_cocci2 toks_out in
-    let unindent _ = push2 Unindent_cocci2 toks_out in
+    let indent _   = Common.push Indent_cocci2 toks_out in
+    let unindent _ = Common.push Unindent_cocci2 toks_out in
 
     let args_pp = (env, pr_cocci, pr_c, pr_space, indent, unindent) in
 
@@ -412,7 +413,7 @@ let all_coccis = function
   | _ -> false
 
 (*previously gave up if the first character was a newline, but not clear why*)
-let is_minusable_comment_or_plus x = is_minusable_comment x or all_coccis x
+let is_minusable_comment_or_plus x = is_minusable_comment x || all_coccis x
 
 let set_minus_comment = function
   | T2 (t,false,idx) -> 
@@ -552,7 +553,7 @@ let adjust_before_semicolon toks =
     | x::xs -> x :: loop xs in
   List.rev (loop toks)
 
-let is_ident_like s = s ==~ Common.regexp_alpha
+let is_ident_like s = (s ==~ Common2.regexp_alpha)
 
 let rec add_space xs = 
   match xs with
@@ -579,7 +580,7 @@ let rec add_space xs =
 let new_tabbing2 space = 
   (list_of_string space)
     +> List.rev
-    +> Common.take_until (fun c -> c =<= '\n')
+    +> Common2.take_until (fun c -> c =<= '\n')
     +> List.rev
     +> List.map string_of_char
     +> String.concat ""
@@ -829,7 +830,7 @@ let pp_program2 xs outfile  =
 
           (* phase1: just get all the tokens, all the information *)
           assert(toks_e +> List.for_all (fun t -> 
-	    TH.is_origin t or TH.is_expanded t
+	    TH.is_origin t || TH.is_expanded t
           ));
           let toks = get_fakeInfo_and_tokens e toks_e in
 	  let toks = displace_fake_nodes toks in

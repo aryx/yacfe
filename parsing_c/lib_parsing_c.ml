@@ -133,7 +133,7 @@ let extract_info_visitor recursor x =
   let visitor = 
     {
       Visitor_c.default_visitor_c with
-        Visitor_c.kinfo = (fun (k, _) i -> Common.push2 i globals)
+        Visitor_c.kinfo = (fun (k, _) i -> Common.push i globals)
     } in
   begin
     recursor visitor x;
@@ -174,11 +174,11 @@ let max_min_ii_by_pos xs =
 
 let info_to_fixpos ii =
   match Ast_c.pinfo_of_info ii with
-    Ast_c.OriginTok pi -> Ast_cocci.Real pi.Common.charpos
+    Ast_c.OriginTok pi -> Ast_cocci.Real pi.Parse_info.charpos
   | Ast_c.ExpandedTok (_,(pi,offset)) ->
-      Ast_cocci.Virt (pi.Common.charpos,offset)
+      Ast_cocci.Virt (pi.Parse_info.charpos,offset)
   | Ast_c.FakeTok (_,(pi,offset)) ->
-      Ast_cocci.Virt (pi.Common.charpos,offset)
+      Ast_cocci.Virt (pi.Parse_info.charpos,offset)
   | Ast_c.AbstractLineTok pi -> failwith "unexpected abstract"
   
 let max_min_by_pos xs = 

@@ -11,8 +11,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * file license.txt for more details.
  *)
-
 open Common
+open Common2
 
 module TH = Token_helpers 
 module TV = Token_views_c
@@ -384,7 +384,7 @@ let rec commentize_skip_start_to_end xs =
       | {tok = TCommentSkipTagStart info} -> 
           (try 
             let (before, x2, after) = 
-              xs +> Common.split_when (function
+              xs +> Common2.split_when (function
               | {tok = TCommentSkipTagEnd _ } -> true
               | _ -> false 
               )
@@ -908,7 +908,7 @@ let rec find_macro_lineparen xs =
 
           msg_macro_toplevel_noptvirg s;
           (* just to avoid the end-of-stream pb of ocamlyacc  *)
-          let tcpar = Common.last info_parens in
+          let tcpar = Common2.list_last info_parens in
           tcpar.tok <- TCParEOL (TH.info_of_tok tcpar.tok);
           
           (*macro.tok <- TMacroTop (s, TH.info_of_tok macro.tok);*)
@@ -1199,7 +1199,7 @@ let insert_virtual_positions l =
 
 (* ------------------------------------------------------------------------- *)
 let fix_tokens_cpp2 ~macro_defs tokens = 
-  let tokens2 = ref (tokens +> Common.acc_map TV.mk_token_extended) in
+  let tokens2 = ref (tokens +> Common2.acc_map TV.mk_token_extended) in
   
   begin 
     (* the order is important, if you put the action heuristic first,
@@ -1272,7 +1272,7 @@ let fix_tokens_cpp2 ~macro_defs tokens =
     
 
 
-    insert_virtual_positions (!tokens2 +> Common.acc_map (fun x -> x.tok))
+    insert_virtual_positions (!tokens2 +> Common2.acc_map (fun x -> x.tok))
   end
 
 let time_hack1 ~macro_defs a = 
