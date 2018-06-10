@@ -21,22 +21,16 @@ OPTPROGS= $(PROGS:=.opt)
 #------------------------------------------------------------------------------
 SYSLIBS=str.cma bigarray.cma unix.cma
 LIBS= commons/commons.cma \
-      commons/commons_features.cma \
+	  commons_ocollection/commons_ocollection.cma\
       globals/globals.cma \
       pl_info/code_info.cma \
       parsing_c/parsing_c.cma \
 
-MAKESUBDIRS=commons \
-  globals \
-  pl_info \
-  parsing_c \
-  demos 
-
-INCLUDEDIRS=commons \
-  globals \
-  pl_info \
+INCLUDEDIRS=commons commons_ocollection \
+  globals pl_info \
   parsing_c \
 
+MAKESUBDIRS=$(INCLUDEDIRS) demos
 
 ##############################################################################
 # Generic variables
@@ -90,12 +84,8 @@ top: $(EXEC).top
 #note: old: was before all: rec $(EXEC) ... but can not do that cos make -j20
 #could try to compile $(EXEC) before rec. So here force sequentiality.
 rec:
-	$(MAKE) -C commons 
-	$(MAKE) features -C commons 
 	set -e; for i in $(MAKESUBDIRS); do $(MAKE) -C $$i all || exit 1; done 
 rec.opt:
-	$(MAKE) all.opt -C commons 
-	$(MAKE) features.opt -C commons 
 	set -e; for i in $(MAKESUBDIRS); do $(MAKE) -C $$i all.opt || exit 1; done 
 
 $(EXEC): $(LIBS) $(OBJS)

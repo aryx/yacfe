@@ -23,17 +23,12 @@ my $projectcmdline =
 
 my $prefix="/usr/local";
 
-my $bt=0;
-my $mpi=0;
-
 local $_ = join ' ', @ARGV;
 
 # Parse options
-/-h/ || /--help/ and die "usage: $0 [--prefix=path] [--with/out-gui] [--with/out-gdbm] [--with/out-mpi]\n";
+/-h/ || /--help/ and die "usage: $0 [--prefix=path]\n";
 /--prefix=([^ ]*)/ and $prefix = $1;
 
-/--with-backtrace/ and $bt = 1;
-/--without-backtrace/ and $bt = 0;
 
 my $src="$prefix/share/$project";
 
@@ -174,15 +169,7 @@ LIBDIR=$prefix/lib
 SHAREDIR=$src
 
 # Features
-FEATURE_BACKTRACE=$bt
-FEATURE_MPI=$mpi
 ";
-
-pr2 "Generating commons/features.ml";
-`cpp -DFEATURE_MPI=$mpi -DFEATURE_BACKTRACE=$bt commons/features.ml.cpp > commons/features.ml`;
-#pr2 "Generating features.ml (GDBM=$gdbm, GUI=$gui, MPI=$mpi)";
-#`make features.ml`;
-
 
 pr2 "Modifying globals/config.ml";
 my $command = "perl -p -i -e 's#Not_found.\*#Not_found->\\\"$src\\\"#' globals/config.ml";
