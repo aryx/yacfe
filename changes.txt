@@ -6,6 +6,7 @@
 - removed most applications, to have a "yacfe-light" without
 too much dependencies. Those applications are now anyway better
 in pfff.
+- added a -dump_c action to easily see the OCaml AST of a program
 
 ** Language:
 - removed parsing_cplusplus and parsing_java.
