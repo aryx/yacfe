@@ -1,0 +1,26 @@
+-*- org -*-
+
+* Requirements
+-----------------
+
+Install both the runtime and the development libraries for:
+
+ocaml
+make
+
+
+* Ubuntu
+------------
+
+ocaml
+
+* gentoo
+------------
+
+ocaml
+
+* godi
+------------
+
+ocaml
+

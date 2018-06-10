@@ -1,0 +1,599 @@
+# Makefile.in generated automatically by automake 1.4-p6 from Makefile.am
+
+# Copyright (C) 1994, 1995-8, 1999, 2001 Free Software Foundation, Inc.
+# This Makefile.in is free software; the Free Software Foundation
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY, to the extent permitted by law; without
+# even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
+
+################################################################################
+################################################################################
+
+
+SHELL = @SHELL@
+
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+VPATH = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+bindir = @bindir@
+sbindir = @sbindir@
+libexecdir = @libexecdir@
+datadir = @datadir@
+sysconfdir = @sysconfdir@
+sharedstatedir = @sharedstatedir@
+localstatedir = @localstatedir@
+libdir = @libdir@
+infodir = @infodir@
+mandir = @mandir@
+includedir = @includedir@
+oldincludedir = /usr/include
+
+DESTDIR =
+
+pkgdatadir = $(datadir)/@PACKAGE@
+pkglibdir = $(libdir)/@PACKAGE@
+pkgincludedir = $(includedir)/@PACKAGE@
+
+top_builddir = ../..
+
+ACLOCAL = @ACLOCAL@
+AUTOCONF = @AUTOCONF@
+AUTOMAKE = @AUTOMAKE@
+AUTOHEADER = @AUTOHEADER@
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@ $(AM_INSTALL_PROGRAM_FLAGS)
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+transform = @program_transform_name@
+
+NORMAL_INSTALL = :
+PRE_INSTALL = :
+POST_INSTALL = :
+NORMAL_UNINSTALL = :
+PRE_UNINSTALL = :
+POST_UNINSTALL = :
+host_alias = @host_alias@
+host_triplet = @host@
+BUILD_INCLUDED_LIBINTL = @BUILD_INCLUDED_LIBINTL@
+CATOBJEXT = @CATOBJEXT@
+CC = @CC@
+CONSOLE_CPP = @CONSOLE_CPP@
+CONSOLE_H = @CONSOLE_H@
+CONSOLE_H_INCLUDE = @CONSOLE_H_INCLUDE@
+CONSOLE_TEST_EXPECT = @CONSOLE_TEST_EXPECT@
+CONSOLE_TEST_FILES = @CONSOLE_TEST_FILES@
+CONSOLE_TEST_OUTPUTOK = @CONSOLE_TEST_OUTPUTOK@
+CPP = @CPP@
+CXX = @CXX@
+DATADIRNAME = @DATADIRNAME@
+DOXYGEN = @DOXYGEN@
+FICHIER_CPP = @FICHIER_CPP@
+FICHIER_H = @FICHIER_H@
+FICHIER_H_INCLUDE = @FICHIER_H_INCLUDE@
+FICHIER_TEST_EXPECT = @FICHIER_TEST_EXPECT@
+FICHIER_TEST_FILES = @FICHIER_TEST_FILES@
+FICHIER_TEST_OUTPUTOK = @FICHIER_TEST_OUTPUTOK@
+FIGURES_CPP = @FIGURES_CPP@
+FIGURES_H = @FIGURES_H@
+FIGURES_H_INCLUDE = @FIGURES_H_INCLUDE@
+FIGURES_TEST_EXPECT = @FIGURES_TEST_EXPECT@
+FIGURES_TEST_OUTPUTOK = @FIGURES_TEST_OUTPUTOK@
+GENCAT = @GENCAT@
+GLIBC21 = @GLIBC21@
+GMSGFMT = @GMSGFMT@
+GRANY_GTKMM_CFLAGS = @GRANY_GTKMM_CFLAGS@
+GRANY_GTKMM_LIBS = @GRANY_GTKMM_LIBS@
+HAVE_LIB = @HAVE_LIB@
+INSTOBJEXT = @INSTOBJEXT@
+INTERFACEFILES = @INTERFACEFILES@
+INTERFACE_CPP = @INTERFACE_CPP@
+INTERFACE_H = @INTERFACE_H@
+INTERFACE_H_INCLUDE = @INTERFACE_H_INCLUDE@
+INTLBISON = @INTLBISON@
+INTLLIBS = @INTLLIBS@
+INTLOBJS = @INTLOBJS@
+INTL_LIBTOOL_SUFFIX_PREFIX = @INTL_LIBTOOL_SUFFIX_PREFIX@
+LATEX = @LATEX@
+LIB = @LIB@
+LIBICONV = @LIBICONV@
+LIBINTL = @LIBINTL@
+LTLIB = @LTLIB@
+LTLIBICONV = @LTLIBICONV@
+LTLIBINTL = @LTLIBINTL@
+MAKEINFO = @MAKEINFO@
+MKINSTALLDIRS = @MKINSTALLDIRS@
+MOTEUR_CPP = @MOTEUR_CPP@
+MOTEUR_H = @MOTEUR_H@
+MOTEUR_H_INCLUDE = @MOTEUR_H_INCLUDE@
+MOTEUR_TEST_EXPECT = @MOTEUR_TEST_EXPECT@
+MOTEUR_TEST_OUTPUTOK = @MOTEUR_TEST_OUTPUTOK@
+PACKAGE = @PACKAGE@
+PKG_CONFIG = @PKG_CONFIG@
+POSUB = @POSUB@
+RANLIB = @RANLIB@
+RUNTESTT = @RUNTESTT@
+SCENE_CPP = @SCENE_CPP@
+SCENE_H = @SCENE_H@
+SCENE_H_INCLUDE = @SCENE_H_INCLUDE@
+SCENE_TEST_EXPECT = @SCENE_TEST_EXPECT@
+SCENE_TEST_OUTPUTOK = @SCENE_TEST_OUTPUTOK@
+USE_INCLUDED_LIBINTL = @USE_INCLUDED_LIBINTL@
+USE_NLS = @USE_NLS@
+VERSION = @VERSION@
+
+INCLUDES = -I../include -I../../moteur/include -I../../figures/include 	-I../../scene/include -I$(top_srcdir)/common
+
+LIBS = @INTLLIBS@ ../../moteur/src/libmoteur.a @LIBS@
+
+noinst_LIBRARIES = libfichier.a
+
+FICHIERSRC = RegleParser.cpp RegleScanner.cpp RegleCompiler.cpp 	FrontiereParser.cpp FrontiereScanner.cpp FrontiereCompiler.cpp 	SceneParser.cpp SceneScanner.cpp SceneCompiler.cpp 	SimulParser.cpp SimulScanner.cpp SimulCompiler.cpp EntreeSortie.cpp
+
+
+libfichier_a_SOURCES = $(FICHIERSRC)
+
+EXTRA_DIST = RegleParser.y RegleScanner.l 	     FrontiereScanner.l FrontiereParser.y 	     SceneScanner.l SceneParser.y 	     SimulScanner.l SimulParser.y 
+
+mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+CONFIG_HEADER = ../../config.h
+CONFIG_CLEAN_FILES = 
+LIBRARIES =  $(noinst_LIBRARIES)
+
+
+DEFS = @DEFS@ -I. -I$(srcdir) -I../..
+CPPFLAGS = @CPPFLAGS@
+LDFLAGS = @LDFLAGS@
+X_CFLAGS = @X_CFLAGS@
+X_LIBS = @X_LIBS@
+X_EXTRA_LIBS = @X_EXTRA_LIBS@
+X_PRE_LIBS = @X_PRE_LIBS@
+libfichier_a_LIBADD = 
+libfichier_a_OBJECTS =  RegleParser.o RegleScanner.o RegleCompiler.o \
+FrontiereParser.o FrontiereScanner.o FrontiereCompiler.o SceneParser.o \
+SceneScanner.o SceneCompiler.o SimulParser.o SimulScanner.o \
+SimulCompiler.o EntreeSortie.o
+AR = ar
+CXXFLAGS = @CXXFLAGS@
+CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+CXXLD = $(CXX)
+CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@
+DIST_COMMON =  Makefile.am Makefile.in
+
+
+DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
+
+TAR = gtar
+GZIP_ENV = --best
+SOURCES = $(libfichier_a_SOURCES)
+OBJECTS = $(libfichier_a_OBJECTS)
+
+all: all-redirect
+.SUFFIXES:
+.SUFFIXES: .S .c .cpp .o .s
+$(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
+	cd $(top_srcdir) && $(AUTOMAKE) --gnu --include-deps fichiers/src/Makefile
+
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
+	cd $(top_builddir) \
+	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+
+mostlyclean-noinstLIBRARIES:
+
+clean-noinstLIBRARIES:
+	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
+
+distclean-noinstLIBRARIES:
+
+maintainer-clean-noinstLIBRARIES:
+
+.c.o:
+	$(COMPILE) -c $<
+
+.s.o:
+	$(COMPILE) -c $<
+
+.S.o:
+	$(COMPILE) -c $<
+
+mostlyclean-compile:
+	-rm -f *.o core *.core
+
+clean-compile:
+
+distclean-compile:
+	-rm -f *.tab.c
+
+maintainer-clean-compile:
+
+libfichier.a: $(libfichier_a_OBJECTS) $(libfichier_a_DEPENDENCIES)
+	-rm -f libfichier.a
+	$(AR) cru libfichier.a $(libfichier_a_OBJECTS) $(libfichier_a_LIBADD)
+	$(RANLIB) libfichier.a
+.cpp.o:
+	$(CXXCOMPILE) -c $<
+
+tags: TAGS
+
+ID: $(HEADERS) $(SOURCES) $(LISP)
+	list='$(SOURCES) $(HEADERS)'; \
+	unique=`for i in $$list; do echo $$i; done | \
+	  awk '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	here=`pwd` && cd $(srcdir) \
+	  && mkid -f$$here/ID $$unique $(LISP)
+
+TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) $(LISP)
+	tags=; \
+	here=`pwd`; \
+	list='$(SOURCES) $(HEADERS)'; \
+	unique=`for i in $$list; do echo $$i; done | \
+	  awk '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
+	  || (cd $(srcdir) && etags $(ETAGS_ARGS) $$tags  $$unique $(LISP) -o $$here/TAGS)
+
+mostlyclean-tags:
+
+clean-tags:
+
+distclean-tags:
+	-rm -f TAGS ID
+
+maintainer-clean-tags:
+
+distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
+
+subdir = fichiers/src
+
+distdir: $(DISTFILES)
+	@for file in $(DISTFILES); do \
+	  d=$(srcdir); \
+	  if test -d $$d/$$file; then \
+	    cp -pr $$d/$$file $(distdir)/$$file; \
+	  else \
+	    test -f $(distdir)/$$file \
+	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
+	    || cp -p $$d/$$file $(distdir)/$$file || :; \
+	  fi; \
+	done
+EntreeSortie.o: EntreeSortie.cpp ../include/EntreeSortie.h \
+	../include/CommunFichiers.h ../../common/ioManager.h \
+	../../moteur/include/RegleExclusion.h \
+	../../moteur/include/CommunMoteur.h \
+	../../moteur/include/Direction.h \
+	../../scene/include/Frontiere.h \
+	../../scene/include/CommunScene.h \
+	../../figures/include/Figures.h ../../figures/include/Ligne.h \
+	../../figures/include/CommunFigures.h \
+	../../figures/include/Rectangle.h \
+	../../figures/include/FormeFermee.h \
+	../../figures/include/Forme.h \
+	../../figures/include/FormeOuverte.h \
+	../../figures/include/Polygone.h \
+	../../figures/include/Ellipse.h \
+	../../figures/include/ArcEllipse.h \
+	../../figures/include/Arete.h ../../moteur/include/Couleur.h \
+	../../moteur/include/Phase.h ../../moteur/include/Ponderation.h \
+	../../scene/include/Scene.h ../../scene/include/Zonage.h \
+	../../scene/include/ContenuZonage.h \
+	../../scene/include/Coloration.h \
+	../../scene/include/ContientPhase.h \
+	../../scene/include/PhasePourcent.h ../include/RegleCompiler.h \
+	../include/RegleScanner.h ../include/RegleParser.h \
+	../include/FrontiereCompiler.h ../include/FrontiereScanner.h \
+	../include/FrontiereParser.h ../include/SceneCompiler.h \
+	../include/SceneScanner.h ../include/SceneParser.h \
+	../../scene/include/ContientHorsScene.h \
+	../../moteur/include/CelluleHorsScene.h \
+	../../moteur/include/CelluleSansParticule.h \
+	../../moteur/include/Cellule.h ../../moteur/include/Automate.h \
+	../../moteur/include/Requete.h ../include/SimulCompiler.h \
+	../include/SimulScanner.h ../include/SimulParser.h \
+	../../moteur/include/Particule.h \
+	../../moteur/include/CelluleAvecParticule.h \
+	../../moteur/include/CelluleGeneratrice.h \
+	../../moteur/include/CelluleParoi.h
+FrontiereCompiler.o: FrontiereCompiler.cpp \
+	../include/FrontiereCompiler.h ../include/FrontiereScanner.h \
+	../include/FrontiereParser.h ../include/CommunFichiers.h \
+	../../common/ioManager.h ../../figures/include/Figures.h \
+	../../figures/include/Ligne.h \
+	../../figures/include/CommunFigures.h \
+	../../figures/include/Rectangle.h \
+	../../figures/include/FormeFermee.h \
+	../../figures/include/Forme.h \
+	../../figures/include/FormeOuverte.h \
+	../../figures/include/Polygone.h \
+	../../figures/include/Ellipse.h \
+	../../figures/include/ArcEllipse.h \
+	../../figures/include/Arete.h ../../scene/include/Frontiere.h \
+	../../scene/include/CommunScene.h \
+	../../moteur/include/RegleExclusion.h \
+	../../moteur/include/CommunMoteur.h \
+	../../moteur/include/Direction.h ../../moteur/include/Couleur.h \
+	../../moteur/include/Phase.h ../../moteur/include/Ponderation.h
+FrontiereParser.o: FrontiereParser.cpp ../include/CommunFichiers.h \
+	../../common/ioManager.h ../../figures/include/Figures.h \
+	../../figures/include/Ligne.h \
+	../../figures/include/CommunFigures.h \
+	../../figures/include/Rectangle.h \
+	../../figures/include/FormeFermee.h \
+	../../figures/include/Forme.h \
+	../../figures/include/FormeOuverte.h \
+	../../figures/include/Polygone.h \
+	../../figures/include/Ellipse.h \
+	../../figures/include/ArcEllipse.h \
+	../../figures/include/Arete.h ../../scene/include/Frontiere.h \
+	../../scene/include/CommunScene.h \
+	../../moteur/include/RegleExclusion.h \
+	../../moteur/include/CommunMoteur.h \
+	../../moteur/include/Direction.h ../../moteur/include/Couleur.h \
+	../../moteur/include/Phase.h ../../moteur/include/Ponderation.h
+FrontiereScanner.o: FrontiereScanner.cpp ../include/FrontiereScanner.h \
+	../include/FrontiereParser.h ../include/CommunFichiers.h \
+	../../common/ioManager.h ../../figures/include/Figures.h \
+	../../figures/include/Ligne.h \
+	../../figures/include/CommunFigures.h \
+	../../figures/include/Rectangle.h \
+	../../figures/include/FormeFermee.h \
+	../../figures/include/Forme.h \
+	../../figures/include/FormeOuverte.h \
+	../../figures/include/Polygone.h \
+	../../figures/include/Ellipse.h \
+	../../figures/include/ArcEllipse.h \
+	../../figures/include/Arete.h ../../scene/include/Frontiere.h \
+	../../scene/include/CommunScene.h \
+	../../moteur/include/RegleExclusion.h \
+	../../moteur/include/CommunMoteur.h \
+	../../moteur/include/Direction.h ../../moteur/include/Couleur.h \
+	../../moteur/include/Phase.h ../../moteur/include/Ponderation.h
+RegleCompiler.o: RegleCompiler.cpp ../include/RegleCompiler.h \
+	../include/RegleScanner.h ../include/RegleParser.h \
+	../include/CommunFichiers.h ../../common/ioManager.h \
+	../../moteur/include/RegleExclusion.h \
+	../../moteur/include/CommunMoteur.h \
+	../../moteur/include/Direction.h
+RegleParser.o: RegleParser.cpp ../include/CommunFichiers.h \
+	../../common/ioManager.h ../../moteur/include/RegleExclusion.h \
+	../../moteur/include/CommunMoteur.h \
+	../../moteur/include/Direction.h
+RegleScanner.o: RegleScanner.cpp ../include/RegleScanner.h \
+	../include/RegleParser.h ../include/CommunFichiers.h \
+	../../common/ioManager.h ../../moteur/include/RegleExclusion.h \
+	../../moteur/include/CommunMoteur.h \
+	../../moteur/include/Direction.h
+SceneCompiler.o: SceneCompiler.cpp ../include/SceneCompiler.h \
+	../include/SceneScanner.h ../include/SceneParser.h \
+	../include/CommunFichiers.h ../../common/ioManager.h \
+	../../figures/include/Figures.h ../../figures/include/Ligne.h \
+	../../figures/include/CommunFigures.h \
+	../../figures/include/Rectangle.h \
+	../../figures/include/FormeFermee.h \
+	../../figures/include/Forme.h \
+	../../figures/include/FormeOuverte.h \
+	../../figures/include/Polygone.h \
+	../../figures/include/Ellipse.h \
+	../../figures/include/ArcEllipse.h \
+	../../figures/include/Arete.h ../../moteur/include/Couleur.h \
+	../../moteur/include/CommunMoteur.h \
+	../../scene/include/Frontiere.h \
+	../../scene/include/CommunScene.h \
+	../../moteur/include/RegleExclusion.h \
+	../../moteur/include/Direction.h ../../moteur/include/Phase.h \
+	../../moteur/include/Ponderation.h ../../scene/include/Zonage.h \
+	../../scene/include/ContenuZonage.h \
+	../../scene/include/ContientPhase.h \
+	../../scene/include/PhasePourcent.h \
+	../../scene/include/ContientHorsScene.h \
+	../../moteur/include/CelluleHorsScene.h \
+	../../moteur/include/CelluleSansParticule.h \
+	../../moteur/include/Cellule.h ../../moteur/include/Automate.h \
+	../../moteur/include/Requete.h ../../scene/include/Coloration.h \
+	../../scene/include/Scene.h
+SceneParser.o: SceneParser.cpp ../include/CommunFichiers.h \
+	../../common/ioManager.h ../../figures/include/Figures.h \
+	../../figures/include/Ligne.h \
+	../../figures/include/CommunFigures.h \
+	../../figures/include/Rectangle.h \
+	../../figures/include/FormeFermee.h \
+	../../figures/include/Forme.h \
+	../../figures/include/FormeOuverte.h \
+	../../figures/include/Polygone.h \
+	../../figures/include/Ellipse.h \
+	../../figures/include/ArcEllipse.h \
+	../../figures/include/Arete.h ../../moteur/include/Couleur.h \
+	../../moteur/include/CommunMoteur.h \
+	../../scene/include/Frontiere.h \
+	../../scene/include/CommunScene.h \
+	../../moteur/include/RegleExclusion.h \
+	../../moteur/include/Direction.h ../../moteur/include/Phase.h \
+	../../moteur/include/Ponderation.h ../../scene/include/Zonage.h \
+	../../scene/include/ContenuZonage.h \
+	../../scene/include/ContientPhase.h \
+	../../scene/include/PhasePourcent.h \
+	../../scene/include/ContientHorsScene.h \
+	../../moteur/include/CelluleHorsScene.h \
+	../../moteur/include/CelluleSansParticule.h \
+	../../moteur/include/Cellule.h ../../moteur/include/Automate.h \
+	../../moteur/include/Requete.h ../../scene/include/Coloration.h \
+	../../scene/include/Scene.h
+SceneScanner.o: SceneScanner.cpp ../include/SceneScanner.h \
+	../include/SceneParser.h ../include/CommunFichiers.h \
+	../../common/ioManager.h ../../figures/include/Figures.h \
+	../../figures/include/Ligne.h \
+	../../figures/include/CommunFigures.h \
+	../../figures/include/Rectangle.h \
+	../../figures/include/FormeFermee.h \
+	../../figures/include/Forme.h \
+	../../figures/include/FormeOuverte.h \
+	../../figures/include/Polygone.h \
+	../../figures/include/Ellipse.h \
+	../../figures/include/ArcEllipse.h \
+	../../figures/include/Arete.h ../../moteur/include/Couleur.h \
+	../../moteur/include/CommunMoteur.h \
+	../../scene/include/Frontiere.h \
+	../../scene/include/CommunScene.h \
+	../../moteur/include/RegleExclusion.h \
+	../../moteur/include/Direction.h ../../moteur/include/Phase.h \
+	../../moteur/include/Ponderation.h ../../scene/include/Zonage.h \
+	../../scene/include/ContenuZonage.h \
+	../../scene/include/ContientPhase.h \
+	../../scene/include/PhasePourcent.h \
+	../../scene/include/ContientHorsScene.h \
+	../../moteur/include/CelluleHorsScene.h \
+	../../moteur/include/CelluleSansParticule.h \
+	../../moteur/include/Cellule.h ../../moteur/include/Automate.h \
+	../../moteur/include/Requete.h ../../scene/include/Coloration.h \
+	../../scene/include/Scene.h
+SimulCompiler.o: SimulCompiler.cpp ../include/SimulCompiler.h \
+	../include/SimulScanner.h ../include/SimulParser.h \
+	../include/CommunFichiers.h ../../common/ioManager.h \
+	../../moteur/include/RegleExclusion.h \
+	../../moteur/include/CommunMoteur.h \
+	../../moteur/include/Direction.h \
+	../../moteur/include/Automate.h ../../moteur/include/Phase.h \
+	../../moteur/include/Ponderation.h \
+	../../moteur/include/Cellule.h ../../moteur/include/Requete.h \
+	../../moteur/include/Couleur.h ../../moteur/include/Particule.h \
+	../../moteur/include/CelluleAvecParticule.h \
+	../../moteur/include/CelluleGeneratrice.h \
+	../../moteur/include/CelluleHorsScene.h \
+	../../moteur/include/CelluleSansParticule.h \
+	../../moteur/include/CelluleParoi.h
+SimulParser.o: SimulParser.cpp ../include/CommunFichiers.h \
+	../../common/ioManager.h ../../moteur/include/RegleExclusion.h \
+	../../moteur/include/CommunMoteur.h \
+	../../moteur/include/Direction.h \
+	../../moteur/include/Automate.h ../../moteur/include/Phase.h \
+	../../moteur/include/Ponderation.h \
+	../../moteur/include/Cellule.h ../../moteur/include/Requete.h \
+	../../moteur/include/Couleur.h ../../moteur/include/Particule.h \
+	../../moteur/include/CelluleAvecParticule.h \
+	../../moteur/include/CelluleGeneratrice.h \
+	../../moteur/include/CelluleHorsScene.h \
+	../../moteur/include/CelluleSansParticule.h \
+	../../moteur/include/CelluleParoi.h
+SimulScanner.o: SimulScanner.cpp ../include/SimulScanner.h \
+	../include/SimulParser.h ../include/CommunFichiers.h \
+	../../common/ioManager.h ../../moteur/include/RegleExclusion.h \
+	../../moteur/include/CommunMoteur.h \
+	../../moteur/include/Direction.h \
+	../../moteur/include/Automate.h ../../moteur/include/Phase.h \
+	../../moteur/include/Ponderation.h \
+	../../moteur/include/Cellule.h ../../moteur/include/Requete.h \
+	../../moteur/include/Couleur.h ../../moteur/include/Particule.h \
+	../../moteur/include/CelluleAvecParticule.h \
+	../../moteur/include/CelluleGeneratrice.h \
+	../../moteur/include/CelluleHorsScene.h \
+	../../moteur/include/CelluleSansParticule.h \
+	../../moteur/include/CelluleParoi.h
+
+info-am:
+info: info-am
+dvi-am:
+dvi: dvi-am
+check-am: all-am
+check: check-am
+installcheck-am:
+installcheck: installcheck-am
+install-exec-am:
+install-exec: install-exec-am
+
+install-data-am:
+install-data: install-data-am
+
+install-am: all-am
+	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
+install: install-am
+uninstall-am:
+uninstall: uninstall-am
+all-am: Makefile $(LIBRARIES)
+all-redirect: all-am
+install-strip:
+	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
+installdirs:
+
+
+mostlyclean-generic:
+
+clean-generic:
+
+distclean-generic:
+	-rm -f Makefile $(CONFIG_CLEAN_FILES)
+	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+
+maintainer-clean-generic:
+mostlyclean-am:  mostlyclean-noinstLIBRARIES mostlyclean-compile \
+		mostlyclean-tags mostlyclean-generic
+
+mostlyclean: mostlyclean-am
+
+clean-am:  clean-noinstLIBRARIES clean-compile clean-tags clean-generic \
+		mostlyclean-am
+
+clean: clean-am
+
+distclean-am:  distclean-noinstLIBRARIES distclean-compile \
+		distclean-tags distclean-generic clean-am
+
+distclean: distclean-am
+
+maintainer-clean-am:  maintainer-clean-noinstLIBRARIES \
+		maintainer-clean-compile maintainer-clean-tags \
+		maintainer-clean-generic distclean-am
+	@echo "This command is intended for maintainers to use;"
+	@echo "it deletes files that may require special tools to rebuild."
+
+maintainer-clean: maintainer-clean-am
+
+.PHONY: mostlyclean-noinstLIBRARIES distclean-noinstLIBRARIES \
+clean-noinstLIBRARIES maintainer-clean-noinstLIBRARIES \
+mostlyclean-compile distclean-compile clean-compile \
+maintainer-clean-compile tags mostlyclean-tags distclean-tags \
+clean-tags maintainer-clean-tags distdir info-am info dvi-am dvi check \
+check-am installcheck-am installcheck install-exec-am install-exec \
+install-data-am install-data install-am install uninstall-am uninstall \
+all-redirect all-am all installdirs mostlyclean-generic \
+distclean-generic clean-generic maintainer-clean-generic clean \
+mostlyclean distclean maintainer-clean
+
+
+# arrive pas a faire des .y.cpp pour factoriser
+RegleParser.cpp: RegleParser.y
+	$(BISON) -d  -o $*.cpp -h../include/$*.h  $*.y
+RegleScanner.cpp: RegleScanner.l
+	$(FLEX)  -8  -h../include/$*.h -o$*.cpp $*.l
+
+FrontiereParser.cpp: FrontiereParser.y
+	$(BISON) -d  -o $*.cpp -h../include/$*.h  $*.y
+FrontiereScanner.cpp: FrontiereScanner.l
+	$(FLEX)  -8  -h../include/$*.h -o$*.cpp $*.l
+
+SceneParser.cpp: SceneParser.y
+	$(BISON) -d  -o $*.cpp -h../include/$*.h  $*.y
+SceneScanner.cpp: SceneScanner.l
+	$(FLEX)  -8  -h../include/$*.h -o$*.cpp $*.l
+
+SimulParser.cpp: SimulParser.y
+	$(BISON) -d  -o $*.cpp -h../include/$*.h  $*.y
+SimulScanner.cpp: SimulScanner.l
+	$(FLEX)  -8  -h../include/$*.h -o$*.cpp $*.l
+
+clean-bison:
+	rm -f RegleScanner.cpp ../include/RegleScanner.h RegleParser.cpp ../include/RegleParser.h
+	rm -f FrontiereScanner.cpp ../include/FrontiereScanner.h FrontiereParser.cpp ../include/FrontiereParser.h
+	rm -f SceneScanner.cpp ../include/SceneScanner.h SceneParser.cpp ../include/SceneParser.h
+	rm -f SimulScanner.cpp ../include/SimulScanner.h SimulParser.cpp ../include/SimulParser.h
+
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:

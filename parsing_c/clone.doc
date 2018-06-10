@@ -1,0 +1,22 @@
+-*- org -*-
+
+master: yacfe
+
+coccinelle
+comment
+
+
+** update: now use darcs too
+
+** old
+
+*** use mercurial queue instead
+
+*** use transplant
+
+for coccinelle, they diverge so need cherry-pick via transplant
+interactive mode. 
+
+hg transplant -s ~/coccinelle/parsing_c/
+hg transplant -s ~/mobile/project-yacfe/parsing_c/
+

@@ -1,0 +1,7 @@
+@@
+expression X; 
+expression Y;
+@@
+
+* assert(X++ > Y);
+

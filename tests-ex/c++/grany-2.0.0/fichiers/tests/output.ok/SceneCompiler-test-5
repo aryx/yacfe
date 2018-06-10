@@ -1,0 +1,272 @@
+********************************************** 
+** Affichage des attributs de l'objet scene ** 
+********************************************** 
+Frontieres
+Frontiere
+Forme:
+Ligne(0,0,8,0)
+type:
+CLASSIQUE
+
+Frontiere
+Forme:
+Rectangle(3,2,5,5)
+type:
+CLASSIQUE
+
+Frontiere
+Forme:
+Ellipse(2,9,1,1)
+type:
+CLASSIQUE
+
+Frontiere
+Forme:
+Ellipse(6,9,1,1)
+type:
+CLASSIQUE
+
+Frontiere
+Forme:
+Polygone(
+Ligne(0,0,11,0)
+Ligne(11,0,11,12)
+Ligne(11,12,6,12)
+Ligne(6,12,0,0)
+)
+type:
+CLASSIQUE
+
+
+Regles
+
+ColorMap
+Couleur Numero: 0  R= 65535  G= 65535  B= 65535
+
+Couleur Numero: 1  R= 65535  G= 0  B= 0
+
+Couleur Numero: 2  R= 0  G= 65535  B= 0
+
+Couleur Numero: 3  R= 0  G= 0  B= 65535
+
+Couleur Numero: 4  R= 0  G= 65535  B= 65535
+
+
+Phases
+----------- Phase --------------
+Nom : sable
+Phi : 0.2
+Propagatif : 1
+Inertie : 0
+Couleur (ajout) : 1
+Ponderations : 
+----------- Ponderation --------------
+Valeur de la ponderation : NORD = 2
+Valeur de la ponderation : NE = 1
+Valeur de la ponderation : SE = 0
+Valeur de la ponderation : SUD = 0
+Valeur de la ponderation : SW = 0
+Valeur de la ponderation : NW = 1
+
+Regle d'exclusion utilisee en PREexclusion :
+WARNING: pointeur null a la place d'un pointeur vers une regle d'exclusion 
+Regle d'exclusion utilisee en PREexclusion :
+WARNING: pointeur null a la place d'un pointeur vers une regle d'exclusion 
+Regle d'exclusion utilisee en POSTexclusion :
+WARNING: pointeur null a la place d'un pointeur vers une regle d'exclusion 
+
+----------- Phase --------------
+Nom : vide
+Phi : 0.7
+Propagatif : 1
+Inertie : 0
+Couleur (ajout) : 3
+Ponderations : 
+----------- Ponderation --------------
+Valeur de la ponderation : NORD = 0
+Valeur de la ponderation : NE = 0
+Valeur de la ponderation : SE = 1
+Valeur de la ponderation : SUD = 3
+Valeur de la ponderation : SW = 1
+Valeur de la ponderation : NW = 0
+
+
+----------- Phase --------------
+Nom : eau
+Phi : 0.6
+Propagatif : 0
+Inertie : 0
+Couleur (ajout) : 2
+Ponderations : 
+----------- Ponderation --------------
+Valeur de la ponderation : NORD = 1
+Valeur de la ponderation : NE = 1
+Valeur de la ponderation : SE = 0
+Valeur de la ponderation : SUD = 0
+Valeur de la ponderation : SW = 0
+Valeur de la ponderation : NW = 1
+
+Regle d'exclusion utilisee en PREexclusion :
+WARNING: pointeur null a la place d'un pointeur vers une regle d'exclusion 
+Regle d'exclusion utilisee en POSTexclusion :
+WARNING: pointeur null a la place d'un pointeur vers une regle d'exclusion 
+
+
+Zonages
+Zonage
+
+ Forme : Rectangle(3,2,5,5)
+ Contenu de la forme :
+Contient de type Hors scene 
+
+Zonage
+
+ Forme : Ellipse(2,9,1,1)
+ Contenu de la forme :
+Contient de type Hors scene 
+
+Zonage
+
+ Forme : Ellipse(6,9,1,1)
+ Contenu de la forme :
+Contient de type Hors scene 
+
+Zonage
+
+ Forme : Rectangle(0,0,8,2)
+ Contenu de la forme :
+contient Phase: ----------- Phase --------------
+Nom : sable
+Phi : 0.2
+Propagatif : 1
+Inertie : 0
+Couleur (ajout) : 1
+Ponderations : 
+----------- Ponderation --------------
+Valeur de la ponderation : NORD = 2
+Valeur de la ponderation : NE = 1
+Valeur de la ponderation : SE = 0
+Valeur de la ponderation : SUD = 0
+Valeur de la ponderation : SW = 0
+Valeur de la ponderation : NW = 1
+
+Regle d'exclusion utilisee en PREexclusion :
+WARNING: pointeur null a la place d'un pointeur vers une regle d'exclusion 
+Regle d'exclusion utilisee en PREexclusion :
+WARNING: pointeur null a la place d'un pointeur vers une regle d'exclusion 
+Regle d'exclusion utilisee en POSTexclusion :
+WARNING: pointeur null a la place d'un pointeur vers une regle d'exclusion 
+Pourcentage :50
+----------- Phase --------------
+Nom : eau
+Phi : 0.6
+Propagatif : 0
+Inertie : 0
+Couleur (ajout) : 2
+Ponderations : 
+----------- Ponderation --------------
+Valeur de la ponderation : NORD = 1
+Valeur de la ponderation : NE = 1
+Valeur de la ponderation : SE = 0
+Valeur de la ponderation : SUD = 0
+Valeur de la ponderation : SW = 0
+Valeur de la ponderation : NW = 1
+
+Regle d'exclusion utilisee en PREexclusion :
+WARNING: pointeur null a la place d'un pointeur vers une regle d'exclusion 
+Regle d'exclusion utilisee en POSTexclusion :
+WARNING: pointeur null a la place d'un pointeur vers une regle d'exclusion 
+Pourcentage :50
+
+
+Zonage
+
+ Forme : Rectangle(0,2,8,5)
+ Contenu de la forme :
+contient Phase: ----------- Phase --------------
+Nom : sable
+Phi : 0.2
+Propagatif : 1
+Inertie : 0
+Couleur (ajout) : 1
+Ponderations : 
+----------- Ponderation --------------
+Valeur de la ponderation : NORD = 2
+Valeur de la ponderation : NE = 1
+Valeur de la ponderation : SE = 0
+Valeur de la ponderation : SUD = 0
+Valeur de la ponderation : SW = 0
+Valeur de la ponderation : NW = 1
+
+Regle d'exclusion utilisee en PREexclusion :
+WARNING: pointeur null a la place d'un pointeur vers une regle d'exclusion 
+Regle d'exclusion utilisee en PREexclusion :
+WARNING: pointeur null a la place d'un pointeur vers une regle d'exclusion 
+Regle d'exclusion utilisee en POSTexclusion :
+WARNING: pointeur null a la place d'un pointeur vers une regle d'exclusion 
+Pourcentage :100
+
+
+Zonage
+
+ Forme : Ellipse(6,9,3,3)
+ Contenu de la forme :
+contient Phase: ----------- Phase --------------
+Nom : sable
+Phi : 0.2
+Propagatif : 1
+Inertie : 0
+Couleur (ajout) : 1
+Ponderations : 
+----------- Ponderation --------------
+Valeur de la ponderation : NORD = 2
+Valeur de la ponderation : NE = 1
+Valeur de la ponderation : SE = 0
+Valeur de la ponderation : SUD = 0
+Valeur de la ponderation : SW = 0
+Valeur de la ponderation : NW = 1
+
+Regle d'exclusion utilisee en PREexclusion :
+WARNING: pointeur null a la place d'un pointeur vers une regle d'exclusion 
+Regle d'exclusion utilisee en PREexclusion :
+WARNING: pointeur null a la place d'un pointeur vers une regle d'exclusion 
+Regle d'exclusion utilisee en POSTexclusion :
+WARNING: pointeur null a la place d'un pointeur vers une regle d'exclusion 
+Pourcentage :100
+
+
+Zonage
+
+ Forme : Polygone(
+Ligne(6,9,7,9)
+Ligne(7,9,8,10)
+Ligne(8,10,6,9)
+)
+ Contenu de la forme :
+contient Phase: ----------- Phase --------------
+Nom : eau
+Phi : 0.6
+Propagatif : 0
+Inertie : 0
+Couleur (ajout) : 2
+Ponderations : 
+----------- Ponderation --------------
+Valeur de la ponderation : NORD = 1
+Valeur de la ponderation : NE = 1
+Valeur de la ponderation : SE = 0
+Valeur de la ponderation : SUD = 0
+Valeur de la ponderation : SW = 0
+Valeur de la ponderation : NW = 1
+
+Regle d'exclusion utilisee en PREexclusion :
+WARNING: pointeur null a la place d'un pointeur vers une regle d'exclusion 
+Regle d'exclusion utilisee en POSTexclusion :
+WARNING: pointeur null a la place d'un pointeur vers une regle d'exclusion 
+Pourcentage :100
+
+
+
+Colorations
+
+Phase Generatrice
+Pas de Phase Generatrice

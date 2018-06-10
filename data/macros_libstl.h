@@ -1,0 +1,28 @@
+// time
+//  start 11h27: 
+//        11h44: 52% :((
+
+//BAD:!!!!! _GLIBCXX_BEGIN_NAMESPACE_TR1
+#define _GLIBCXX_BEGIN_NAMESPACE_TR1
+//BAD:!!!!! _GLIBCXX_END_NAMESPACE_TR1
+#define _GLIBCXX_END_NAMESPACE_TR1
+//
+//
+//bad: _GLIBCXX_BEGIN_NAMESPACE(std)
+#define _GLIBCXX_BEGIN_NAMESPACE(a) 
+//bad: _GLIBCXX_END_NAMESPACE
+#define _GLIBCXX_END_NAMESPACE
+//
+//
+//bad: PB_DS_CLASS_T_DEC
+#define PB_DS_CLASS_T_DEC
+//
+//BAD:!!!!! _GLIBCXX_WEAK_DEFINITION void*
+#define _GLIBCXX_WEAK_DEFINITION
+
+
+
+/*
+
+
+*/

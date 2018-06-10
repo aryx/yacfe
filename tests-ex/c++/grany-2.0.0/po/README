@@ -1,0 +1,53 @@
+Grany i18n
+----------
+
+We use GNU gettext. Please read ../README.internationalization for infos on the
+user's point of view.
+
+Now, if you want to add support for another language, keep reading on.
+
+
+1. Once you've successfully made up Grany, a file grany.pot will handle all the
+  english strings.
+
+
+2. Let's suppose you want to write the italian translation, then copy grany.pot
+  to it.po
+
+
+3. Spend some time to make the translations!
+  It's very easy. For each `msgid "<string-to-translate>"' you have to fill the next
+   `msgstr ""' with the translation.
+  For example:
+
+	msgid " Close "
+	msgstr ""
+
+  Will become:
+
+	msgid " Close "
+	msgstr " Chiudi "
+
+  (as long as I copied from gtk+ italian potfile correctly!)
+
+
+4. Got to .. directory, hack `configure.in' adding `it' in ALL_LINGUAS.
+
+
+5. Run `autoconf', `./configure', `make' and `make install'.
+
+
+
+x. If you hacked Grany and added some strings, you will want to keep the valuable
+  translations already done.
+  Easy.
+  Run `make' from the top grany directory to get the new grany.pot
+  Just use `tupdate' to merge like this:
+	tupdate grany.pot it.po > it.po.new
+
+y. There are some bugs in `make dist' which makes it fail when there is an accentued
+  french letter at the end of the string just before the ". Maybe it will fail also
+  for other languages special characters, be careful.
+
+
+<gcottenc at altern dot org>

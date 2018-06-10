@@ -1,0 +1,5 @@
+process_start SimulCompiler
+
+match_max 200000
+process_test "test1"
+process_test "test2"

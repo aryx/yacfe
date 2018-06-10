@@ -1,0 +1,20 @@
+#!/bin/sh
+
+#  This script has been ripped from gimp. http://www.gimp.org
+
+#  Script to perform the default installation steps for the
+#   specified user home directory.
+#
+#  1) Create ~/.grany if it doesn't exist
+#  2) Copy system granyrc file to ~/.grany
+#  3) Create the files subdir and its subdirs
+#
+
+echo "[Grany::user_install] mkdir $2"
+mkdir $2
+
+echo "[Grany::user_install] Installing your RC file: cp $1/granyrc $2/granyrc"
+cp $1/granyrc $2/granyrc
+
+echo "[Grany::user_install] Installing example Grany files: cp -a $1/files $2/files"
+cp -a $1/files $2/files

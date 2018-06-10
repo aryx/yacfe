@@ -1,0 +1,32 @@
+programme essai;
+
+procedure pa;
+debut
+pa()
+fin;
+
+procedure pb;
+debut
+pa()
+fin;
+
+procedure pc;
+var ent : x;
+debut
+ x:=1
+fin;
+
+procedure pd;
+debut
+pa();
+pa();
+pd();
+pa();
+pd();
+pc()
+fin;
+
+debut
+  pb();
+  pd()
+fin

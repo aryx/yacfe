@@ -1,0 +1,340 @@
+Extern_References DEFINITIONS ::= BEGIN
+{1, "/usr/local/lov/tools/default.cd"}
+END
+
+Entities_Definitions DEFINITIONS ::= BEGIN
+base ::= SEQUENCE OF {
+	SEQUENCE {
+		items_count integer,
+		default_status bits,
+		page_width real,
+		page_heigth real,
+		no_frame boolean,
+		portrait boolean,
+		margin real,
+		languages SEQUENCE OF integer,
+		version string
+	}
+}
+meta_property ::= SEQUENCE OF {
+	SEQUENCE {
+		identity oid,
+		name string
+	}
+}
+template ::= SEQUENCE OF {
+	SEQUENCE {
+		identity oid,
+		name string,
+		language integer,
+		kind meta_entity,
+		content string
+	}
+}
+module ::= SEQUENCE OF {
+	SEQUENCE {
+		identity oid,
+		name string,
+		range integer,
+		status bits
+	}
+}
+class ::= SEQUENCE OF {
+	SEQUENCE {
+		identity oid,
+		name string,
+		derived boolean,
+		abstract boolean,
+		pixmap string,
+		constraint string,
+		status bits
+	}
+}
+association ::= SEQUENCE OF {
+	SEQUENCE {
+		identity oid,
+		name string,
+		derived boolean,
+		described_by oid,
+		status bits
+	}
+}
+role ::= SEQUENCE OF {
+	SEQUENCE {
+		identity oid,
+		name string,
+		agregate boolean,
+		i_multiplicity integer,
+		s_multiplicity string,
+		meta boolean,
+		key boolean,
+		class oid,
+		association oid,
+		status bits
+	}
+}
+qualifier ::= SEQUENCE OF {
+	SEQUENCE {
+		entity oid,
+		name string,
+		type oid
+	}
+}
+operation ::= SEQUENCE OF {
+	SEQUENCE {
+		identity oid,
+		name string,
+		abstract boolean,
+		meta boolean,
+		owner oid,
+		type oid,
+		range integer,
+		status bits
+	}
+}
+parameter ::= SEQUENCE OF {
+	SEQUENCE {
+		identity oid,
+		name string,
+		owner oid,
+		type oid,
+		range integer,
+		status bits
+	}
+}
+attribute ::= SEQUENCE OF {
+	SEQUENCE {
+		identity oid,
+		name string,
+		derived boolean,
+		meta boolean,
+		key boolean,
+		owner oid,
+		type oid,
+		range integer,
+		status bits
+	}
+}
+type ::= SEQUENCE OF {
+	SEQUENCE {
+		identity oid,
+		name string,
+		kind integer,
+		status bits
+	}
+}
+inheritance ::= SEQUENCE OF {
+	SEQUENCE {
+		identity oid,
+		ancestor oid,
+		discriminator oid,
+		repeated boolean,
+		subclasses SEQUENCE OF oid,
+		status bits
+	}
+}
+instance ::= SEQUENCE OF {
+	SEQUENCE {
+		identity oid,
+		name string,
+		range integer
+	}
+}
+id_class ::= SEQUENCE OF {
+	SEQUENCE {
+		identity oid,
+		class oid,
+		meta boolean
+	}
+}
+id_association ::= SEQUENCE OF {
+	SEQUENCE {
+		identity oid,
+		association oid,
+		described_by oid,
+		roles SEQUENCE OF oid
+	}
+}
+id_attribute ::= SEQUENCE OF {
+	SEQUENCE {
+		identity oid,
+		owner oid,
+		attribute oid,
+		value string
+	}
+}
+entity_position ::= SEQUENCE OF {
+	SEQUENCE {
+		entity oid,
+		module oid,
+		position SEQUENCE OF real
+	}
+}
+agregation_position ::= SEQUENCE OF {
+	SEQUENCE {
+		module oid,
+		roles SEQUENCE OF oid,
+		position SEQUENCE OF real
+	}
+}
+inheritance_position ::= SEQUENCE OF {
+	SEQUENCE {
+		inheritance oid,
+		module oid,
+		class oid,
+		position SEQUENCE OF real
+	}
+}
+template_link ::= SEQUENCE OF {
+	SEQUENCE {
+		entity oid,
+		templates SEQUENCE OF oid
+	}
+}
+module_layout ::= SEQUENCE OF {
+	SEQUENCE {
+		entity oid,
+		portrait boolean,
+		nb_w_pages integer,
+		nb_h_pages integer,
+		layout integer
+	}
+}
+note ::= SEQUENCE OF {
+	SEQUENCE {
+		entity oid,
+		name string,
+		content string
+	}
+}
+base ::= {
+{77, -1, 0, 0, f, f, 0, NULL, "
+%W%
+"}
+}
+meta_property ::= {
+{"48", "class"},
+{"49", "attribute"},
+{"50", "operation"},
+{"51", "parameter"},
+{"52", "association"},
+{"53", "role"},
+{"54", "type"}
+}
+template ::= {
+{"1:22", "AttributeEncapsulation", 1, attribute, "%DECL
+%IF %$nt(*)%
+/*
+$nt(*)
+*/
+%ENDIF
+private:
+   $(type) p_$(name);
+$(access):
+   $(type) $(name) ()
+   {
+      return p_$(name);
+   }
+   void set_$(name) ($(type) a_$(name))
+   {
+      p_$(name) = a_$(name);
+   }
+"}
+}
+module ::= {
+{"8", "Subject", 1, -1}
+}
+class ::= {
+{"9", "Objet_Graphique", f, f, "", "", -1},
+{"10", "Mobile", f, f, "", "", -1},
+{"11", "Immobile", f, f, "", "", -1},
+{"12", "Projectile", f, f, "", "", -1},
+{"13", "Fusee", f, f, "", "", -1},
+{"14", "Paroi", f, f, "", "", -1},
+{"15", "Cadre", f, f, "", "", -1},
+{"16", "Canon", f, f, "", "", -1}
+}
+type ::= {
+{"1", "unknown", 2, -1},
+{"2", "void", 1, -1},
+{"3", "string", 4, -1},
+{"4", "integer", 4, -1},
+{"5", "real", 4, -1},
+{"6", "boolean", 4, -1},
+{"7", "char", 4, -1},
+{"30", "Figures", 8, -1},
+{"31", "Figures *", 8, -1},
+{"41", "Objet_Graphique *", 8, -1},
+{"45", "EnumIdentite", 8, -1},
+{"77", "EnumOrientation", 8, -1}
+}
+attribute ::= {
+{"28", "NbFigures", f, f, f, "9", "4", 1, -1},
+{"29", "ListeFigures", f, f, f, "9", "31", 2, -1},
+{"38", "Deplacement_x", f, f, f, "10", "4", 1, -1},
+{"39", "Deplacement_y", f, f, f, "10", "4", 2, -1},
+{"40", "Liste_Objets_Graphiques", f, t, f, "9", "41", 3, -1},
+{"42", "Prochain_Objet_Graphique", f, f, f, "9", "41", 4, -1},
+{"43", "Liste_Objet_Mobiles", f, f, f, "10", "41", 3, -1},
+{"57", "Vie", f, f, f, "12", "4", 1, -1},
+{"59", "Vie", f, f, f, "14", "4", 1, -1},
+{"74", "Orientation", f, f, f, "14", "77", 2, -1},
+{"75", "Position_x", f, f, f, "9", "4", 5, -1},
+{"76", "Position_y", f, f, f, "9", "4", 6, -1}
+}
+operation ::= {
+{"32", "Afficher", f, f, "9", "2", 1, -1},
+{"33", "Effacer", f, f, "9", "2", 2, -1},
+{"34", "SuisjeTouche", f, f, "9", "41", 3, -1},
+{"35", "ResolutionChoc", t, f, "9", "2", 5, -1},
+{"36", "Mort", t, f, "9", "2", 6, -1},
+{"37", "Identite", t, f, "9", "45", 4, -1},
+{"44", "Deplacer", f, f, "10", "2", 1, -1},
+{"46", "Objet_Graphique", f, f, "9", "2", 7, -1},
+{"47", "Mobile", f, f, "10", "2", 2, -1},
+{"56", "Immobile", f, f, "11", "2", 1, -1},
+{"58", "Projectile", f, f, "12", "2", 1, -1},
+{"60", "Paroi", f, f, "14", "2", 1, -1},
+{"61", "Cadre", f, f, "15", "2", 1, -1},
+{"62", "Canon", f, f, "16", "2", 1, -1},
+{"63", "Fusee", f, f, "13", "2", 1, -1},
+{"64", "~Immobile", f, f, "11", "2", 2, -1},
+{"66", "~Objet_Graphique", f, f, "9", "2", 8, -1},
+{"67", "~Mobile", f, f, "10", "2", 3, -1},
+{"68", "~Projectile", f, f, "12", "2", 2, -1},
+{"69", "~Fusee", f, f, "13", "2", 2, -1},
+{"70", "~Paroi", f, f, "14", "2", 2, -1},
+{"72", "~Cadre", f, f, "15", "2", 2, -1},
+{"73", "~Canon", f, f, "16", "2", 2, -1}
+}
+inheritance ::= {
+{"23", "9", NULL, f, {"10", "11"}, -1},
+{"25", "10", NULL, f, {"13", "12"}, -1},
+{"27", "11", NULL, f, {"14", "15", "16"}, -1}
+}
+entity_position ::= {
+{"16", "8", {630, 510, 720, 640}},
+{"15", "8", {530, 510, 620, 640}},
+{"14", "8", {430, 510, 520, 640}},
+{"13", "8", {150, 510, 240, 630}},
+{"12", "8", {50, 510, 140, 630}},
+{"11", "8", {550, 330, 630, 450}},
+{"10", "8", {100, 330, 210, 450}},
+{"9", "8", {270, 20, 440, 260}}
+}
+inheritance_position ::= {
+{"23", "8", "9", {360, 260, 360, 305}},
+{"23", "8", "10", {360, 305, 210, 305, 210, 330}},
+{"23", "8", "11", {360, 305, 553, 305, 553, 330}},
+{"25", "8", "10", {151, 450, 151, 490}},
+{"25", "8", "13", {151, 490, 200, 490, 200, 510}},
+{"25", "8", "12", {151, 490, 109, 490, 109, 510}},
+{"27", "8", "11", {588, 450, 588, 490}},
+{"27", "8", "14", {588, 490, 474, 490, 474, 510}},
+{"27", "8", "15", {588, 490, 566, 490, 566, 510}},
+{"27", "8", "16", {588, 490, 692, 490, 692, 510}}
+}
+template_link ::= {
+{"49", {"1:22"}}
+}
+END

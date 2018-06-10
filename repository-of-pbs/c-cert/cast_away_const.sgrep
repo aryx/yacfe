@@ -1,0 +1,10 @@
+@@ 
+function f;
+type T;
+identifier V;
+@@
+ f(...,const T *V,...) {
+  <...
+* (T*) V
+  ...>
+ }

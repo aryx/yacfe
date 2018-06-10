@@ -1,0 +1,74 @@
+Here are basics to `play' with Grany if you're not a granular physicist,
+or if you're not familiar with Dr. Dominique Deserable's theory.
+
+
+To begin with : the `simulation' file
+-------------------------------------
+
+1. We will simulate the behavior of granular matter. For example,
+  how cereals will go out of a silo.
+
+2. We will use an hexagonal surface. Therefore our cells will have six
+  neighbours. Arbitrary, it will be: north, south, north-east, north-west,
+  south-east, and south-west.
+
+3. Each cell will process its own request according to probabilities of
+  requests.
+
+4. The only move allowed is exchange, and two cells will exchange their
+  positions if their requests fit. For example if a cell wants to go
+  south, it will be able to go south if the south's cell wants to go
+  north.
+
+5. Then you're ready to open a `simulation' file for the main window.
+  Use `file|open', follow `files|simulations' and choose
+  `sand-water.simul'. It's a filled silo. Click on `play' and see how
+  the sand will move south and the water north.
+
+
+To continue using the marvellous software : the `scene' file
+------------------------------------------------------------
+
+1. Now let's create your own simulation.
+
+2. A simulation file is static and all the cells are predefined. Let's use a
+  `scene' file which has all the info but is still in the vectorial world.
+
+3. Use `file|new' from the main window. You'll be requested a scene file.
+  Use the browse button, follow `files|scenes' and choose `sand-water.scene'.
+
+4. Now for example setup the network size to `100'. Click ok. (it will take
+  a while for processing...)
+
+5. In the main window a more precise silo should appear. If you play the
+  simulation you will see that it's slower than before because there are much
+  more cells in the simulation
+
+
+Now you want more. Ok. Let's edit the `scene' file.
+---------------------------------------------------
+
+1. From the main window, choose `tools|scene editor'.
+
+2. Use `file|open', follow `files|scenes' and choose again `sand-water.scene'.
+
+3. Now you can see the vectorial scene displayed in the scene editor:
+	notebook page #1 is the borders of the scene.
+	notebook page #2 is all the `phases' defined. Phases are just our
+		abstraction to define a kind of matter.
+	notebook page #3 is the borders + the zonings of the phases.
+	notebook page #4 is the borders + the zonings + the colorations.
+
+4. In each notebook page you can edit and modify the scene. Try it !
+
+5. When you're finished you can save up the file and use it as the scene of
+  a new simulation.
+
+
+
+More precise doc is out of this short introduction and if you would like
+some info about the underlying theory, please drop a mail to Dr. Dominique
+Deserable here: <dominique.deserable@insa-rennes.fr>
+
+(a CC to <gcottenc at altern dot org> would be greatly appreciated as coder of the
+application!)

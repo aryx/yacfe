@@ -1,0 +1,8 @@
+c_transducer.cmo: ../parsing_c/visitor_c.cmi ../code_info/statistics_code.cmi \
+    ../parsing_c/statistics_c.cmi ../parsing_c/parse_c.cmi \
+    ../parsing_c/flag_parsing_c.cmo ../commons/common.cmi \
+    ../parsing_c/ast_c.cmo 
+c_transducer.cmx: ../parsing_c/visitor_c.cmx ../code_info/statistics_code.cmx \
+    ../parsing_c/statistics_c.cmx ../parsing_c/parse_c.cmx \
+    ../parsing_c/flag_parsing_c.cmx ../commons/common.cmx \
+    ../parsing_c/ast_c.cmx 

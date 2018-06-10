@@ -1,0 +1,9 @@
+$REGLE:
+CONSTRICTIVE_EXCLUSION=
+((Contrainte_PHIINFERIEUR,Depl_POSSIBLE),
+(Contrainte_NULLE,Depl_IMPOSSIBLE),
+(Contrainte_NULLE,Depl_IMPOSSIBLE),
+(Contrainte_PHIINFERIEUR,Depl_POSSIBLE),
+(Contrainte_NULLE,Depl_POSSIBLE),
+(Contrainte_NULLE,Depl_POSSIBLE));
+

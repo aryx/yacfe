@@ -1,0 +1,16 @@
+[TEST************] constructeur par defaut ************************
+----------- Ponderation --------------
+Valeur de la ponderation : NORD = 0
+Valeur de la ponderation : NE = 0
+Valeur de la ponderation : SE = 0
+Valeur de la ponderation : SUD = 0
+Valeur de la ponderation : SW = 0
+Valeur de la ponderation : NW = 0
+---------Valeur attendue-------------
+----------- Ponderation --------------
+Valeur de la ponderation : NORD = 0
+Valeur de la ponderation : NE = 0
+Valeur de la ponderation : SE = 0
+Valeur de la ponderation : SUD = 0
+Valeur de la ponderation : SW = 0
+Valeur de la ponderation : NW = 0

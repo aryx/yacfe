@@ -1,0 +1,4 @@
+process_start FrontiereCompiler
+
+process_test "test1"
+process_test "test sur sablier.frontiere"

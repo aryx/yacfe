@@ -1,0 +1,6 @@
+struct xx {
+	int a;
+	;
+	;
+};
+

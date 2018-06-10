@@ -1,0 +1,27 @@
+-*- org -*-
+
+*
+
+** Darcs
+
+install darcs
+
+** Ocaml and libs
+
+** Get the source 
+
+darcs get
+
+** Compiles it
+
+make depend
+make
+
+** Run
+
+** Get the development environment
+
+emacs + tuareg-mode + optionally pad-emacs-addons
+
+** Extend
+

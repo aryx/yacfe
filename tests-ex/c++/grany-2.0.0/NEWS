@@ -1,0 +1,206 @@
+Changes in 2.0.0 (release: 2003-04-08)
+----------------
+
+AIM: adapt to gtkmm2
+
+(gcottenc)	rework much GUI code to adapt to gtkmm-2.2.1
+
+
+Changes in 1.0.1 (released: 2002-05-14)
+----------------
+
+AIM: adapt to gcc-3.1
+
+(gcottenc)	configure, .h files, .cpp files: adapt to gcc-3.1 and in
+(gcottenc)        particular mandatory namespace for STL, sstream
+(gcottenc)      a few fixes in Zoning and Coloration editors
+
+
+Changes in 1.0.0 (released: 2000-08-14)
+----------------
+
+AIM: produce a stable version.
+
+(gcottenc)	bugfix: lots of adapts for the API of gtkmm-1.2.0
+(gcottenc)	added hotkeys
+(gcottenc)	we cannot use the exceptions anymore to catch parse errors in
+(gcottenc)        file reads, due to gtkmm :-( ; had to design new hugly methods
+
+
+Changes in 0.9.2 (never released)
+----------------
+
+AIM: correct 0.9.1 bugs
+
+(gcottenc)	bugfix: if no good latex, no more failing latex attempt in the
+(gcottenc)	  doxygen/ subdir of moteur/ and interface/
+(gcottenc)	bugfix: dependencies of `grany' upon the libs is now ok.
+(pgarcia)	bugfix: SIGSEGV on Solaris when corrupted ~/.grany/ directory,
+(pgarcia)	  when opening an ParamPhaseDialog.
+
+
+Changes in 0.9.1 (released: 1999-08-30)
+----------------
+
+AIM: correct 0.9 bugs
+
+(ypadiole)	better detection of libg++ which we want to reject because
+(ypadiole)	  of its STL implementation
+(ypadiole)	detection of a non-complete Gtk-- installation
+(ypadiole)	more flexible lexical analysis of phases/rules names in the files
+(gcottenc)	cuter `Arrows' in the Rules Editor. *REALLY* looks cuter, cool.
+(gcottenc)	RulesEditor: moved to `grey' instead of `black' for any phi.
+(gcottenc)	RulesEditor: bugfix, it's not `bigger phi' but `less than
+(gcottenc)	  solid phi'!!
+(gcottenc)	grany: cuter buttons (using some spaces on the edge)
+(gcottenc)	bugfix: modifying rules in `updatable parameters' now works
+(gcottenc)	bugfix: the simulation and scene editor colors no more mess up
+(gcottenc)	bugfix: the `cancel' button for the phases parameters now also
+(gcottenc)	  cancels a possible color change.
+(gcottenc)	bugfix: when `stopping' the simulation, initial colors are
+(gcottenc)	  now properly restored
+(gcottenc)	bugfix: `UpdatableParameters' can now stay open when modifying the
+(gcottenc)	  current simulation
+(gcottenc)	bugfix: if latex is not detected / no good latex, there is no
+(gcottenc)	  more failing attempt to execute latex 
+(gcottenc)	added: the `newbie help'
+(gcottenc)	bugfix: availability of a newly created rule in the phase params
+(gcottenc)	bugfix: corrected a segmentation fault in the rules editor when
+(gcottenc)	  clicking `too fast'. :-)
+(gcottenc)	added: sensitivity for `save' and `save as'.
+(gcottenc)	added: support for `file|new' in the Rules Editor
+(gcottenc)	bugfix: coherence of the Coloration preview in the Scene editor
+(gcottenc)	  when /opening/ a borders file.
+(gcottenc)	bugfix: color problem in the RulesEditor when opening it + times
+
+
+
+Changes in 0.9 (released: 1999-08-07)
+--------------
+
+AIM: make an actual distribution, so lots of bugfixes, and finished a few things
+
+
+WARNING: now requires Gtk-- 1.0.1 or greater.
+
+
+(gcottenc)	configure: removed -fhuge-objects which was causing problems for
+			SPARC fabulous workstations.
+(gcottenc)	code: moves to pointers to avoid the huge-objects problem
+
+(gcottenc)	/NEWS
+(gcottenc)	/FAQ
+(gcottenc)	/README.internationalization
+(gcottenc)	/po/README
+(gcottenc)	/docs/BASICS
+(gcottenc)	/docs/README
+(gcottenc)	/docs/developper/*
+
+(gcottenc)	bugfix: (bug added in v0.1.2) problem with missing -lintl for
+			`granyconsole' with some systems
+
+(gcottenc)	more tests on your compiler in configure. fucking libg++.
+
+(gcottenc)	All source files: removed warnings coming from stupid compiler
+
+(pgarcia)	hexagonal algorithms:
+(pgarcia)		fixed wrong height size of the ellipses
+(pgarcia)		fixed lots of bugs in arc of ellipse
+
+(gcottenc)	grany:
+(gcottenc)		support for double-click in editors, will erase the
+(gcottenc)		  pointed object
+(gcottenc)		support for double-click in scene editor, will edit
+(gcottenc)		  pointed object (borders, phases, zoning)
+(gcottenc)		support for double-click in updatable parameters
+(gcottenc)		support for enter and escape in dialogs
+(gcottenc)		I don't use idle() anymore because in the Faq they
+(gcottenc)		  advice to use gtk_events_pending()
+(gcottenc)		unusable buttons & menus are now disactivated
+(gcottenc)		  (insensitive)
+(gcottenc)		bugfix: in the scene editor when deleting a phase, the
+(gcottenc)		  current zoning is deleted (it's no longer pertinent)
+(gcottenc)		in Gtk---1.0.1 a bugfix to the Gdk_Pixmap allows me now
+(gcottenc)		  to use it (I was obliged to use GdkPixmap)
+(gcottenc)		bugfix: in the scene editor, the color used for each
+(gcottenc)		  phases mix was everytime at total intensity.
+(gcottenc)		general upgrade of the interface internal conception
+(gcottenc)		more colors on widgets
+(gcottenc)		bugfix: selection of ellipses as borders did not work ok
+(gcottenc)		added missing support for polygons ; but the selection
+(gcottenc)		  for filled polygons still is buggy (no gdk function)
+(gcottenc)		added missing support for rules in phase properties
+(gcottenc)		happyfix: I had trouble with multipleinheritance pointers
+(gcottenc)		  if you're interested go to EditeurZonageWindow
+(gcottenc)		moved to toggle buttons in scene editor/phase page,
+(gcottenc)		  for propagative/generated properties
+(gcottenc)		bugfix: in the scene editor, fixed more little bugs
+(gcottenc)		bugfix: in updatable parameters, you can now change the
+(gcottenc)		  fluid/solid state of the phase, it's consistent
+(gcottenc)		moved to better Gdk_Handles using (Pixmaps and GCs)
+(gcottenc)		added missing coloration editor
+(gcottenc)		moved to plain english in the whole gui code
+(gcottenc)		added a logo in the About window
+(gcottenc)		added remembering of the last directory browsed
+(gcottenc)		added auto-creation for ~/.grany
+(gcottenc)		bugfix to the `rule name' computing from the given
+(gcottenc)		  filename, in the rules editor
+
+
+
+Changes in 0.1.2 (released: 1999-07-17)
+----------------
+
+AIM: produce a packaged version, so fixes for the biggest bugs.
+
+
+(gcottenc)	/README
+(gcottenc)	/AUTHORS
+(gcottenc)	/TODO
+
+(gcottenc)	All source files: added the GPL license header ; moved to pure
+(gcottenc)			    english message text
+
+(gcottenc)	granyconsole:	
+(gcottenc)		added the --authors option
+
+(gcottenc)	grany:
+(gcottenc)		support of options
+(gcottenc)		added an `expert' :) mode in which the warning messages
+(gcottenc)		  are disabled
+(gcottenc)		bugfix: in case of a failing load/save, will not use
+(gcottenc)			this failing filename as next save filename
+(gcottenc)		bugfix: (bug added in version 0.1) in `updatable
+(gcottenc)			parameters', modifications to the phases will
+(gcottenc)			work again
+
+(gcottenc)	Modified files in the interface/src/files subdirectory to have
+(gcottenc)	  some nice editable examples.
+	
+(gcottenc)	po:
+(gcottenc)		corrected the files used
+
+
+
+Changes in 0.1 (released: 1999-06-23)
+--------------
+
+AIM: put code things together to have a first distribution available
+
+
+(gcottenc)	grany:
+(gcottenc)		looooots of bugfixes, especially in the scene editor
+(gcottenc)		the whole window space is now used to display the
+(gcottenc)		  simulation (cuuute) (dedicated to Dr. Leplumey)
+(gcottenc)		the automatic phi generation for the phases is now done
+(gcottenc)		added lots of tests for validity of parameters entered
+(gcottenc)		  by the user in the various dialogs, especially the
+(gcottenc)		  phases names which were sometimes leading to file
+(gcottenc)		  read errors (spaces, numbers, identical names)
+(gcottenc)		scene editor: added edition of current zoning (if
+(gcottenc)		  exists) instead of automatic deletion
+
+
+
+
+<gcottenc at altern dot org>

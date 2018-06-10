@@ -1,0 +1,45 @@
+comment_java_annotater.cmi: ../code_info/statistics_code.cmi \
+    ../code_info/place_code.cmo parser_java.cmi parse_java.cmi \
+    ../commons/common.cmi 
+parse_java.cmi: parser_java.cmi ../commons/common.cmi ast_java.cmo 
+parser_java.cmi: ast_java.cmo 
+token_helpers_java.cmi: parser_java.cmi ../commons/common.cmi ast_java.cmo 
+visitor_java.cmi: ast_java.cmo 
+ast_java.cmo: ../commons/common.cmi 
+ast_java.cmx: ../commons/common.cmx 
+comment_java_annotater.cmo: visitor_java.cmi token_helpers_java.cmi \
+    ../code_info/statistics_code.cmi ../code_info/place_code.cmo \
+    parser_java.cmi parse_java.cmi lib_parsing_java.cmo ../commons/common.cmi \
+    ast_java.cmo ../code_info/ast_generic.cmo comment_java_annotater.cmi 
+comment_java_annotater.cmx: visitor_java.cmx token_helpers_java.cmx \
+    ../code_info/statistics_code.cmx ../code_info/place_code.cmx \
+    parser_java.cmx parse_java.cmx lib_parsing_java.cmx ../commons/common.cmx \
+    ast_java.cmx ../code_info/ast_generic.cmx comment_java_annotater.cmi 
+lexer_helper.cmo: lexer_helper.cmi 
+lexer_helper.cmx: lexer_helper.cmi 
+lexer_java.cmo: parser_java.cmi lexer_helper.cmi flag_parsing_java.cmo \
+    ../commons/common.cmi ast_java.cmo 
+lexer_java.cmx: parser_java.cmx lexer_helper.cmx flag_parsing_java.cmx \
+    ../commons/common.cmx ast_java.cmx 
+lib_parsing_java.cmo: visitor_java.cmi ../commons/common.cmi ast_java.cmo 
+lib_parsing_java.cmx: visitor_java.cmx ../commons/common.cmx ast_java.cmx 
+parse_java.cmo: token_helpers_java.cmi parser_java.cmi lexer_java.cmo \
+    lexer_helper.cmi flag_parsing_java.cmo ../commons/common.cmi ast_java.cmo \
+    parse_java.cmi 
+parse_java.cmx: token_helpers_java.cmx parser_java.cmx lexer_java.cmx \
+    lexer_helper.cmx flag_parsing_java.cmx ../commons/common.cmx ast_java.cmx \
+    parse_java.cmi 
+parser_java.cmo: ../commons/common.cmi ast_java.cmo parser_java.cmi 
+parser_java.cmx: ../commons/common.cmx ast_java.cmx parser_java.cmi 
+test_parsing_java.cmo: visitor_java.cmi token_helpers_java.cmi \
+    parser_java.cmi parse_java.cmi lexer_java.cmo ../commons/common.cmi \
+    ast_java.cmo 
+test_parsing_java.cmx: visitor_java.cmx token_helpers_java.cmx \
+    parser_java.cmx parse_java.cmx lexer_java.cmx ../commons/common.cmx \
+    ast_java.cmx 
+token_helpers_java.cmo: parser_java.cmi ../commons/common.cmi ast_java.cmo \
+    token_helpers_java.cmi 
+token_helpers_java.cmx: parser_java.cmx ../commons/common.cmx ast_java.cmx \
+    token_helpers_java.cmi 
+visitor_java.cmo: ../commons/common.cmi ast_java.cmo visitor_java.cmi 
+visitor_java.cmx: ../commons/common.cmx ast_java.cmx visitor_java.cmi 

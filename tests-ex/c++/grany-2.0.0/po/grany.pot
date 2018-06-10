@@ -1,0 +1,1283 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2003-04-08 20:34+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: interface/src/AboutWindow.cpp:21 interface/src/NewbieWindow.cpp:23
+msgid "Close"
+msgstr ""
+
+#: interface/src/AboutWindow.cpp:24 interface/src/AboutWindow.cpp:27
+msgid "version "
+msgstr ""
+
+#. Ok the first to drop a critic I'll kick his ass!
+#. * We also can produce free software! :)
+#.
+#: interface/src/AboutWindow.cpp:33
+msgid "is a simulator of cellular automata for the granular environments"
+msgstr ""
+
+#: interface/src/AboutWindow.cpp:35
+msgid "Authors"
+msgstr ""
+
+#: interface/src/AboutWindow.cpp:38
+msgid "This program is "
+msgstr ""
+
+#: interface/src/AboutWindow.cpp:38
+msgid "For further information, consult"
+msgstr ""
+
+#: interface/src/AboutWindow.cpp:42
+msgid "About Grany-3..."
+msgstr ""
+
+#: interface/src/MainWindow.cpp:49
+msgid "_Scene editor"
+msgstr ""
+
+#: interface/src/MainWindow.cpp:49 interface/src/BaseWindow.cpp:72
+msgid "<alt>s"
+msgstr ""
+
+#: interface/src/MainWindow.cpp:50
+msgid "_Borders editor"
+msgstr ""
+
+#: interface/src/MainWindow.cpp:50
+msgid "<alt>b"
+msgstr ""
+
+#: interface/src/MainWindow.cpp:51
+msgid "_Rules editor"
+msgstr ""
+
+#: interface/src/MainWindow.cpp:51
+msgid "<alt>r"
+msgstr ""
+
+#: interface/src/MainWindow.cpp:53
+msgid "_Updatable parameters"
+msgstr ""
+
+#: interface/src/MainWindow.cpp:53
+msgid "<alt>u"
+msgstr ""
+
+#: interface/src/MainWindow.cpp:56
+msgid "_Tools"
+msgstr ""
+
+#: interface/src/MainWindow.cpp:56
+msgid "<alt>t"
+msgstr ""
+
+#: interface/src/MainWindow.cpp:62
+msgid "St_op"
+msgstr ""
+
+#: interface/src/MainWindow.cpp:62 interface/src/BaseWindow.cpp:71
+msgid "<alt>o"
+msgstr ""
+
+#: interface/src/MainWindow.cpp:64
+msgid "_Play"
+msgstr ""
+
+#: interface/src/MainWindow.cpp:64
+msgid "<alt>p"
+msgstr ""
+
+#: interface/src/MainWindow.cpp:66
+msgid "P_ause"
+msgstr ""
+
+#: interface/src/MainWindow.cpp:66
+msgid "<alt>a"
+msgstr ""
+
+#: interface/src/MainWindow.cpp:69
+msgid "Recor_d"
+msgstr ""
+
+#: interface/src/MainWindow.cpp:69
+msgid "<alt>d"
+msgstr ""
+
+#: interface/src/MainWindow.cpp:72
+msgid "_Control"
+msgstr ""
+
+#: interface/src/MainWindow.cpp:72
+msgid "<alt>c"
+msgstr ""
+
+#: interface/src/MainWindow.cpp:106
+msgid "Stop"
+msgstr ""
+
+#: interface/src/MainWindow.cpp:107
+msgid "Play"
+msgstr ""
+
+#: interface/src/MainWindow.cpp:108
+msgid "Pause"
+msgstr ""
+
+#: interface/src/MainWindow.cpp:110
+msgid "Record"
+msgstr ""
+
+#: interface/src/MainWindow.cpp:145 interface/src/MainWindow.cpp:630
+#: interface/src/MainWindow.cpp:747 interface/src/MainWindow.cpp:947
+#: interface/src/BordersEditor.cpp:184 interface/src/ZoningEditor.cpp:79
+#: interface/src/ColorationEditor.cpp:57
+msgid "Ready."
+msgstr ""
+
+#: interface/src/MainWindow.cpp:375
+msgid ""
+"I detected you don't have `~/.grany' directory,\n"
+"but I can't find my installing script...\n"
+"I tried: "
+msgstr ""
+
+#: interface/src/MainWindow.cpp:385
+msgid ""
+"No `~/.grany' directory. Welcome to Grany, new user! Let's make your very "
+"own grany directory..."
+msgstr ""
+
+#: interface/src/MainWindow.cpp:386
+msgid "Invoking my install script: "
+msgstr ""
+
+#: interface/src/MainWindow.cpp:392
+msgid "Installation successful. Enjoy!"
+msgstr ""
+
+#: interface/src/MainWindow.cpp:393
+msgid ""
+"A directory `~/.grany' and some subdirs have been created.\n"
+"Please put your creations in its subdirectories.\n"
+"NB: through each window you can access Help / Newbie help which will help "
+"you begin with Grany."
+msgstr ""
+
+#: interface/src/MainWindow.cpp:396
+msgid ""
+"I detected you don't have `~/.grany' directory,\n"
+"but I failed while invoking my script...\n"
+"I tried: "
+msgstr ""
+
+#: interface/src/MainWindow.cpp:446
+msgid ""
+"This is the main window.\n"
+"Here you will watch a simulation progressing over the time.\n"
+"Please consider opening a .simulation file, -- or defining a new simulation\n"
+"by opening a .scene file and setting up some parameters through the "
+"dialogs.\n"
+"Then you will use the stop-play-pause buttons to control the simulation."
+msgstr ""
+
+#. TODO more constraints
+#. we call the window to act for signaling the non-validity
+#: interface/src/MainWindow.cpp:537
+msgid "The value entered for `number of steps' is not valid."
+msgstr ""
+
+#. TODO more constraints
+#. we call the window to act for signaling the non-validity
+#: interface/src/MainWindow.cpp:545
+msgid "The value entered for `display frequency' is not valid."
+msgstr ""
+
+#. we call the window to act for signaling the non-validity
+#: interface/src/MainWindow.cpp:571 interface/src/MainWindow.cpp:902
+#: interface/src/BordersEditor.cpp:218 interface/src/SceneEditor.cpp:257
+#: interface/src/SceneEditor.cpp:675 interface/src/RulesEditor.cpp:413
+msgid "File not found !"
+msgstr ""
+
+#: interface/src/MainWindow.cpp:578 interface/src/MainWindow.cpp:909
+msgid "Computing..."
+msgstr ""
+
+#: interface/src/MainWindow.cpp:595
+msgid ""
+"Error while reading the file...\n"
+"Are you sure this is a .simul file?"
+msgstr ""
+
+#: interface/src/MainWindow.cpp:598 interface/src/MainWindow.cpp:926
+msgid "Fileread failed."
+msgstr ""
+
+#: interface/src/MainWindow.cpp:613 interface/src/MainWindow.cpp:656
+#: interface/src/MainWindow.cpp:677
+msgid "Grany-3 : "
+msgstr ""
+
+#: interface/src/MainWindow.cpp:647 interface/src/MainWindow.cpp:668
+msgid ""
+"Error while writing the file...\n"
+"Do you have write permission?"
+msgstr ""
+
+#: interface/src/MainWindow.cpp:649 interface/src/MainWindow.cpp:670
+#: interface/src/MainWindow.cpp:938
+msgid "Grany-3 : new file"
+msgstr ""
+
+#: interface/src/MainWindow.cpp:657 interface/src/BordersEditor.cpp:281
+#: interface/src/SceneEditor.cpp:509 interface/src/RulesEditor.cpp:509
+msgid "You have erased the previous file named :\n"
+msgstr ""
+
+#: interface/src/MainWindow.cpp:688
+msgid "Step of the automata : "
+msgstr ""
+
+#. we call the window to act for signaling the non-validity
+#: interface/src/MainWindow.cpp:852
+msgid "The value entered for `network size' is not valid. It must be a number."
+msgstr ""
+
+#. we call the window to act for signaling the non-validity
+#: interface/src/MainWindow.cpp:860
+msgid ""
+"The value entered for `network size' is not valid.\n"
+"It must be greater than 0. (and should be smaller than 100 to be viewable)"
+msgstr ""
+
+#: interface/src/MainWindow.cpp:865
+msgid ""
+"The -actual- number of cells generated is `network size'^2.\n"
+"The cells in the window can therefore be too small to be viewable."
+msgstr ""
+
+#. we call the window to act for signaling the non-validity
+#: interface/src/MainWindow.cpp:872
+msgid ""
+"The value entered for `number of steps' is not valid. It must be a number."
+msgstr ""
+
+#. we call the window to act for signaling the non-validity
+#: interface/src/MainWindow.cpp:880
+msgid ""
+"The value entered for `number of steps' is not valid. It must be greater "
+"than 0."
+msgstr ""
+
+#. we call the window to act for signaling the non-validity
+#: interface/src/MainWindow.cpp:888
+msgid "The value entered for `seed' is not valid."
+msgstr ""
+
+#: interface/src/MainWindow.cpp:924
+msgid ""
+"Error while reading the file...\n"
+"Are you sure you gave me a .scene file?"
+msgstr ""
+
+#: interface/src/BaseWindow.cpp:41 interface/src/SceneEditor.cpp:27
+#: interface/src/SceneEditor.cpp:36 interface/src/AreaEditor.cpp:88
+msgid "New"
+msgstr ""
+
+#: interface/src/BaseWindow.cpp:42 interface/src/SceneEditor.cpp:28
+msgid "Open"
+msgstr ""
+
+#: interface/src/BaseWindow.cpp:43
+msgid "Save"
+msgstr ""
+
+#: interface/src/BaseWindow.cpp:45 interface/src/AreaEditor.cpp:90
+msgid "Help"
+msgstr ""
+
+#: interface/src/BaseWindow.cpp:70 interface/src/AreaEditor.cpp:39
+msgid "_New"
+msgstr ""
+
+#: interface/src/BaseWindow.cpp:70 interface/src/AreaEditor.cpp:39
+msgid "<alt>n"
+msgstr ""
+
+#: interface/src/BaseWindow.cpp:71
+msgid "_Open"
+msgstr ""
+
+#: interface/src/BaseWindow.cpp:72
+msgid "_Save"
+msgstr ""
+
+#: interface/src/BaseWindow.cpp:73
+msgid "Save as..."
+msgstr ""
+
+#: interface/src/BaseWindow.cpp:75 interface/src/AreaEditor.cpp:41
+msgid "_Quit"
+msgstr ""
+
+#: interface/src/BaseWindow.cpp:75 interface/src/AreaEditor.cpp:41
+msgid "<alt>q"
+msgstr ""
+
+#: interface/src/BaseWindow.cpp:77 interface/src/AreaEditor.cpp:43
+msgid "_File"
+msgstr ""
+
+#: interface/src/BaseWindow.cpp:77 interface/src/AreaEditor.cpp:43
+msgid "<alt>f"
+msgstr ""
+
+#: interface/src/BaseWindow.cpp:119
+msgid "Open a file..."
+msgstr ""
+
+#: interface/src/BaseWindow.cpp:140
+msgid "Write to a file..."
+msgstr ""
+
+#: interface/src/BasicWindow.cpp:52
+msgid "About _Grany"
+msgstr ""
+
+#: interface/src/BasicWindow.cpp:54
+msgid "Ne_wbie help!"
+msgstr ""
+
+#: interface/src/BasicWindow.cpp:56
+msgid "_Help"
+msgstr ""
+
+#: interface/src/BasicWindow.cpp:56
+msgid "<alt>h"
+msgstr ""
+
+#: interface/src/BasicWindow.cpp:68
+msgid "Sorry, no newbie help available in this window."
+msgstr ""
+
+#: interface/src/main.cpp:35 interface/src/main.cpp:60
+#: console/src/Console.cpp:206 console/src/Console.cpp:241
+msgid "version"
+msgstr ""
+
+#: interface/src/main.cpp:37
+msgid "engine, file handling, tools (autoconf...)"
+msgstr ""
+
+#: interface/src/main.cpp:38 console/src/Console.cpp:244
+msgid "graphical interface"
+msgstr ""
+
+#: interface/src/main.cpp:39 console/src/Console.cpp:245
+msgid "hexagonal algorithms"
+msgstr ""
+
+#: interface/src/main.cpp:40 console/src/Console.cpp:246
+msgid "design"
+msgstr ""
+
+#: interface/src/main.cpp:41 console/src/Console.cpp:247
+msgid "contribution to the graphical interface"
+msgstr ""
+
+#: interface/src/main.cpp:42 interface/src/main.cpp:43
+#: console/src/Console.cpp:248 console/src/Console.cpp:249
+msgid "contribution to file handling"
+msgstr ""
+
+#: interface/src/main.cpp:67 console/src/Console.cpp:218
+msgid "Usage"
+msgstr ""
+
+#: interface/src/main.cpp:68
+msgid "Launch the graphical interface of Grany-3"
+msgstr ""
+
+#: interface/src/main.cpp:69 console/src/Console.cpp:220
+msgid "Options"
+msgstr ""
+
+#: interface/src/main.cpp:70
+msgid "disable the (few) warning messages"
+msgstr ""
+
+#: interface/src/main.cpp:74 console/src/Console.cpp:227
+msgid "prints a summary of the options"
+msgstr ""
+
+#: interface/src/main.cpp:75 console/src/Console.cpp:228
+msgid "prints the version number"
+msgstr ""
+
+#: interface/src/main.cpp:76 console/src/Console.cpp:229
+msgid "prints the authors"
+msgstr ""
+
+#: interface/src/main.cpp:96
+msgid "Now I can talk like this. Your application will be in english."
+msgstr ""
+
+#: interface/src/main.cpp:124
+msgid "Expert mode engaged."
+msgstr ""
+
+#: interface/src/main.cpp:128
+msgid "[Warning!] Unrecognized option on command-line: "
+msgstr ""
+
+#: interface/src/main.cpp:135
+msgid "Asking gtk to wake up..."
+msgstr ""
+
+#: interface/src/main.cpp:146
+msgid "No ~/.grany/granyrc, so using common `granyrc'."
+msgstr ""
+
+#: interface/src/main.cpp:151
+msgid "Found ~/.grany/granyrc, using it."
+msgstr ""
+
+#: interface/src/main.cpp:159
+msgid "Ok. Running now..."
+msgstr ""
+
+#: interface/src/main.cpp:163
+msgid "Exiting..."
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:40 interface/src/BordersEditor.cpp:220
+#: interface/src/BordersEditor.cpp:275 interface/src/BordersEditor.cpp:294
+msgid "Borders editor : new file"
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:48 interface/src/BordersEditor.cpp:107
+#: interface/src/AreaEditor.cpp:50 interface/src/AreaEditor.cpp:96
+msgid "Select"
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:50 interface/src/BordersEditor.cpp:108
+msgid "New line"
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:52 interface/src/BordersEditor.cpp:109
+msgid "New arc of ellipse"
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:54 interface/src/BordersEditor.cpp:110
+#: interface/src/AreaEditor.cpp:54 interface/src/AreaEditor.cpp:98
+msgid "New ellipse"
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:56 interface/src/BordersEditor.cpp:111
+#: interface/src/AreaEditor.cpp:56 interface/src/AreaEditor.cpp:99
+msgid "New polygon"
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:59 interface/src/BordersEditor.cpp:113
+#: interface/src/SceneEditor.cpp:38 interface/src/AreaEditor.cpp:59
+#: interface/src/AreaEditor.cpp:101
+msgid "Delete"
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:64 interface/src/BordersEditor.cpp:115
+msgid "Create classical borders"
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:66 interface/src/BordersEditor.cpp:116
+msgid "Create generating borders"
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:69 interface/src/BordersEditor.cpp:118
+#: interface/src/AreaEditor.cpp:62 interface/src/AreaEditor.cpp:103
+msgid "Grid"
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:72 interface/src/RulesEditor.cpp:49
+#: interface/src/AreaEditor.cpp:65
+msgid "_Edit"
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:72 interface/src/AreaEditor.cpp:65
+msgid "<alt>e"
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:130 interface/src/RulesEditor.cpp:84
+#: interface/src/AreaEditor.cpp:151
+msgid "Configuration in progress..."
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:240 interface/src/SceneEditor.cpp:695
+msgid ""
+"Error while reading the file...\n"
+"Are you sure this was a borders file?"
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:250 interface/src/BordersEditor.cpp:280
+#: interface/src/BordersEditor.cpp:299
+msgid "Borders editor : "
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:273 interface/src/BordersEditor.cpp:292
+#: interface/src/SceneEditor.cpp:501 interface/src/SceneEditor.cpp:528
+#: interface/src/RulesEditor.cpp:499 interface/src/RulesEditor.cpp:565
+msgid "Error while writing the file..."
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:308
+msgid ""
+"This is the Borders Editor.\n"
+"Here you will design the borders of a future simulation.\n"
+"\n"
+"You can use several geometrical forms:\n"
+"1. A line: click-drag-drop.\n"
+"2. An arc of ellipse: click-drag-drop to setup the first and last points ; "
+"then move the pointer to setup the curve.\n"
+"3. An ellipse: click-drag-drop (holding shift you will create a circle).\n"
+"4. A polygon: click-drag-drop for the first line, then click for the next "
+"ones, then right-click to terminate.\n"
+"\n"
+"Each one of these borders may be:\n"
+"1. Classical borders. -- or,\n"
+"2. Generating borders (which means one phase will be able to go through this "
+"border)."
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:442 interface/src/ZoningEditor.cpp:213
+#: interface/src/ColorationEditor.cpp:198
+msgid "Element selected."
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:455
+msgid "New line, origine : ("
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:455 interface/src/BordersEditor.cpp:504
+#: interface/src/BordersEditor.cpp:595 interface/src/ZoningEditor.cpp:227
+#: interface/src/ZoningEditor.cpp:289 interface/src/ColorationEditor.cpp:211
+#: interface/src/ColorationEditor.cpp:274
+msgid "). Drag for the end."
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:465
+msgid "The arc of ellipse is not valid."
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:479
+msgid "Arc of ellipse with a classical border added."
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:487
+msgid "Arc of ellipse with a generating border added."
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:504
+msgid "New arc of ellipse, origine : ("
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:515 interface/src/BordersEditor.cpp:773
+#: interface/src/ZoningEditor.cpp:238 interface/src/ColorationEditor.cpp:222
+msgid "The line is not valid."
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:533 interface/src/BordersEditor.cpp:854
+#: interface/src/ZoningEditor.cpp:251 interface/src/ZoningEditor.cpp:615
+#: interface/src/ColorationEditor.cpp:235
+#: interface/src/ColorationEditor.cpp:499
+msgid "Left button for another line, right button to end."
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:544
+msgid "The polygone is not valid."
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:556
+msgid "Polygone with a classical border added."
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:563
+msgid "Polygone with a generating border added."
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:585 interface/src/ZoningEditor.cpp:279
+#: interface/src/ColorationEditor.cpp:264
+msgid "New polygone, origine : ("
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:585 interface/src/ZoningEditor.cpp:279
+#: interface/src/ColorationEditor.cpp:264
+msgid "). Drag."
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:595 interface/src/ZoningEditor.cpp:289
+#: interface/src/ColorationEditor.cpp:274
+msgid "New ellipse, origine : ("
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:667 interface/src/BordersEditor.cpp:675
+#: interface/src/BordersEditor.cpp:689 interface/src/BordersEditor.cpp:731
+#: interface/src/ZoningEditor.cpp:358 interface/src/ZoningEditor.cpp:368
+#: interface/src/ZoningEditor.cpp:378 interface/src/ZoningEditor.cpp:389
+#: interface/src/ZoningEditor.cpp:422 interface/src/ColorationEditor.cpp:331
+#: interface/src/ColorationEditor.cpp:341
+#: interface/src/ColorationEditor.cpp:351
+#: interface/src/ColorationEditor.cpp:360
+#: interface/src/ColorationEditor.cpp:392
+msgid "Current position : ("
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:789
+msgid "Line with classical border added."
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:801
+msgid "Line with generating border added."
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:821
+msgid "Invalid arc of ellipse."
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:828
+msgid "Now decide for the centre of the ellipse."
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:843 interface/src/ZoningEditor.cpp:604
+#: interface/src/ColorationEditor.cpp:488
+msgid "The line is not valid. Please give the first line again."
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:874 interface/src/ZoningEditor.cpp:575
+#: interface/src/ColorationEditor.cpp:461
+msgid "The ellipse is not valid."
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:890
+msgid "Ellipse with classical border added."
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:902
+msgid "Ellipse with generating border added."
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:949 interface/src/ZoningEditor.cpp:679
+#: interface/src/ColorationEditor.cpp:540
+msgid "Element deleted."
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:1006 interface/src/AreaEditor.cpp:269
+msgid "You can also use the DEL key."
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:1017
+msgid "Add a new line by clicking for the origine, then dragging for the end."
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:1038
+msgid ""
+"Add a new arc of ellipse by clicking and dragging to determine the extreme "
+"coordinates."
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:1059
+msgid ""
+"Add a new ellipse by clicking and dragging to determine the extreme "
+"coordinates."
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:1080 interface/src/AreaEditor.cpp:323
+msgid "Add a new polygone by clicking and dragging for the first line."
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:1102
+msgid "Added borders will be `classical'."
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:1120
+msgid "Added borders will be `generating'."
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:1141 interface/src/AreaEditor.cpp:347
+msgid "The grid is no longer displayed."
+msgstr ""
+
+#: interface/src/BordersEditor.cpp:1147 interface/src/AreaEditor.cpp:353
+msgid "The grid is being displayed."
+msgstr ""
+
+#: interface/src/SceneEditor.cpp:29 interface/src/SceneEditor.cpp:46
+#: interface/src/SceneEditor.cpp:51 interface/src/UpdatableParameters.cpp:31
+msgid "Modify"
+msgstr ""
+
+#: interface/src/SceneEditor.cpp:30
+msgid "Borders"
+msgstr ""
+
+#: interface/src/SceneEditor.cpp:37
+msgid "Properties"
+msgstr ""
+
+#: interface/src/SceneEditor.cpp:39
+msgid "Propagative"
+msgstr ""
+
+#: interface/src/SceneEditor.cpp:40
+msgid "Generated"
+msgstr ""
+
+#: interface/src/SceneEditor.cpp:41 interface/src/UpdatableParameters.cpp:21
+msgid "Phases"
+msgstr ""
+
+#: interface/src/SceneEditor.cpp:42
+msgid "Number of phases : 0"
+msgstr ""
+
+#: interface/src/SceneEditor.cpp:47
+msgid "Zoning"
+msgstr ""
+
+#: interface/src/SceneEditor.cpp:52
+msgid "Coloration"
+msgstr ""
+
+#: interface/src/SceneEditor.cpp:61 interface/src/SceneEditor.cpp:200
+msgid "Scene editor : new file"
+msgstr ""
+
+#: interface/src/SceneEditor.cpp:278
+msgid ""
+"Error while reading the file...\n"
+"Are you sur this was a .scene file?"
+msgstr ""
+
+#: interface/src/SceneEditor.cpp:358 interface/src/SceneEditor.cpp:508
+#: interface/src/SceneEditor.cpp:535
+msgid "Scene editor : "
+msgstr ""
+
+#: interface/src/SceneEditor.cpp:377
+msgid "You must define at least one border."
+msgstr ""
+
+#: interface/src/SceneEditor.cpp:386
+msgid "You must define at least one phase."
+msgstr ""
+
+#: interface/src/SceneEditor.cpp:401
+msgid "You must define a generated phase because you have a generating border."
+msgstr ""
+
+#: interface/src/SceneEditor.cpp:474
+msgid "You must define at least one zoning."
+msgstr ""
+
+#: interface/src/SceneEditor.cpp:503 interface/src/SceneEditor.cpp:530
+msgid "Scene editor"
+msgstr ""
+
+#: interface/src/SceneEditor.cpp:581
+msgid ""
+"This is the Scene Editor.\n"
+"Here you will design step-by-step a new scene (ie. a vectorial "
+"representation of the future simulation):\n"
+"1. Design some borders either by opening a borders file or creating a new "
+"one from scratch.\n"
+"2. Design some phases (abstraction for `type of matter') and setup their "
+"properties.\n"
+"3. Design some zonings: they will be the initial positions of the phases.\n"
+"4. Design some colorations: they will repaint some initial areas with local "
+"colors."
+msgstr ""
+
+#: interface/src/SceneEditor.cpp:652
+msgid "Open a borders file..."
+msgstr ""
+
+#: interface/src/SceneEditor.cpp:767 interface/src/SceneEditor.cpp:973
+#: interface/src/SceneEditor.cpp:999 interface/src/SceneEditor.cpp:1022
+#: interface/src/UpdatableParameters.cpp:167
+msgid "No phase selected."
+msgstr ""
+
+#. 1. We update the number of phases.
+#: interface/src/SceneEditor.cpp:804
+msgid "Number of phases : "
+msgstr ""
+
+#: interface/src/SceneEditor.cpp:902
+msgid "Newphase"
+msgstr ""
+
+#: interface/src/RulesEditor.cpp:32
+msgid "Rules editor"
+msgstr ""
+
+#: interface/src/RulesEditor.cpp:40 interface/src/RulesEditor.cpp:74
+msgid "Same Phi"
+msgstr ""
+
+#: interface/src/RulesEditor.cpp:42 interface/src/RulesEditor.cpp:75
+msgid "Lower than solid Phi"
+msgstr ""
+
+#: interface/src/RulesEditor.cpp:44 interface/src/RulesEditor.cpp:76
+msgid "Lower Phi"
+msgstr ""
+
+#: interface/src/RulesEditor.cpp:46 interface/src/RulesEditor.cpp:77
+msgid "Any Phi"
+msgstr ""
+
+#: interface/src/RulesEditor.cpp:123
+msgid "Ready"
+msgstr ""
+
+#: interface/src/RulesEditor.cpp:335
+msgid "Now, to enable the rule, that cell must be `same phi'"
+msgstr ""
+
+#: interface/src/RulesEditor.cpp:342
+msgid "Now, to enable the rule, that cell must be `phi inf solid'"
+msgstr ""
+
+#: interface/src/RulesEditor.cpp:349
+msgid "Now, to enable the rule, that cell must be `phi inf'"
+msgstr ""
+
+#: interface/src/RulesEditor.cpp:356
+msgid "Now, there is no constraint on this cell"
+msgstr ""
+
+#: interface/src/RulesEditor.cpp:386
+msgid "Now, this movement is allowed"
+msgstr ""
+
+#: interface/src/RulesEditor.cpp:388
+msgid "Now, this movement is forbidden"
+msgstr ""
+
+#: interface/src/RulesEditor.cpp:416 interface/src/RulesEditor.cpp:431
+#: interface/src/RulesEditor.cpp:502 interface/src/RulesEditor.cpp:567
+msgid "Rules editor : new file"
+msgstr ""
+
+#: interface/src/RulesEditor.cpp:428
+msgid ""
+"Error while reading the file...\n"
+"Are you sure this was a rule file?"
+msgstr ""
+
+#: interface/src/RulesEditor.cpp:446 interface/src/RulesEditor.cpp:508
+#: interface/src/RulesEditor.cpp:572
+msgid "Rules editor : "
+msgstr ""
+
+#: interface/src/RulesEditor.cpp:548 interface/src/ParamPhaseDialog.cpp:628
+msgid ""
+"The value entered for `name' is not valid. It must not contain spaces nor "
+"special characters."
+msgstr ""
+
+#: interface/src/RulesEditor.cpp:584
+msgid ""
+"This is the Rules Editor.\n"
+"Here you will design an exclusion rule applicable to the phases.\n"
+"To setup your rule, you may:\n"
+"1. dictate conditions on the neighbourhood by the colors symbols.\n"
+"2. forbid some movements by clicking on the arrows."
+msgstr ""
+
+#: interface/src/RulesEditor.cpp:642
+msgid "Clic on a bubble to set it `same phi'"
+msgstr ""
+
+#: interface/src/RulesEditor.cpp:664
+msgid "Clic on a bubble to set it `lower than solid Phi'"
+msgstr ""
+
+#: interface/src/RulesEditor.cpp:686
+msgid "Clic on a bubble to set it `lower phi'"
+msgstr ""
+
+#: interface/src/RulesEditor.cpp:708
+msgid "Clic on a bubble to set it `any phi'"
+msgstr ""
+
+#: interface/src/NewSimulationDialog.cpp:22
+msgid "Scene name"
+msgstr ""
+
+#: interface/src/NewSimulationDialog.cpp:23
+#: interface/src/ParamRecordDialog.cpp:21
+msgid "Parameters"
+msgstr ""
+
+#: interface/src/NewSimulationDialog.cpp:31
+#: interface/src/ParamRecordDialog.cpp:27
+#: interface/src/ParamPhaseDialog.cpp:94 interface/src/ErrorWindow.cpp:24
+msgid "Ok"
+msgstr ""
+
+#: interface/src/NewSimulationDialog.cpp:32
+#: interface/src/ParamRecordDialog.cpp:28
+#: interface/src/ParamPhaseDialog.cpp:95
+msgid "Cancel"
+msgstr ""
+
+#: interface/src/NewSimulationDialog.cpp:33
+#: interface/src/ParamRecordDialog.cpp:29
+msgid "Browse..."
+msgstr ""
+
+#: interface/src/NewSimulationDialog.cpp:35
+#: interface/src/ParamRecordDialog.cpp:31
+msgid "Network size"
+msgstr ""
+
+#: interface/src/NewSimulationDialog.cpp:36
+#: interface/src/UpdatableParameters.cpp:26
+msgid "Number of steps"
+msgstr ""
+
+#: interface/src/NewSimulationDialog.cpp:38
+msgid "Seed"
+msgstr ""
+
+#: interface/src/NewSimulationDialog.cpp:43
+msgid "New simulation"
+msgstr ""
+
+#: interface/src/NewSimulationDialog.cpp:154
+msgid "Open a scene file..."
+msgstr ""
+
+#: interface/src/UpdatableParameters.cpp:20
+#: interface/src/ParamPhaseDialog.cpp:38
+msgid "General"
+msgstr ""
+
+#: interface/src/UpdatableParameters.cpp:27
+msgid "Display frequency"
+msgstr ""
+
+#: interface/src/UpdatableParameters.cpp:30
+msgid "Apply changes"
+msgstr ""
+
+#: interface/src/UpdatableParameters.cpp:35
+msgid "Updatable parameters"
+msgstr ""
+
+#: interface/src/ParamRecordDialog.cpp:20
+msgid "Name of output file"
+msgstr ""
+
+#: interface/src/ParamRecordDialog.cpp:34
+msgid "Recording parameters"
+msgstr ""
+
+#: interface/src/ParamRecordDialog.cpp:40
+msgid "Sorry, not implemented."
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:33
+msgid "The phase is solid"
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:34
+msgid "The phase is fluid"
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:39
+msgid "Name :"
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:40
+msgid "Inertia :"
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:43
+msgid "Color"
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:61
+msgid "Rules"
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:62
+msgid "Usable rules"
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:63
+msgid "Pre-exclusion rules"
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:64
+msgid "Post-exclusion rules"
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:67
+msgid "Design new rule"
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:68
+msgid "Add in pre "
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:69
+msgid "Add in post"
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:70
+msgid "Remove from pre "
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:71
+msgid "Remove from post"
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:74
+msgid "Ponderations"
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:75
+msgid "North"
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:76
+msgid "South"
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:77
+msgid "North-east"
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:78
+msgid "North-west"
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:79
+msgid "South-east"
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:80
+msgid "South-west"
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:98
+msgid "Phases parameters"
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:343
+#: interface/src/ColorationEditor.cpp:86
+msgid "Please choose a color..."
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:371
+msgid "Please save the rule in the rules editor"
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:391
+#: interface/src/ParamPhaseDialog.cpp:403
+msgid ""
+"Error while reading the rule file. Reinstall Microsoft Windows.\n"
+"(seriously, you're in trouble)"
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:455
+#: interface/src/ParamPhaseDialog.cpp:480
+#: interface/src/ParamPhaseDialog.cpp:516
+#: interface/src/ParamPhaseDialog.cpp:541
+msgid "No rule selected."
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:638
+msgid "The value entered for `name' is not valid. It must not be void."
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:647
+msgid ""
+"The value entered for `name' is not valid. It must be different from the "
+"other phases names."
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:655
+msgid "The value entered for `inertie' is not valid. It must be a number."
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:663
+msgid "The value entered for `North' is not valid. It must be a number."
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:671
+msgid "The value entered for `North east' is not valid. It must be a number."
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:679
+msgid "The value entered for `North west' is not valid. It must be a number."
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:687
+msgid "The value entered for `South' is not valid. It must be a number."
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:695
+msgid "The value entered for `South east' is not valid. It must be a number."
+msgstr ""
+
+#: interface/src/ParamPhaseDialog.cpp:703
+msgid "The value entered for `South west' is not valid. It must be a number."
+msgstr ""
+
+#: interface/src/ZoningEditor.cpp:22
+msgid "Relative mix of phases:"
+msgstr ""
+
+#: interface/src/ZoningEditor.cpp:23
+msgid "Apply mix to selected area"
+msgstr ""
+
+#: interface/src/ZoningEditor.cpp:26
+msgid "Zoning editor"
+msgstr ""
+
+#: interface/src/ZoningEditor.cpp:102
+msgid ""
+"This is the Zoning Editor.\n"
+"Here you will setup the initial positions of the phases:\n"
+"1. Setup the desired phases mix with the sliders on the right.\n"
+"2. Create your geometrical filled form:\n"
+"\ta. A rectangle or an ellipse by click-drag-drop.\n"
+"\tb. A polygon by click-drag-drop, then clicks, then right-click."
+msgstr ""
+
+#: interface/src/ZoningEditor.cpp:227 interface/src/ColorationEditor.cpp:211
+msgid "New rectangle, origine : ("
+msgstr ""
+
+#: interface/src/ZoningEditor.cpp:516
+msgid "You must have at least a little bit of one phase !"
+msgstr ""
+
+#: interface/src/ZoningEditor.cpp:546 interface/src/ColorationEditor.cpp:435
+msgid "The rectangle is not valid."
+msgstr ""
+
+#: interface/src/ZoningEditor.cpp:561 interface/src/ZoningEditor.cpp:589
+#: interface/src/ColorationEditor.cpp:448
+#: interface/src/ColorationEditor.cpp:474
+msgid "Rectangle added."
+msgstr ""
+
+#: interface/src/ZoningEditor.cpp:655 interface/src/AreaEditor.cpp:272
+msgid "No area selected !"
+msgstr ""
+
+#: interface/src/ErrorWindow.cpp:22
+msgid "An error has occured..."
+msgstr ""
+
+#: interface/src/ErrorWindow.cpp:27
+msgid "Error"
+msgstr ""
+
+#: interface/src/AreaEditor.cpp:52 interface/src/AreaEditor.cpp:97
+msgid "New rectangle"
+msgstr ""
+
+#: interface/src/AreaEditor.cpp:283
+msgid ""
+"Add a new rectangle by clicking for the origine, then dragging for the end."
+msgstr ""
+
+#: interface/src/AreaEditor.cpp:303
+msgid "Add a new ellipse by clicking and dragging."
+msgstr ""
+
+#: interface/src/ColorationEditor.cpp:22
+msgid "Choose color"
+msgstr ""
+
+#: interface/src/ColorationEditor.cpp:23
+msgid "Automatic random color"
+msgstr ""
+
+#: interface/src/ColorationEditor.cpp:26
+msgid "Coloration editor"
+msgstr ""
+
+#: interface/src/ColorationEditor.cpp:80
+msgid ""
+"This is the Coloration Editor.\n"
+"Here you will setup color paintings on some areas:\n"
+"1. Setup the desired color.\n"
+"2. Create your geometrical filled form:\n"
+"\ta. A rectangle or an ellipse by click-drag-drop.\n"
+"\tb. A polygon by click-drag-drop, then clicks, then right-click."
+msgstr ""
+
+#: interface/src/NewbieWindow.cpp:20
+msgid "A newbie! has occured..."
+msgstr ""
+
+#: interface/src/NewbieWindow.cpp:25
+msgid "Newbie"
+msgstr ""
+
+#: console/src/Console.cpp:130
+msgid "You did not specify the network size."
+msgstr ""
+
+#: console/src/Console.cpp:189
+msgid "console"
+msgstr ""
+
+#: console/src/Console.cpp:199
+msgid "This is"
+msgstr ""
+
+#: console/src/Console.cpp:199
+msgid "the celullar automaton simulator."
+msgstr ""
+
+#: console/src/Console.cpp:219
+msgid "Launch the simulation or the scene from FILE or standard input"
+msgstr ""
+
+#: console/src/Console.cpp:221
+msgid "seed of the simulation"
+msgstr ""
+
+#: console/src/Console.cpp:222
+msgid "number of steps of the simulation"
+msgstr ""
+
+#: console/src/Console.cpp:223
+msgid "if the argument is a scene, gives the dimension of the network"
+msgstr ""
+
+#: console/src/Console.cpp:243
+msgid "file handling, engine, tools (configure...)"
+msgstr ""

@@ -1,0 +1,32 @@
+[TEST************] methode RequeteAccorde ************************
+RIEN
+NORD
+NE
+SE
+SUD
+SW
+NW
+[ERREUR] on ne devrait pas avoir d'appel de requete accordee sur RIEN (aucune requete ne s'y accorde / cela ne genere pas de deplacement)
+RIEN
+SUD
+SW
+NW
+NORD
+NE
+SE
+---------Valeur attendue-------------
+RIEN
+NORD
+NE
+SE
+SUD
+SW
+NW
+[ERREUR] on ne devrait pas avoir d'appel de requete accordee sur RIEN (aucune requete ne s'y accorde / cela ne genere pas de deplacement)
+RIEN
+SUD
+SW
+NW
+NORD
+NE
+SE

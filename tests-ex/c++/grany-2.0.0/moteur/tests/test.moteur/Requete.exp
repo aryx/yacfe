@@ -1,0 +1,14 @@
+process_start Requete
+
+process_test "constructeur par defaut"
+process_test "Constructeur par EnumRequeteRequete"
+process_test "Constructeur par entier"
+process_test "operateur de cast"
+process_test "operateur =="
+process_test "methode RequeteEnAccord"
+process_test "methode RequeteAccorde"
+process_test "pas d'exception sur RIEN"
+process_test "exception sur 7"
+
+
+

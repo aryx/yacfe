@@ -1,0 +1,21 @@
+can_stubs : cercle.o segment.o point.o carre.o rectangle.o figures.o
+	c++ fenetre.o cercle.o segment.o point.o carre.o rectangle.o can_stubs.cc can_ui.o figures.o -o can_stubs  -I/usr/local/guide/include -I/usr/openwin/include -DMAIN -DSVR4 -L/usr/local/guide/lib -L/usr/openwin/lib -lsocket -lnsl -lguidexv -lguide -lxview -lolgx -lX11 -lintl
+ 
+figures.o : figures.c figures.h
+	c++ -c figures.c   -I/logiciel/sun4/bin/Devguide/include -I/usr/openwin/include -DMAIN -sun4
+ 
+point.o : point.c point.h
+	c++ -c point.c   -I/logiciel/sun4/bin/Devguide/include -I/usr/openwin/include -DMAIN -sun4
+ 
+segment.o : segment.c segment.h
+	c++ -c segment.c -I/logiciel/sun4/bin/Devguide/include -I/usr/openwin/include -DMAIN -sun4
+ 
+rectangle.o : rectangle.c rectangle.h
+	CC -c rectangle.c -I/logiciel/sun4/bin/Devguide/include -I/usr/openwin/include -DMAIN -sun4
+ 
+carre.o : carre.c carre.h
+	CC -c carre.c    -I/logiciel/sun4/bin/Devguide/include -I/usr/openwin/include -DMAIN  -sun4
+ 
+cercle.o : cercle.c cercle.h
+	CC -c cercle.c  -I/logiciel/sun4/bin/Devguide/include -I/usr/openwin/include -DMAIN -sun4
+ 

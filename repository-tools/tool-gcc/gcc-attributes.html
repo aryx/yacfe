@@ -1,0 +1,1577 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>gcc attribute overview</title>
+</head>
+<body>
+<h3><a href="../uwe.html">Uwe Ohse</a></h3>
+<h2><a href="index.html">Artikel</a></h2>
+<h1>gcc attribute overview</h1>
+<a href="#func">function attributes</a>
+ -- <a href="#type">type attributes</a>
+ -- <a href="#var">variable attributes</a>
+<p>
+This list was automatically generated from the GCC documentation.
+It lists documented GCCs function, type and variable attributes
+(__attribute__) together with the GCC versions the attribute was
+found in.<br>
+Versions used:
+<ul>
+<li>Major - minor version used.
+<li>2.0 - 2.0
+<li>2.1 - 2.1
+<li>2.2 - 2.2.2
+<li>2.3 - 2.3.3
+<li>2.4 - 2.4.5
+<li>2.5 - 2.5.8
+<li>2.6 - 2.6.3
+<li>2.7 - 2.7.2.3
+<li>2.8 - 2.8.1
+<li>e1.0 - egcs-1.0.3
+<li>e1.1 - egcs-1.1.2
+<li>2.95 - 2.95.3
+<li>3.0 - 3.0
+<li>3.1 - 3.1
+<li>3.2 - 3.2
+<li>3.3 - 3.3.2
+<li>3.4 - 3.4.0
+</ul>
+<a name="func"><h2>'c extensions' 'function attributes'</h2>
+<a href="#func-alias">alias</a>
+ -- <a href="#func-always_inline">always_inline</a>
+ -- <a href="#func-cdecl">cdecl</a>
+ -- <a href="#func-const">const</a>
+ -- <a href="#func-constructor">constructor</a>
+ -- <a href="#func-deprecated">deprecated</a>
+ -- <a href="#func-destructor">destructor</a>
+ -- <a href="#func-dllexport">dllexport</a>
+ -- <a href="#func-dllimport">dllimport</a>
+ -- <a href="#func-eightbit_data">eightbit_data</a>
+ -- <a href="#func-exception">exception</a>
+ -- <a href="#func-far">far</a>
+ -- <a href="#func-fastcall">fastcall</a>
+ -- <a href="#func-format">format</a>
+ -- <a href="#func-format_arg">format_arg</a>
+ -- <a href="#func-function_vector">function_vector</a>
+ -- <a href="#func-interrupt">interrupt</a>
+ -- <a href="#func-interrupt_handler">interrupt_handler</a>
+ -- <a href="#func-long_call/short_call">long_call/short_call</a>
+ -- <a href="#func-longcall">longcall</a>
+ -- <a href="#func-longcall/shortcall">longcall/shortcall</a>
+ -- <a href="#func-malloc">malloc</a>
+ -- <a href="#func-model">model</a>
+ -- <a href="#func-naked">naked</a>
+ -- <a href="#func-near">near</a>
+ -- <a href="#func-no_check_memory_usage">no_check_memory_usage</a>
+ -- <a href="#func-no_instrument_function">no_instrument_function</a>
+ -- <a href="#func-noinline">noinline</a>
+ -- <a href="#func-nonnull">nonnull</a>
+ -- <a href="#func-noreturn">noreturn</a>
+ -- <a href="#func-nothrow">nothrow</a>
+ -- <a href="#func-pure">pure</a>
+ -- <a href="#func-regparm">regparm</a>
+ -- <a href="#func-saveall">saveall</a>
+ -- <a href="#func-section">section</a>
+ -- <a href="#func-signal">signal</a>
+ -- <a href="#func-sp_switch">sp_switch</a>
+ -- <a href="#func-stdcall">stdcall</a>
+ -- <a href="#func-tiny_data">tiny_data</a>
+ -- <a href="#func-trap_exit">trap_exit</a>
+ -- <a href="#func-unused">unused</a>
+ -- <a href="#func-used">used</a>
+ -- <a href="#func-visibility">visibility</a>
+ -- <a href="#func-warn_unused_result">warn_unused_result</a>
+ -- <a href="#func-weak">weak</a>
+<dl>
+<a name="func-alias">
+<dt>alias ("TARGET")
+<dd>Found in versions: 2.7-3.4
+<dd>Description:
+<pre>     The `alias' attribute causes the declaration to be emitted as an
+     alias for another symbol, which must be specified.  For instance,
+
+          void __f () { /* Do something. */; }
+          void f () __attribute__ ((weak, alias ("__f")));
+
+     declares `f' to be a weak alias for `__f'.  In C++, the mangled
+     name for the target must be used.
+
+     Not all target machines support this attribute.
+
+</pre>
+<a name="func-always_inline">
+<dt>always_inline
+<dd>Found in versions: 3.1-3.4
+<dd>Description:
+<pre>     Generally, functions are not inlined unless optimization is
+     specified.  For functions declared inline, this attribute inlines
+     the function even if no optimization level was specified.
+
+</pre>
+<a name="func-cdecl">
+<dt>cdecl
+<dd>Found in versions: 2.7-3.4
+<dd>Description:
+<pre>     On the Intel 386, the `cdecl' attribute causes the compiler to
+     assume that the calling function will pop off the stack space used
+     to pass arguments.  This is useful to override the effects of the
+     `-mrtd' switch.
+
+</pre>
+<a name="func-const">
+<dt>const
+<dd>Found in versions: 2.5-3.4
+<dd>Introduced in version 2.5. (according to documentation)
+<dd>Description:
+<pre>     Many functions do not examine any values except their arguments,
+     and have no effects except the return value.  Basically this is
+     just slightly more strict class than the `pure' attribute above,
+     since function is not allowed to read global memory.
+
+     Note that a function that has pointer arguments and examines the
+     data pointed to must _not_ be declared `const'.  Likewise, a
+     function that calls a non-`const' function usually must not be
+     `const'.  It does not make sense for a `const' function to return
+     `void'.
+
+     The attribute `const' is not implemented in GCC versions earlier
+     than 2.5.  An alternative way to declare that a function has no
+     side effects, which works in the current version and in some older
+     versions, is as follows:
+
+          typedef int intfn ();
+          
+          extern const intfn square;
+
+     This approach does not work in GNU C++ from 2.6.0 on, since the
+     language specifies that the `const' must be attached to the return
+     value.
+
+</pre>
+<a name="func-constructor">
+<dt>constructor
+<dd>Found in versions: 2.7-3.4
+<dd>Description:
+<pre></pre>
+<a name="func-deprecated">
+<dt>deprecated
+<dd>Found in versions: 3.1-3.4
+<dd>Description:
+<pre>     The `deprecated' attribute results in a warning if the function is
+     used anywhere in the source file.  This is useful when identifying
+     functions that are expected to be removed in a future version of a
+     program.  The warning also includes the location of the declaration
+     of the deprecated function, to enable users to easily find further
+     information about why the function is deprecated, or what they
+     should do instead.  Note that the warnings only occurs for uses:
+
+          int old_fn () __attribute__ ((deprecated));
+          int old_fn ();
+          int (*fn_ptr)() = old_fn;
+
+     results in a warning on line 3 but not line 2.
+
+     The `deprecated' attribute can also be used for variables and
+     types (*note Variable Attributes::, *note Type Attributes::.)
+
+</pre>
+<a name="func-destructor">
+<dt>destructor
+<dd>Found in versions: 2.7-3.4
+<dd>Description:
+<pre>     The `constructor' attribute causes the function to be called
+     automatically before execution enters `main ()'.  Similarly, the
+     `destructor' attribute causes the function to be called
+     automatically after `main ()' has completed or `exit ()' has been
+     called.  Functions with these attributes are useful for
+     initializing data that will be used implicitly during the
+     execution of the program.
+
+     These attributes are not currently implemented for Objective-C.
+
+</pre>
+<a name="func-dllexport">
+<dt>dllexport
+<dd>Found in versions: 2.8-3.4
+<dd>Description:
+<pre>     On Microsoft Windows targets the `dllexport' attribute causes the
+     compiler to provide a global pointer to a pointer in a dll, so
+     that it can be referenced with the `dllimport' attribute. The
+     pointer name is formed by combining `_imp__' and the function or
+     variable name.
+
+     Currently, the `dllexport'attribute is ignored for inlined
+     functions, but export can be forced by using the
+     `-fkeep-inline-functions' flag. The attribute is also ignored for
+     undefined symbols.
+
+     When applied to C++ classes. the attribute marks defined
+     non-inlined member functions and static data members as exports.
+     Static consts initialized in-class are not marked unless they are
+     also defined out-of-class.
+
+     On cygwin, mingw and arm-pe targets, `__declspec(dllexport)' is
+     recognized as a synonym for `__attribute__ ((dllexport))' for
+     compatibility with other Microsoft Windows compilers.
+
+     Alternative methods for including the symbol in the dll's export
+     table are to use a .def file with an `EXPORTS' section or, with
+     GNU ld, using the `--export-all' linker flag.
+
+   You can specify multiple attributes in a declaration by separating
+</pre>
+<a name="func-dllimport">
+<dt>dllimport
+<dd>Found in versions: 2.8-3.4
+<dd>Description:
+<pre>     On Microsoft Windows targets, the `dllimport' attribute causes the
+     compiler to reference a function or variable via a global pointer
+     to a pointer that is set up by the Microsoft Windows dll library.
+     The pointer name is formed by combining `_imp__' and the function
+     or variable name. The attribute implies `extern' storage.
+
+     Currently, the attribute is ignored for inlined functions. If the
+     attribute is applied to a symbol _definition_, an error is
+     reported.  If a symbol previously declared `dllimport' is later
+     defined, the attribute is ignored in subsequent references, and a
+     warning is emitted.  The attribute is also overridden by a
+     subsequent declaration as `dllexport'.
+
+     When applied to C++ classes, the attribute marks non-inlined
+     member functions and static data members as imports.  However, the
+     attribute is ignored for virtual methods to allow creation of
+     vtables using thunks.
+
+     On cygwin, mingw and arm-pe targets, `__declspec(dllimport)' is
+     recognized as a synonym for `__attribute__ ((dllimport))' for
+     compatibility with other Microsoft Windows compilers.
+
+     The use of the `dllimport' attribute on functions is not necessary,
+     but provides a small performance benefit by eliminating a thunk in
+     the dll. The use of the `dllimport' attribute on imported
+     variables was required on older versions of GNU ld, but can now be
+     avoided by passing the `--enable-auto-import' switch to ld. As
+     with functions, using the attribute for a variable eliminates a
+     thunk in the dll.
+
+     One drawback to using this attribute is that a pointer to a
+     function or variable marked as dllimport cannot be used as a
+     constant address. The attribute can be disabled for functions by
+     setting the `-mnop-fun-dllimport' flag.
+
+</pre>
+<a name="func-eightbit_data">
+<dt>eightbit_data
+<dd>Found in versions: 2.8-3.4
+<dd>Description:
+<pre>     Use this attribute on the H8/300, H8/300H, and H8S to indicate
+     that the specified variable should be placed into the eight bit
+     data section.  The compiler will generate more efficient code for
+     certain operations on data in the eight bit data area.  Note the
+     eight bit data area is limited to 256 bytes of data.
+
+     You must use GAS and GLD from GNU binutils version 2.7 or later for
+     this attribute to work correctly.
+
+</pre>
+<a name="func-exception">
+<dt>exception (EXCEPT-FUNC [, EXCEPT-ARG])
+<dd>Found in versions: 2.8-3.2
+<dd>Description:
+<pre>     On the PowerPC running Windows NT, the `exception' attribute causes
+     the compiler to modify the structured exception table entry it
+     emits for the declared function.  The string or identifier
+     EXCEPT-FUNC is placed in the third entry of the structured
+     exception table.  It represents a function, which is called by the
+     exception handling mechanism if an exception occurs.  If it was
+     specified, the string or identifier EXCEPT-ARG is placed in the
+     fourth entry of the structured exception table.
+
+</pre>
+<a name="func-far">
+<dt>far
+<dd>Found in versions: 3.3 3.4
+<dd>Description:
+<pre>     On 68HC11 and 68HC12 the `far' attribute causes the compiler to
+     use a calling convention that takes care of switching memory banks
+     when entering and leaving a function.  This calling convention is
+     also the default when using the `-mlong-calls' option.
+
+     On 68HC12 the compiler will use the `call' and `rtc' instructions
+     to call and return from a function.
+
+     On 68HC11 the compiler will generate a sequence of instructions to
+     invoke a board-specific routine to switch the memory bank and call
+     the real function. The board-specific routine simulates a `call'.
+     At the end of a function, it will jump to a board-specific routine
+     instead of using `rts'. The board-specific return routine simulates
+     the `rtc'.
+
+</pre>
+<a name="func-fastcall">
+<dt>fastcall
+<dd>Found in versions: 3.4
+<dd>Description:
+<pre>     On the Intel 386, the `fastcall' attribute causes the compiler to
+     pass the first two arguments in the registers ECX and EDX.
+     Subsequent arguments are passed on the stack. The called function
+     will pop the arguments off the stack. If the number of arguments
+     is variable all arguments are pushed on the stack.
+
+</pre>
+<a name="func-format">
+<dt>format (ARCHETYPE, STRING-INDEX, FIRST-TO-CHECK)
+<dd>Found in versions: 2.3-3.4
+<dd>Description:
+<pre>     The `format' attribute specifies that a function takes `printf',
+     `scanf', `strftime' or `strfmon' style arguments which should be
+     type-checked against a format string.  For example, the
+     declaration:
+
+          extern int
+          my_printf (void *my_object, const char *my_format, ...)
+                __attribute__ ((format (printf, 2, 3)));
+
+     causes the compiler to check the arguments in calls to `my_printf'
+     for consistency with the `printf' style format string argument
+     `my_format'.
+
+     The parameter ARCHETYPE determines how the format string is
+     interpreted, and should be `printf', `scanf', `strftime' or
+     `strfmon'.  (You can also use `__printf__', `__scanf__',
+     `__strftime__' or `__strfmon__'.)  The parameter STRING-INDEX
+     specifies which argument is the format string argument (starting
+     from 1), while FIRST-TO-CHECK is the number of the first argument
+     to check against the format string.  For functions where the
+     arguments are not available to be checked (such as `vprintf'),
+     specify the third parameter as zero.  In this case the compiler
+     only checks the format string for consistency.  For `strftime'
+     formats, the third parameter is required to be zero.  Since
+     non-static C++ methods have an implicit `this' argument, the
+     arguments of such methods should be counted from two, not one, when
+     giving values for STRING-INDEX and FIRST-TO-CHECK.
+
+     In the example above, the format string (`my_format') is the second
+     argument of the function `my_print', and the arguments to check
+     start with the third argument, so the correct parameters for the
+     format attribute are 2 and 3.
+
+     The `format' attribute allows you to identify your own functions
+     which take format strings as arguments, so that GCC can check the
+     calls to these functions for errors.  The compiler always (unless
+     `-ffreestanding' is used) checks formats for the standard library
+     functions `printf', `fprintf', `sprintf', `scanf', `fscanf',
+     `sscanf', `strftime', `vprintf', `vfprintf' and `vsprintf'
+     whenever such warnings are requested (using `-Wformat'), so there
+     is no need to modify the header file `stdio.h'.  In C99 mode, the
+     functions `snprintf', `vsnprintf', `vscanf', `vfscanf' and
+     `vsscanf' are also checked.  Except in strictly conforming C
+     standard modes, the X/Open function `strfmon' is also checked as
+     are `printf_unlocked' and `fprintf_unlocked'.  *Note Options
+     Controlling C Dialect: C Dialect Options.
+
+</pre>
+<a name="func-format_arg">
+<dt>format_arg (STRING-INDEX)
+<dd>Found in versions: 2.8-3.4
+<dd>Description:
+<pre>     The `format_arg' attribute specifies that a function takes a format
+     string for a `printf', `scanf', `strftime' or `strfmon' style
+     function and modifies it (for example, to translate it into
+     another language), so the result can be passed to a `printf',
+     `scanf', `strftime' or `strfmon' style function (with the
+     remaining arguments to the format function the same as they would
+     have been for the unmodified string).  For example, the
+     declaration:
+
+          extern char *
+          my_dgettext (char *my_domain, const char *my_format)
+                __attribute__ ((format_arg (2)));
+
+     causes the compiler to check the arguments in calls to a `printf',
+     `scanf', `strftime' or `strfmon' type function, whose format
+     string argument is a call to the `my_dgettext' function, for
+     consistency with the format string argument `my_format'.  If the
+     `format_arg' attribute had not been specified, all the compiler
+     could tell in such calls to format functions would be that the
+     format string argument is not constant; this would generate a
+     warning when `-Wformat-nonliteral' is used, but the calls could
+     not be checked without the attribute.
+
+     The parameter STRING-INDEX specifies which argument is the format
+     string argument (starting from one).  Since non-static C++ methods
+     have an implicit `this' argument, the arguments of such methods
+     should be counted from two.
+
+     The `format-arg' attribute allows you to identify your own
+     functions which modify format strings, so that GCC can check the
+     calls to `printf', `scanf', `strftime' or `strfmon' type function
+     whose operands are a call to one of your own function.  The
+     compiler always treats `gettext', `dgettext', and `dcgettext' in
+     this manner except when strict ISO C support is requested by
+     `-ansi' or an appropriate `-std' option, or `-ffreestanding' is
+     used.  *Note Options Controlling C Dialect: C Dialect Options.
+
+</pre>
+<a name="func-function_vector">
+<dt>function_vector
+<dd>Found in versions: 2.8-3.4
+<dd>Description:
+<pre>     Use this attribute on the H8/300, H8/300H, and H8S to indicate
+     that the specified function should be called through the function
+     vector.  Calling a function through the function vector will
+     reduce code size, however; the function vector has a limited size
+     (maximum 128 entries on the H8/300 and 64 entries on the H8/300H
+     and H8S) and shares space with the interrupt vector.
+
+     You must use GAS and GLD from GNU binutils version 2.7 or later for
+     this attribute to work correctly.
+
+</pre>
+<a name="func-interrupt">
+<dt>interrupt
+<dd>Found in versions: 2.8-3.4
+<dd>Description:
+<pre>     Use this attribute on the ARM, AVR, C4x, M32R/D and Xstormy16
+     ports to indicate that the specified function is an interrupt
+     handler.  The compiler will generate function entry and exit
+     sequences suitable for use in an interrupt handler when this
+     attribute is present.
+
+     Note, interrupt handlers for the m68k, H8/300, H8/300H, H8S, and
+     SH processors can be specified via the `interrupt_handler'
+     attribute.
+
+     Note, on the AVR, interrupts will be enabled inside the function.
+
+     Note, for the ARM, you can specify the kind of interrupt to be
+     handled by adding an optional parameter to the interrupt attribute
+     like this:
+
+          void f () __attribute__ ((interrupt ("IRQ")));
+
+     Permissible values for this parameter are: IRQ, FIQ, SWI, ABORT
+     and UNDEF.
+
+</pre>
+<a name="func-interrupt_handler">
+<dt>interrupt_handler
+<dd>Found in versions: 2.8-3.4
+<dd>Description:
+<pre>     Use this attribute on the m68k, H8/300, H8/300H, H8S, and SH to
+     indicate that the specified function is an interrupt handler.  The
+     compiler will generate function entry and exit sequences suitable
+     for use in an interrupt handler when this attribute is present.
+
+</pre>
+<a name="func-long_call/short_call">
+<dt>long_call/short_call
+<dd>Found in versions: 3.0-3.4
+<dd>Description:
+<pre>     This attribute specifies how a particular function is called on
+     ARM.  Both attributes override the `-mlong-calls' (*note ARM
+     Options::) command line switch and `#pragma long_calls' settings.
+     The `long_call' attribute causes the compiler to always call the
+     function by first loading its address into a register and then
+     using the contents of that register.   The `short_call' attribute
+     always places the offset to the function from the call site into
+     the `BL' instruction directly.
+
+</pre>
+<a name="func-longcall">
+<dt>longcall
+<dd>Found in versions: 2.8-3.2
+<dd>Description:
+<pre>     On the RS/6000 and PowerPC, the `longcall' attribute causes the
+     compiler to always call the function via a pointer, so that
+     functions which reside further than 64 megabytes (67,108,864
+     bytes) from the current location can be called.
+
+</pre>
+<a name="func-longcall/shortcall">
+<dt>longcall/shortcall
+<dd>Found in versions: 3.3 3.4
+<dd>Description:
+<pre>     On the RS/6000 and PowerPC, the `longcall' attribute causes the
+     compiler to always call this function via a pointer, just as it
+     would if the `-mlongcall' option had been specified.  The
+     `shortcall' attribute causes the compiler not to do this.  These
+     attributes override both the `-mlongcall' switch and the `#pragma
+     longcall' setting.
+
+     *Note RS/6000 and PowerPC Options::, for more information on
+     whether long calls are necessary.
+
+</pre>
+<a name="func-malloc">
+<dt>malloc
+<dd>Found in versions: 3.0-3.4
+<dd>Description:
+<pre>     The `malloc' attribute is used to tell the compiler that a function
+     may be treated as if any non-`NULL' pointer it returns cannot
+     alias any other pointer valid when the function returns.  This
+     will often improve optimization.  Standard functions with this
+     property include `malloc' and `calloc'.  `realloc'-like functions
+     have this property as long as the old pointer is never referred to
+     (including comparing it to the new pointer) after the function
+     returns a non-`NULL' value.
+
+</pre>
+<a name="func-model">
+<dt>model (MODEL-NAME)
+<dd>Found in versions: 2.8-3.4
+<dd>Description:
+<pre>     On the M32R/D, use this attribute to set the addressability of an
+     object, and of the code generated for a function.  The identifier
+     MODEL-NAME is one of `small', `medium', or `large', representing
+     each of the code models.
+
+     Small model objects live in the lower 16MB of memory (so that their
+     addresses can be loaded with the `ld24' instruction), and are
+     callable with the `bl' instruction.
+
+     Medium model objects may live anywhere in the 32-bit address space
+     (the compiler will generate `seth/add3' instructions to load their
+     addresses), and are callable with the `bl' instruction.
+
+     Large model objects may live anywhere in the 32-bit address space
+     (the compiler will generate `seth/add3' instructions to load their
+     addresses), and may not be reachable with the `bl' instruction
+     (the compiler will generate the much slower `seth/add3/jl'
+     instruction sequence).
+
+     On IA-64, use this attribute to set the addressability of an
+     object.  At present, the only supported identifier for MODEL-NAME
+     is `small', indicating addressability via "small" (22-bit)
+     addresses (so that their addresses can be loaded with the `addl'
+     instruction).  Caveat: such addressing is by definition not
+     position independent and hence this attribute must not be used for
+     objects defined by shared libraries.
+
+</pre>
+<a name="func-naked">
+<dt>naked
+<dd>Found in versions: 3.0-3.4
+<dd>Description:
+<pre>     Use this attribute on the ARM, AVR, C4x and IP2K ports to indicate
+     that the specified function does not need prologue/epilogue
+     sequences generated by the compiler.  It is up to the programmer
+     to provide these sequences.
+
+</pre>
+<a name="func-near">
+<dt>near
+<dd>Found in versions: 3.3 3.4
+<dd>Description:
+<pre>     On 68HC11 and 68HC12 the `near' attribute causes the compiler to
+     use the normal calling convention based on `jsr' and `rts'.  This
+     attribute can be used to cancel the effect of the `-mlong-calls'
+     option.
+
+</pre>
+<a name="func-no_check_memory_usage">
+<dt>no_check_memory_usage
+<dd>Found in versions: 2.95 3.0
+<dd>Description:
+<pre>     The `no_check_memory_usage' attribute causes GCC to omit checks of
+     memory references when it generates code for that function.
+     Normally if you specify `-fcheck-memory-usage' (see *note Code Gen
+     Options::), GCC generates calls to support routines before most
+     memory accesses to permit support code to record usage and detect
+     uses of uninitialized or unallocated storage.  Since GCC cannot
+     handle `asm' statements properly they are not allowed in such
+     functions.  If you declare a function with this attribute, GCC
+     will not generate memory checking code for that function,
+     permitting the use of `asm' statements without having to compile
+     that function with different options.  This also allows you to
+     write support routines of your own if you wish, without getting
+     infinite recursion if they get compiled with
+     `-fcheck-memory-usage'.
+
+</pre>
+<a name="func-no_instrument_function">
+<dt>no_instrument_function
+<dd>Found in versions: 2.95-3.4
+<dd>Description:
+<pre>     If `-finstrument-functions' is given, profiling function calls will
+     be generated at entry and exit of most user-compiled functions.
+     Functions with this attribute will not be so instrumented.
+
+</pre>
+<a name="func-noinline">
+<dt>noinline
+<dd>Found in versions: 3.1-3.4
+<dd>Description:
+<pre>     This function attribute prevents a function from being considered
+     for inlining.
+
+</pre>
+<a name="func-nonnull">
+<dt>nonnull (ARG-INDEX, ...)
+<dd>Found in versions: 3.3 3.4
+<dd>Description:
+<pre>     The `nonnull' attribute specifies that some function parameters
+     should be non-null pointers.  For instance, the declaration:
+
+          extern void *
+          my_memcpy (void *dest, const void *src, size_t len)
+          	__attribute__((nonnull (1, 2)));
+
+     causes the compiler to check that, in calls to `my_memcpy',
+     arguments DEST and SRC are non-null.  If the compiler determines
+     that a null pointer is passed in an argument slot marked as
+     non-null, and the `-Wnonnull' option is enabled, a warning is
+     issued.  The compiler may also choose to make optimizations based
+     on the knowledge that certain function arguments will not be null.
+
+     If no argument index list is given to the `nonnull' attribute, all
+     pointer arguments are marked as non-null.  To illustrate, the
+     following declaration is equivalent to the previous example:
+
+          extern void *
+          my_memcpy (void *dest, const void *src, size_t len)
+          	__attribute__((nonnull));
+
+</pre>
+<a name="func-noreturn">
+<dt>noreturn
+<dd>Found in versions: 2.5-3.4
+<dd>Introduced in version 2.5. (according to documentation)
+<dd>Description:
+<pre>     A few standard library functions, such as `abort' and `exit',
+     cannot return.  GCC knows this automatically.  Some programs define
+     their own functions that never return.  You can declare them
+     `noreturn' to tell the compiler this fact.  For example,
+
+          void fatal () __attribute__ ((noreturn));
+          
+          void
+          fatal (/* ... */)
+          {
+            /* ... */ /* Print error message. */ /* ... */
+            exit (1);
+          }
+
+     The `noreturn' keyword tells the compiler to assume that `fatal'
+     cannot return.  It can then optimize without regard to what would
+     happen if `fatal' ever did return.  This makes slightly better
+     code.  More importantly, it helps avoid spurious warnings of
+     uninitialized variables.
+
+     The `noreturn' keyword does not affect the exceptional path when
+     that applies: a `noreturn'-marked function may still return to the
+     caller by throwing an exception.
+
+     Do not assume that registers saved by the calling function are
+     restored before calling the `noreturn' function.
+
+     It does not make sense for a `noreturn' function to have a return
+     type other than `void'.
+
+     The attribute `noreturn' is not implemented in GCC versions
+     earlier than 2.5.  An alternative way to declare that a function
+     does not return, which works in the current version and in some
+     older versions, is as follows:
+
+          typedef void voidfn ();
+          
+          volatile voidfn fatal;
+
+</pre>
+<a name="func-nothrow">
+<dt>nothrow
+<dd>Found in versions: 3.3 3.4
+<dd>Introduced in version 3.2. (according to documentation)
+<dd>Description:
+<pre>     The `nothrow' attribute is used to inform the compiler that a
+     function cannot throw an exception.  For example, most functions in
+     the standard C library can be guaranteed not to throw an exception
+     with the notable exceptions of `qsort' and `bsearch' that take
+     function pointer arguments.  The `nothrow' attribute is not
+     implemented in GCC versions earlier than 3.2.
+
+</pre>
+<a name="func-pure">
+<dt>pure
+<dd>Found in versions: 3.0-3.4
+<dd>Introduced in version 2.96. (according to documentation)
+<dd>Description:
+<pre>     Many functions have no effects except the return value and their
+     return value depends only on the parameters and/or global
+     variables.  Such a function can be subject to common subexpression
+     elimination and loop optimization just as an arithmetic operator
+     would be.  These functions should be declared with the attribute
+     `pure'.  For example,
+
+          int square (int) __attribute__ ((pure));
+
+     says that the hypothetical function `square' is safe to call fewer
+     times than the program says.
+
+     Some of common examples of pure functions are `strlen' or `memcmp'.
+     Interesting non-pure functions are functions with infinite loops
+     or those depending on volatile memory or other system resource,
+     that may change between two consecutive calls (such as `feof' in a
+     multithreading environment).
+
+     The attribute `pure' is not implemented in GCC versions earlier
+     than 2.96.
+
+</pre>
+<a name="func-regparm">
+<dt>regparm (NUMBER)
+<dd>Found in versions: 2.7-3.4
+<dd>Description:
+<pre>     On the Intel 386, the `regparm' attribute causes the compiler to
+     pass up to NUMBER integer arguments in registers EAX, EDX, and ECX
+     instead of on the stack.  Functions that take a variable number of
+     arguments will continue to be passed all of their arguments on the
+     stack.
+
+     Beware that on some ELF systems this attribute is unsuitable for
+     global functions in shared libraries with lazy binding (which is
+     the default).  Lazy binding will send the first call via resolving
+     code in the loader, which might assume EAX, EDX and ECX can be
+     clobbered, as per the standard calling conventions.  Solaris 8 is
+     affected by this.  GNU systems with GLIBC 2.1 or higher, and
+     FreeBSD, are believed to be safe since the loaders there save all
+     registers.  (Lazy binding can be disabled with the linker or the
+     loader if desired, to avoid the problem.)
+
+</pre>
+<a name="func-saveall">
+<dt>saveall
+<dd>Found in versions: 3.4
+<dd>Description:
+<pre>     Use this attribute on the H8/300, H8/300H, and H8S to indicate that
+     all registers except the stack pointer should be saved in the
+     prologue regardless of whether they are used or not.
+
+</pre>
+<a name="func-section">
+<dt>section ("SECTION-NAME")
+<dd>Found in versions: 2.6-3.4
+<dd>Description:
+<pre>     Normally, the compiler places the code it generates in the `text'
+     section.  Sometimes, however, you need additional sections, or you
+     need certain particular functions to appear in special sections.
+     The `section' attribute specifies that a function lives in a
+     particular section.  For example, the declaration:
+
+          extern void foobar (void) __attribute__ ((section ("bar")));
+
+     puts the function `foobar' in the `bar' section.
+
+     Some file formats do not support arbitrary sections so the
+     `section' attribute is not available on all platforms.  If you
+     need to map the entire contents of a module to a particular
+     section, consider using the facilities of the linker instead.
+
+</pre>
+<a name="func-signal">
+<dt>signal
+<dd>Found in versions: 3.0-3.4
+<dd>Description:
+<pre>     Use this attribute on the AVR to indicate that the specified
+     function is a signal handler.  The compiler will generate function
+     entry and exit sequences suitable for use in a signal handler when
+     this attribute is present.  Interrupts will be disabled inside the
+     function.
+
+</pre>
+<a name="func-sp_switch">
+<dt>sp_switch
+<dd>Found in versions: 3.0-3.4
+<dd>Description:
+<pre>     Use this attribute on the SH to indicate an `interrupt_handler'
+     function should switch to an alternate stack.  It expects a string
+     argument that names a global variable holding the address of the
+     alternate stack.
+
+          void *alt_stack;
+          void f () __attribute__ ((interrupt_handler,
+                                    sp_switch ("alt_stack")));
+
+</pre>
+<a name="func-stdcall">
+<dt>stdcall
+<dd>Found in versions: 2.7-3.4
+<dd>Description:
+<pre>     On the Intel 386, the `stdcall' attribute causes the compiler to
+     assume that the called function will pop off the stack space used
+     to pass arguments, unless it takes a variable number of arguments.
+
+</pre>
+<a name="func-tiny_data">
+<dt>tiny_data
+<dd>Found in versions: 2.8-3.4
+<dd>Description:
+<pre>     Use this attribute on the H8/300H and H8S to indicate that the
+     specified variable should be placed into the tiny data section.
+     The compiler will generate more efficient code for loads and stores
+     on data in the tiny data section.  Note the tiny data area is
+     limited to slightly under 32kbytes of data.
+
+</pre>
+<a name="func-trap_exit">
+<dt>trap_exit
+<dd>Found in versions: 3.0-3.4
+<dd>Description:
+<pre>     Use this attribute on the SH for an `interrupt_handler' to return
+     using `trapa' instead of `rte'.  This attribute expects an integer
+     argument specifying the trap number to be used.
+
+</pre>
+<a name="func-unused">
+<dt>unused
+<dd>Found in versions: 2.7-3.4
+<dd>Description:
+<pre>     This attribute, attached to a function, means that the function is
+     meant to be possibly unused.  GCC will not produce a warning for
+     this function.
+
+</pre>
+<a name="func-used">
+<dt>used
+<dd>Found in versions: 3.1-3.4
+<dd>Description:
+<pre>     This attribute, attached to a function, means that code must be
+     emitted for the function even if it appears that the function is
+     not referenced.  This is useful, for example, when the function is
+     referenced only in inline assembly.
+
+</pre>
+<a name="func-visibility">
+<dt>visibility ("VISIBILITY_TYPE")
+<dd>Found in versions: 3.3 3.4
+<dd>Description:
+<pre>     The `visibility' attribute on ELF targets causes the declaration
+     to be emitted with default, hidden, protected or internal
+     visibility.
+
+          void __attribute__ ((visibility ("protected")))
+          f () { /* Do something. */; }
+          int i __attribute__ ((visibility ("hidden")));
+
+     See the ELF gABI for complete details, but the short story is:
+
+    "default"
+          Default visibility is the normal case for ELF.  This value is
+          available for the visibility attribute to override other
+          options that may change the assumed visibility of symbols.
+
+    "hidden"
+          Hidden visibility indicates that the symbol will not be
+          placed into the dynamic symbol table, so no other "module"
+          (executable or shared library) can reference it directly.
+
+    "protected"
+          Protected visibility indicates that the symbol will be placed
+          in the dynamic symbol table, but that references within the
+          defining module will bind to the local symbol.  That is, the
+          symbol cannot be overridden by another module.
+
+    "internal"
+          Internal visibility is like hidden visibility, but with
+          additional processor specific semantics.  Unless otherwise
+          specified by the psABI, GCC defines internal visibility to
+          mean that the function is _never_ called from another module.
+          Note that hidden symbols, while they cannot be referenced
+          directly by other modules, can be referenced indirectly via
+          function pointers.  By indicating that a symbol cannot be
+          called from outside the module, GCC may for instance omit the
+          load of a PIC register since it is known that the calling
+          function loaded the correct value.
+
+     Not all ELF targets support this attribute.
+
+</pre>
+<a name="func-warn_unused_result">
+<dt>warn_unused_result
+<dd>Found in versions: 3.3 3.4
+<dd>Description:
+<pre>     The `warn_unused_result' attribute causes a warning to be emitted
+     if a caller of the function with this attribute does not use its
+     return value.  This is useful for functions where not checking the
+     result is either a security problem or always a bug, such as
+     `realloc'.
+
+          int fn () __attribute__ ((warn_unused_result));
+          int foo ()
+          {
+            if (fn () < 0) return -1;
+            fn ();
+            return 0;
+          }
+
+     results in warning on line 5.
+
+</pre>
+<a name="func-weak">
+<dt>weak
+<dd>Found in versions: 2.7-3.4
+<dd>Description:
+<pre>     The `weak' attribute causes the declaration to be emitted as a weak
+     symbol rather than a global.  This is primarily useful in defining
+     library functions which can be overridden in user code, though it
+     can also be used with non-function declarations.  Weak symbols are
+     supported for ELF targets, and also for a.out targets when using
+     the GNU assembler and linker.
+
+</pre>
+</dl>
+<a name="type"><h2>'c extensions' 'type attributes'</h2>
+<a href="#type-aligned">aligned</a>
+ -- <a href="#type-deprecated">deprecated</a>
+ -- <a href="#type-gcc_struct">gcc_struct</a>
+ -- <a href="#type-may_alias">may_alias</a>
+ -- <a href="#type-ms_struct">ms_struct</a>
+ -- <a href="#type-packed">packed</a>
+ -- <a href="#type-transparent_union">transparent_union</a>
+ -- <a href="#type-unused">unused</a>
+<dl>
+<a name="type-aligned">
+<dt>aligned (ALIGNMENT)
+<dd>Found in versions: 2.7-3.4
+<dd>Description:
+<pre>     This attribute specifies a minimum alignment (in bytes) for
+     variables of the specified type.  For example, the declarations:
+
+          struct S { short f[3]; } __attribute__ ((aligned (8)));
+          typedef int more_aligned_int __attribute__ ((aligned (8)));
+
+     force the compiler to insure (as far as it can) that each variable
+     whose type is `struct S' or `more_aligned_int' will be allocated
+     and aligned _at least_ on a 8-byte boundary.  On a SPARC, having
+     all variables of type `struct S' aligned to 8-byte boundaries
+     allows the compiler to use the `ldd' and `std' (doubleword load and
+     store) instructions when copying one variable of type `struct S' to
+     another, thus improving run-time efficiency.
+
+     Note that the alignment of any given `struct' or `union' type is
+     required by the ISO C standard to be at least a perfect multiple of
+     the lowest common multiple of the alignments of all of the members
+     of the `struct' or `union' in question.  This means that you _can_
+     effectively adjust the alignment of a `struct' or `union' type by
+     attaching an `aligned' attribute to any one of the members of such
+     a type, but the notation illustrated in the example above is a
+     more obvious, intuitive, and readable way to request the compiler
+     to adjust the alignment of an entire `struct' or `union' type.
+
+     As in the preceding example, you can explicitly specify the
+     alignment (in bytes) that you wish the compiler to use for a given
+     `struct' or `union' type.  Alternatively, you can leave out the
+     alignment factor and just ask the compiler to align a type to the
+     maximum useful alignment for the target machine you are compiling
+     for.  For example, you could write:
+
+          struct S { short f[3]; } __attribute__ ((aligned));
+
+     Whenever you leave out the alignment factor in an `aligned'
+     attribute specification, the compiler automatically sets the
+     alignment for the type to the largest alignment which is ever used
+     for any data type on the target machine you are compiling for.
+     Doing this can often make copy operations more efficient, because
+     the compiler can use whatever instructions copy the biggest chunks
+     of memory when performing copies to or from the variables which
+     have types that you have aligned this way.
+
+     In the example above, if the size of each `short' is 2 bytes, then
+     the size of the entire `struct S' type is 6 bytes.  The smallest
+     power of two which is greater than or equal to that is 8, so the
+     compiler sets the alignment for the entire `struct S' type to 8
+     bytes.
+
+     Note that although you can ask the compiler to select a
+     time-efficient alignment for a given type and then declare only
+     individual stand-alone objects of that type, the compiler's
+     ability to select a time-efficient alignment is primarily useful
+     only when you plan to create arrays of variables having the
+     relevant (efficiently aligned) type.  If you declare or use arrays
+     of variables of an efficiently-aligned type, then it is likely
+     that your program will also be doing pointer arithmetic (or
+     subscripting, which amounts to the same thing) on pointers to the
+     relevant type, and the code that the compiler generates for these
+     pointer arithmetic operations will often be more efficient for
+     efficiently-aligned types than for other types.
+
+     The `aligned' attribute can only increase the alignment; but you
+     can decrease it by specifying `packed' as well.  See below.
+
+     Note that the effectiveness of `aligned' attributes may be limited
+     by inherent limitations in your linker.  On many systems, the
+     linker is only able to arrange for variables to be aligned up to a
+     certain maximum alignment.  (For some linkers, the maximum
+     supported alignment may be very very small.)  If your linker is
+     only able to align variables up to a maximum of 8 byte alignment,
+     then specifying `aligned(16)' in an `__attribute__' will still
+     only provide you with 8 byte alignment.  See your linker
+     documentation for further information.
+
+</pre>
+<a name="type-deprecated">
+<dt>deprecated
+<dd>Found in versions: 3.1-3.4
+<dd>Description:
+<pre>     The `deprecated' attribute results in a warning if the type is
+     used anywhere in the source file.  This is useful when identifying
+     types that are expected to be removed in a future version of a
+     program.  If possible, the warning also includes the location of
+     the declaration of the deprecated type, to enable users to easily
+     find further information about why the type is deprecated, or what
+     they should do instead.  Note that the warnings only occur for
+     uses and then only if the type is being applied to an identifier
+     that itself is not being declared as deprecated.
+
+          typedef int T1 __attribute__ ((deprecated));
+          T1 x;
+          typedef T1 T2;
+          T2 y;
+          typedef T1 T3 __attribute__ ((deprecated));
+          T3 z __attribute__ ((deprecated));
+
+     results in a warning on line 2 and 3 but not lines 4, 5, or 6.  No
+     warning is issued for line 4 because T2 is not explicitly
+     deprecated.  Line 5 has no warning because T3 is explicitly
+     deprecated.  Similarly for line 6.
+
+     The `deprecated' attribute can also be used for functions and
+     variables (*note Function Attributes::, *note Variable
+     Attributes::.)
+
+</pre>
+<a name="type-gcc_struct">
+<dt>gcc_struct
+<dd>Found in versions: 3.4
+<dd>Description:
+<pre>     If `packed' is used on a structure, or if bit-fields are used it
+     may be that the Microsoft ABI packs them differently than GCC
+     would normally pack them.  Particularly when moving packed data
+     between functions compiled with GCC and the native Microsoft
+     compiler (either via function call or as data in a file), it may
+     be necessary to access either format.
+
+     Currently `-m[no-]ms-bitfields' is provided for the Microsoft
+     Windows X86 compilers to match the native Microsoft compiler.
+
+   To specify multiple attributes, separate them by commas within the
+</pre>
+<a name="type-may_alias">
+<dt>may_alias
+<dd>Found in versions: 3.3 3.4
+<dd>Description:
+<pre>     Accesses to objects with types with this attribute are not
+     subjected to type-based alias analysis, but are instead assumed to
+     be able to alias any other type of objects, just like the `char'
+     type.  See `-fstrict-aliasing' for more information on aliasing
+     issues.
+
+     Example of use:
+
+          typedef short __attribute__((__may_alias__)) short_a;
+          
+          int
+          main (void)
+          {
+            int a = 0x12345678;
+            short_a *b = (short_a *) &a;
+          
+            b[1] = 0;
+          
+            if (a == 0x12345678)
+              abort();
+          
+            exit(0);
+          }
+
+     If you replaced `short_a' with `short' in the variable
+     declaration, the above program would abort when compiled with
+     `-fstrict-aliasing', which is on by default at `-O2' or above in
+     recent GCC versions.
+
+</pre>
+<a name="type-ms_struct">
+<dt>ms_struct
+<dd>Found in versions: 3.4
+<dd>Description:
+<pre></pre>
+<a name="type-packed">
+<dt>packed
+<dd>Found in versions: 2.7-3.4
+<dd>Description:
+<pre>     This attribute, attached to `struct' or `union' type definition,
+     specifies that each member of the structure or union is placed to
+     minimize the memory required. When attached to an `enum'
+     definition, it indicates that the smallest integral type should be
+     used.
+
+     Specifying this attribute for `struct' and `union' types is
+     equivalent to specifying the `packed' attribute on each of the
+     structure or union members.  Specifying the `-fshort-enums' flag
+     on the line is equivalent to specifying the `packed' attribute on
+     all `enum' definitions.
+
+     In the following example `struct my_packed_struct''s members are
+     packed closely together, but the internal layout of its `s' member
+     is not packed - to do that, `struct my_unpacked_struct' would need
+     to be packed too.
+
+          struct my_unpacked_struct
+           {
+              char c;
+              int i;
+           };
+          
+          struct my_packed_struct __attribute__ ((__packed__))
+            {
+               char c;
+               int  i;
+               struct my_unpacked_struct s;
+            };
+
+     You may only specify this attribute on the definition of a `enum',
+     `struct' or `union', not on a `typedef' which does not also define
+     the enumerated type, structure or union.
+
+</pre>
+<a name="type-transparent_union">
+<dt>transparent_union
+<dd>Found in versions: 2.7-3.4
+<dd>Description:
+<pre>     This attribute, attached to a `union' type definition, indicates
+     that any function parameter having that union type causes calls to
+     that function to be treated in a special way.
+
+     First, the argument corresponding to a transparent union type can
+     be of any type in the union; no cast is required.  Also, if the
+     union contains a pointer type, the corresponding argument can be a
+     null pointer constant or a void pointer expression; and if the
+     union contains a void pointer type, the corresponding argument can
+     be any pointer expression.  If the union member type is a pointer,
+     qualifiers like `const' on the referenced type must be respected,
+     just as with normal pointer conversions.
+
+     Second, the argument is passed to the function using the calling
+     conventions of the first member of the transparent union, not the
+     calling conventions of the union itself.  All members of the union
+     must have the same machine representation; this is necessary for
+     this argument passing to work properly.
+
+     Transparent unions are designed for library functions that have
+     multiple interfaces for compatibility reasons.  For example,
+     suppose the `wait' function must accept either a value of type
+     `int *' to comply with Posix, or a value of type `union wait *' to
+     comply with the 4.1BSD interface.  If `wait''s parameter were
+     `void *', `wait' would accept both kinds of arguments, but it
+     would also accept any other pointer type and this would make
+     argument type checking less useful.  Instead, `<sys/wait.h>' might
+     define the interface as follows:
+
+          typedef union
+            {
+              int *__ip;
+              union wait *__up;
+            } wait_status_ptr_t __attribute__ ((__transparent_union__));
+          
+          pid_t wait (wait_status_ptr_t);
+
+     This interface allows either `int *' or `union wait *' arguments
+     to be passed, using the `int *' calling convention.  The program
+     can call `wait' with arguments of either type:
+
+          int w1 () { int w; return wait (&w); }
+          int w2 () { union wait w; return wait (&w); }
+
+     With this interface, `wait''s implementation might look like this:
+
+          pid_t wait (wait_status_ptr_t p)
+          {
+            return waitpid (-1, p.__ip, 0);
+          }
+
+</pre>
+<a name="type-unused">
+<dt>unused
+<dd>Found in versions: 2.8 e1.1-3.4
+<dd>Description:
+<pre>     When attached to a type (including a `union' or a `struct'), this
+     attribute means that variables of that type are meant to appear
+     possibly unused.  GCC will not produce a warning for any variables
+     of that type, even if the variable appears to do nothing.  This is
+     often the case with lock or thread classes, which are usually
+     defined and then not referenced, but contain constructors and
+     destructors that have nontrivial bookkeeping functions.
+
+</pre>
+</dl>
+<a name="var"><h2>'c extensions' 'variable attributes'</h2>
+<a href="#var-aligned">aligned</a>
+ -- <a href="#var-cleanup">cleanup</a>
+ -- <a href="#var-common">common</a>
+ -- <a href="#var-deprecated">deprecated</a>
+ -- <a href="#var-dllexport">dllexport</a>
+ -- <a href="#var-dllimport">dllimport</a>
+ -- <a href="#var-gcc_struct">gcc_struct</a>
+ -- <a href="#var-mode">mode</a>
+ -- <a href="#var-model">model</a>
+ -- <a href="#var-ms_struct">ms_struct</a>
+ -- <a href="#var-nocommon">nocommon</a>
+ -- <a href="#var-packed">packed</a>
+ -- <a href="#var-section">section</a>
+ -- <a href="#var-shared">shared</a>
+ -- <a href="#var-tls_model">tls_model</a>
+ -- <a href="#var-transparent_union">transparent_union</a>
+ -- <a href="#var-unused">unused</a>
+ -- <a href="#var-vector_size">vector_size</a>
+ -- <a href="#var-weak">weak</a>
+<dl>
+<a name="var-aligned">
+<dt>aligned (ALIGNMENT)
+<dd>Found in versions: 2.3-3.4
+<dd>Description:
+<pre>     This attribute specifies a minimum alignment for the variable or
+     structure field, measured in bytes.  For example, the declaration:
+
+          int x __attribute__ ((aligned (16))) = 0;
+
+     causes the compiler to allocate the global variable `x' on a
+     16-byte boundary.  On a 68040, this could be used in conjunction
+     with an `asm' expression to access the `move16' instruction which
+     requires 16-byte aligned operands.
+
+     You can also specify the alignment of structure fields.  For
+     example, to create a double-word aligned `int' pair, you could
+     write:
+
+          struct foo { int x[2] __attribute__ ((aligned (8))); };
+
+     This is an alternative to creating a union with a `double' member
+     that forces the union to be double-word aligned.
+
+     As in the preceding examples, you can explicitly specify the
+     alignment (in bytes) that you wish the compiler to use for a given
+     variable or structure field.  Alternatively, you can leave out the
+     alignment factor and just ask the compiler to align a variable or
+     field to the maximum useful alignment for the target machine you
+     are compiling for.  For example, you could write:
+
+          short array[3] __attribute__ ((aligned));
+
+     Whenever you leave out the alignment factor in an `aligned'
+     attribute specification, the compiler automatically sets the
+     alignment for the declared variable or field to the largest
+     alignment which is ever used for any data type on the target
+     machine you are compiling for.  Doing this can often make copy
+     operations more efficient, because the compiler can use whatever
+     instructions copy the biggest chunks of memory when performing
+     copies to or from the variables or fields that you have aligned
+     this way.
+
+     The `aligned' attribute can only increase the alignment; but you
+     can decrease it by specifying `packed' as well.  See below.
+
+     Note that the effectiveness of `aligned' attributes may be limited
+     by inherent limitations in your linker.  On many systems, the
+     linker is only able to arrange for variables to be aligned up to a
+     certain maximum alignment.  (For some linkers, the maximum
+     supported alignment may be very very small.)  If your linker is
+     only able to align variables up to a maximum of 8 byte alignment,
+     then specifying `aligned(16)' in an `__attribute__' will still
+     only provide you with 8 byte alignment.  See your linker
+     documentation for further information.
+
+</pre>
+<a name="var-cleanup">
+<dt>cleanup (CLEANUP_FUNCTION)
+<dd>Found in versions: 3.3 3.4
+<dd>Description:
+<pre>     The `cleanup' attribute runs a function when the variable goes out
+     of scope.  This attribute can only be applied to auto function
+     scope variables; it may not be applied to parameters or variables
+     with static storage duration.  The function must take one
+     parameter, a pointer to a type compatible with the variable.  The
+     return value of the function (if any) is ignored.
+
+     If `-fexceptions' is enabled, then CLEANUP_FUNCTION will be run
+     during the stack unwinding that happens during the processing of
+     the exception.  Note that the `cleanup' attribute does not allow
+     the exception to be caught, only to perform an action.  It is
+     undefined what happens if CLEANUP_FUNCTION does not return
+     normally.
+
+</pre>
+<a name="var-common">
+<dt>common
+<dd>Found in versions: 3.3 3.4
+<dd>Description:
+<pre></pre>
+<a name="var-deprecated">
+<dt>deprecated
+<dd>Found in versions: 3.1-3.4
+<dd>Description:
+<pre>     The `deprecated' attribute results in a warning if the variable is
+     used anywhere in the source file.  This is useful when identifying
+     variables that are expected to be removed in a future version of a
+     program.  The warning also includes the location of the declaration
+     of the deprecated variable, to enable users to easily find further
+     information about why the variable is deprecated, or what they
+     should do instead.  Note that the warning only occurs for uses:
+
+          extern int old_var __attribute__ ((deprecated));
+          extern int old_var;
+          int new_fn () { return old_var; }
+
+     results in a warning on line 3 but not line 2.
+
+     The `deprecated' attribute can also be used for functions and
+     types (*note Function Attributes::, *note Type Attributes::.)
+
+</pre>
+<a name="var-dllexport">
+<dt>dllexport
+<dd>Found in versions: 3.3 3.4
+<dd>Description:
+<pre>     The `dllexport' attribute is described in *Note Function
+     Attributes::.
+
+</pre>
+<a name="var-dllimport">
+<dt>dllimport
+<dd>Found in versions: 3.3 3.4
+<dd>Description:
+<pre>     The `dllimport' attribute is described in *Note Function
+     Attributes::.
+
+</pre>
+<a name="var-gcc_struct">
+<dt>gcc_struct
+<dd>Found in versions: 3.4
+<dd>Description:
+<pre>     If `packed' is used on a structure, or if bit-fields are used it
+     may be that the Microsoft ABI packs them differently than GCC
+     would normally pack them.  Particularly when moving packed data
+     between functions compiled with GCC and the native Microsoft
+     compiler (either via function call or as data in a file), it may
+     be necessary to access either format.
+
+     Currently `-m[no-]ms-bitfields' is provided for the Microsoft
+     Windows X86 compilers to match the native Microsoft compiler.
+
+</pre>
+<a name="var-mode">
+<dt>mode (MODE)
+<dd>Found in versions: 2.3-3.4
+<dd>Description:
+<pre>     This attribute specifies the data type for the
+     declaration--whichever type corresponds to the mode MODE.  This in
+     effect lets you request an integer or floating point type
+     according to its width.
+
+     You may also specify a mode of `byte' or `__byte__' to indicate
+     the mode corresponding to a one-byte integer, `word' or `__word__'
+     for the mode of a one-word integer, and `pointer' or `__pointer__'
+     for the mode used to represent pointers.
+
+</pre>
+<a name="var-model">
+<dt>model (MODEL-NAME)
+<dd>Found in versions: 2.8-3.4
+<dd>Description:
+<pre>     Use this attribute on the M32R/D to set the addressability of an
+     object.  The identifier MODEL-NAME is one of `small', `medium', or
+     `large', representing each of the code models.
+
+     Small model objects live in the lower 16MB of memory (so that their
+     addresses can be loaded with the `ld24' instruction).
+
+     Medium and large model objects may live anywhere in the 32-bit
+     address space (the compiler will generate `seth/add3' instructions
+     to load their addresses).
+
+</pre>
+<a name="var-ms_struct">
+<dt>ms_struct
+<dd>Found in versions: 3.4
+<dd>Description:
+<pre></pre>
+<a name="var-nocommon">
+<dt>nocommon
+<dd>Found in versions: 2.7-3.4
+<dd>Description:
+<pre>     The `common' attribute requests GCC to place a variable in
+     "common" storage.  The `nocommon' attribute requests the opposite
+     - to allocate space for it directly.
+
+     These attributes override the default chosen by the `-fno-common'
+     and `-fcommon' flags respectively.
+
+</pre>
+<a name="var-packed">
+<dt>packed
+<dd>Found in versions: 2.3-3.4
+<dd>Description:
+<pre>     The `packed' attribute specifies that a variable or structure field
+     should have the smallest possible alignment--one byte for a
+     variable, and one bit for a field, unless you specify a larger
+     value with the `aligned' attribute.
+
+     Here is a structure in which the field `x' is packed, so that it
+     immediately follows `a':
+
+          struct foo
+          {
+            char a;
+            int x[2] __attribute__ ((packed));
+          };
+
+</pre>
+<a name="var-section">
+<dt>section ("SECTION-NAME")
+<dd>Found in versions: 2.6-3.4
+<dd>Description:
+<pre>     Normally, the compiler places the objects it generates in sections
+     like `data' and `bss'.  Sometimes, however, you need additional
+     sections, or you need certain particular variables to appear in
+     special sections, for example to map to special hardware.  The
+     `section' attribute specifies that a variable (or function) lives
+     in a particular section.  For example, this small program uses
+     several specific section names:
+
+          struct duart a __attribute__ ((section ("DUART_A"))) = { 0 };
+          struct duart b __attribute__ ((section ("DUART_B"))) = { 0 };
+          char stack[10000] __attribute__ ((section ("STACK"))) = { 0 };
+          int init_data __attribute__ ((section ("INITDATA"))) = 0;
+          
+          main()
+          {
+            /* Initialize stack pointer */
+            init_sp (stack + sizeof (stack));
+          
+            /* Initialize initialized data */
+            memcpy (&init_data, &data, &edata - &data);
+          
+            /* Turn on the serial ports */
+            init_duart (&a);
+            init_duart (&b);
+          }
+
+     Use the `section' attribute with an _initialized_ definition of a
+     _global_ variable, as shown in the example.  GCC issues a warning
+     and otherwise ignores the `section' attribute in uninitialized
+     variable declarations.
+
+     You may only use the `section' attribute with a fully initialized
+     global definition because of the way linkers work.  The linker
+     requires each object be defined once, with the exception that
+     uninitialized variables tentatively go in the `common' (or `bss')
+     section and can be multiply "defined".  You can force a variable
+     to be initialized with the `-fno-common' flag or the `nocommon'
+     attribute.
+
+     Some file formats do not support arbitrary sections so the
+     `section' attribute is not available on all platforms.  If you
+     need to map the entire contents of a module to a particular
+     section, consider using the facilities of the linker instead.
+
+</pre>
+<a name="var-shared">
+<dt>shared
+<dd>Found in versions: 3.0-3.4
+<dd>Description:
+<pre>     On Microsoft Windows, in addition to putting variable definitions
+     in a named section, the section can also be shared among all
+     running copies of an executable or DLL.  For example, this small
+     program defines shared data by putting it in a named section
+     `shared' and marking the section shareable:
+
+          int foo __attribute__((section ("shared"), shared)) = 0;
+          
+          int
+          main()
+          {
+            /* Read and write foo.  All running
+               copies see the same value.  */
+            return 0;
+          }
+
+     You may only use the `shared' attribute along with `section'
+     attribute with a fully initialized global definition because of
+     the way linkers work.  See `section' attribute for more
+     information.
+
+     The `shared' attribute is only available on Microsoft Windows.
+
+</pre>
+<a name="var-tls_model">
+<dt>tls_model ("TLS_MODEL")
+<dd>Found in versions: 3.3 3.4
+<dd>Description:
+<pre>     The `tls_model' attribute sets thread-local storage model (*note
+     Thread-Local::) of a particular `__thread' variable, overriding
+     `-ftls-model=' command line switch on a per-variable basis.  The
+     TLS_MODEL argument should be one of `global-dynamic',
+     `local-dynamic', `initial-exec' or `local-exec'.
+
+     Not all targets support this attribute.
+
+</pre>
+<a name="var-transparent_union">
+<dt>transparent_union
+<dd>Found in versions: 2.6-3.4
+<dd>Description:
+<pre>     This attribute, attached to a function parameter which is a union,
+     means that the corresponding argument may have the type of any
+     union member, but the argument is passed as if its type were that
+     of the first union member.  For more details see *Note Type
+     Attributes::.  You can also use this attribute on a `typedef' for
+     a union data type; then it applies to all function parameters with
+     that type.
+
+</pre>
+<a name="var-unused">
+<dt>unused
+<dd>Found in versions: 2.7-3.4
+<dd>Description:
+<pre>     This attribute, attached to a variable, means that the variable is
+     meant to be possibly unused.  GCC will not produce a warning for
+     this variable.
+
+</pre>
+<a name="var-vector_size">
+<dt>vector_size (BYTES)
+<dd>Found in versions: 3.1-3.4
+<dd>Description:
+<pre>     This attribute specifies the vector size for the variable,
+     measured in bytes.  For example, the declaration:
+
+          int foo __attribute__ ((vector_size (16)));
+
+     causes the compiler to set the mode for `foo', to be 16 bytes,
+     divided into `int' sized units.  Assuming a 32-bit int (a vector of
+     4 units of 4 bytes), the corresponding mode of `foo' will be V4SI.
+
+     This attribute is only applicable to integral and float scalars,
+     although arrays, pointers, and function return values are allowed
+     in conjunction with this construct.
+
+     Aggregates with this attribute are invalid, even if they are of
+     the same size as a corresponding scalar.  For example, the
+     declaration:
+
+          struct S { int a; };
+          struct S  __attribute__ ((vector_size (16))) foo;
+
+     is invalid even if the size of the structure is the same as the
+     size of the `int'.
+
+</pre>
+<a name="var-weak">
+<dt>weak
+<dd>Found in versions: 2.7-3.4
+<dd>Description:
+<pre>     The `weak' attribute is described in *Note Function Attributes::.
+
+</pre>
+</dl>
+</body></html>

@@ -1,0 +1,475 @@
+cscope 15 $HOME/mobile/project-coccinelle/code/parsing_c/tests/cpp               0000002169
+	@continuation_line.c
+
+1 
+maö
+(
+i
+ \
+
+2 , 
+j
+) {
+
+	@cpp-antislash.c
+
+1 
+	#MODULE_PARM_DESC
+(
+a
+, 
+b
+Ë(b +á)
+
+	)
+
+4 
+MODULE_PARM_DESC
+(
+ty≥
+, "You can setÅhisÅo specific cardÅype (doesn't " \
+
+7 
+MODULE_PARM_DESC
+(
+ty≥
+, "You can setÅhisÅo specific cardÅype (doesn't "
+
+	@cpp-applysubst.c
+
+1 
+	#FOO
+(
+a
+, 
+OP
+, 
+b
+Ë®OP 
+	)
+b
+
+3 
+	$maö
+(
+i
+)
+
+5 
+	`FOO
+(1, +, 2);
+
+6 
+	}
+}
+
+	@cpp-bitfield.c
+
+1 
+	#BITMASK
+(
+t
+,
+b
+Ë((()(1U << ((—)-(b)+1)))-1Ë<< (b))
+
+	)
+
+2 
+	#MASKEXPAND
+(
+mask
+Ë
+	`BITMASK
+(1?mask,0?mask)
+
+	)
+
+3 
+	#SëBF
+(
+mask
+,
+vÆue
+Ë((vÆueË<< (0?mask))
+
+	)
+
+4 
+	#GëBF
+(
+v¨
+,
+mask
+Ë((()((v¨Ë& 
+	`MASKEXPAND
+(mask))Ë>> (0?maskË)
+
+	)
+
+5 
+	#SëBôFõld
+(
+vÆue
+,
+‰om
+,
+to
+Ë
+	`SëBF
+—o, 
+	`GëBF
+(vÆue,‰om))
+
+	)
+
+6 
+	#SëBô
+(
+n
+Ë(1<<“))
+
+	)
+
+7 
+	#Së8Bôs
+(
+vÆue
+Ë((vÆue)&0xff)
+
+	)
+
+10 
+	$maö
+(
+i
+)
+
+12 
+°©e
+->
+¸tc
+[0x3] = 
+	`SëBôFõld
+(
+h_bœnk_e
+, 4: 0, 4:0)
+
+13 | 
+	`SëBô
+(7);
+
+15 
+	}
+}
+
+	@cpp-emptyarg.c
+
+1 
+	#FOO
+(
+a
+,
+b
+Ë®+ 
+	)
+b
+
+5 
+	$maö
+(
+i
+)
+
+7 
+	`FOO
+(1+1,);
+
+8 
+	}
+}
+
+	@cpp-machine-start.c
+
+1 
+	$maö1
+(
+i
+) {
+
+3 
+	}
+}
+
+7 
+MACHINE_START
+(
+VOICEBLUE
+, "VoiceBlue OMAP5910")
+
+9 .
+	gphys_io
+ = 0xfff00000,
+
+10 .
+	gio_pg_off°
+ = ((0xfef00000) >> 18) & 0xfffc,
+
+11 .
+	gboŸ_∑øms
+ = 0x10000100,
+
+12 .
+	gm≠_io
+ = 
+voi˚blue_m≠_io
+,
+
+13 .
+	göô_úq
+ = 
+voi˚blue_öô_úq
+,
+
+14 .
+	göô_machöe
+ = 
+voi˚blue_öô
+,
+
+15 .
+	gtimî
+ = &
+om≠_timî
+,
+
+16 
+MACHINE_END
+
+
+19 
+	$maö2
+(
+i
+) {
+
+21 
+	}
+}
+
+	@cpp-manyargs.c
+
+1 
+	#FOO
+(
+a
+,
+b
+...Ë®+ 
+	)
+b
+
+3 
+	$maö
+(
+i
+)
+
+5 
+	`FOO
+(1,2,3,4,5);
+
+6 
+	}
+}
+
+	@cpp-nestedargs.c
+
+1 
+	#FOO
+(
+a
+,
+b
+Ë
+	`‚
+◊,b)
+
+	)
+
+3 
+	$maö
+(
+i
+)
+
+5 
+	`FOO
+(
+	`f
+(0), f(1,2));
+
+6 
+	}
+}
+
+	@cpp-rec.c
+
+1 
+	#FOO
+(
+a
+Ë
+	`BAR
+◊Ë+ 1
+
+	)
+
+2 
+	#BAR
+(
+a
+Ë
+	`FOO
+◊Ë+ 2
+
+	)
+
+4 
+	$maö
+(
+i
+)
+
+6 
+	`FOO
+(
+a
+)
+
+7 
+	}
+}
+
+	@cpp-space.c
+
+1 
+	#FOO
+(
+a
+,
+b
+Ë®+ 
+	)
+b
+
+3 
+	$maö
+(
+i
+)
+
+6 
+	`FOO
+(1,2);
+
+7 
+	`FOO
+ (1,2);
+
+8 
+	}
+}
+
+	@cpp.c
+
+1 
+	#FOO
+(
+a
+Ë
+	`fooma¸o
+◊)
+
+	)
+
+4 
+	#REC
+ 
+BAR
+
+
+	)
+
+6 
+	#BAR
+ 
+	`b¨ma¸o
+()
+
+	)
+
+11 
+	$maö
+(
+i
+)
+
+14 
+	`FOO
+(1);
+
+15 
+	`FOO
+ (1);
+
+16 
+FOO
+
+
+18 
+FOO
+ (1);
+
+19 
+FOO
+ + (1);
+
+20 
+	`BAR
+();
+
+21 
+BAR
+;
+
+22 
+FOO
+
+
+24 
+REC
+
+
+25 
+	}
+}
+
+	@
+1
+.
+1
+/usr/include
+11
+163
+continuation_line.c
+cpp-antislash.c
+cpp-applysubst.c
+cpp-bitfield.c
+cpp-emptyarg.c
+cpp-machine-start.c
+cpp-manyargs.c
+cpp-nestedargs.c
+cpp-rec.c
+cpp-space.c
+cpp.c

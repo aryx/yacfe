@@ -1,0 +1,9 @@
+[TEST************] test sur test1.regle ************************
+----------- Regle d'exclusion  --------------
+Nom : R_EXCLUSION_CONSTRICTIVE
+Valeur de la contrainte NORD = Contrainte phi inferieur ; deplacement = Deplacement possible
+Valeur de la contrainte NE = Contrainte nulle ; deplacement = Deplacement impossible
+Valeur de la contrainte SE = Contrainte nulle ; deplacement = Deplacement impossible
+Valeur de la contrainte SUD = Contrainte phi inferieur ; deplacement = Deplacement possible
+Valeur de la contrainte SW = Contrainte nulle ; deplacement = Deplacement possible
+Valeur de la contrainte NW = Contrainte nulle ; deplacement = Deplacement possible

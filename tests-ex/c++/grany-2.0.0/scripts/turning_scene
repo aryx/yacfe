@@ -1,0 +1,56 @@
+#!/usr/bin/perl -w
+
+#  * Copyright (C) 1998-1999 by Y. Padioleau, G. Cottenceau, P. Garcia, G. LeGuelvouit, Y. Zemali, S. Crunchant, X. Michard.
+#  *
+#  * Please check out README.
+#  *
+#  * Permission to use, copy, modify, and distribute this software and its
+#  * documentation under the terms of the GNU General Public License is hereby 
+#  * granted. No representations are made about the suitability of this software 
+#  * for any purpose. It is provided "as is" without express or implied warranty.
+#  * See the GNU General Public License for more details.
+#  *
+
+##############################################################################
+sub Usage {
+    print "Usage: cat simul_file | $0 --right ou --left \n";
+}
+
+@ARGV = ('-') unless @ARGV;
+if ( ! (($ARGV[0] eq "--right") || ($ARGV[0] eq "--left"))) {
+    Usage();
+    exit 0;
+}
+##############################################################################
+
+$arg = $ARGV[0];
+shift @ARGV;
+
+open(FICHTMP,">/tmp/foo.simul");
+
+# find the number of steps in the file
+# and create the file /tmp/foo.simul
+while(<>) {
+    $ligne = $_;
+    s/\s//g;
+    
+    if(/NBPAS=(\d*)/) {
+	$nbpas = $1;
+    }
+    print FICHTMP $ligne;
+}
+print $arg, "\n";
+print $nbpas, "\n";
+close FICHTMP; # sync
+
+for ($i = 0; $i < $nbpas; $i++) {
+     `cat /tmp/foo.simul | rotationPonderation $arg | granyconsole --nombre_de_pas=1 > /tmp/foo2.simul`;
+     `mv /tmp/foo2.simul /tmp/foo.simul`;
+	 
+}
+
+open(FOOSIMUL,"/tmp/foo.simul");
+while(<FOOSIMUL>) {
+    print;
+}
+`rm /tmp/foo.simul/`;

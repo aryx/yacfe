@@ -1,0 +1,20 @@
+#********************
+# Frontieres        
+# sablier.frontiere 
+#*******************
+
+$FRONTIERE:
+RECTANGLE(4,2,6,5),
+  CLASSIQUE;
+
+ELLIPSE(1,2,3,4),
+  GENERATRICE;
+
+POLYGONE(
+        LIGNE(0,0,11,0),
+        LIGNE(11,0,2,12),
+        LIGNE(2,12,6,12),
+        LIGNE(6,12,8,11),
+        LIGNE(8,11,8,0)),
+        CLASSIQUE;
+

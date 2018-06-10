@@ -1,0 +1,55 @@
+
+prog          ::= programme ident 1 $; bloc  6 ; 
+
+bloc          ::= partdeclvar  
+                  partdeclproc 5
+                  partinstr ;
+
+partdeclvar   ::= var { defvars $; }+ |
+                  vide ;
+
+defvars       ::= idtype  $: ident  { , ident  }* ;
+
+idtype        ::= ent |
+                  car |
+                  bool ;
+
+partdeclproc  ::= {declproc $; 4 }* ;
+
+declproc      ::= entete $;  blocproc  ;
+
+entete        ::= procedure ident 2 { parfixes }0/1 {parmods }0/1 ;
+
+parfixes      ::= fixe  ( paraforms ) ;
+
+parmods       ::= mod  ( paraforms ) ;
+
+paraforms     ::= pforms { $; pforms }* ;
+
+pforms         ::= idtype $: ident { , ident }* ;
+
+blocproc      ::=  partdeclvar
+                   partinstr  ;
+
+partinstr     ::= debut  suiteinstr fin ;
+
+suiteinstr    ::= instr { $; instr }* ;
+
+instr         ::= affectouappel ;
+
+affectouappel ::= ident { affect |  3 appelproc } ;
+
+affect        ::=  := valeur ;
+
+appelproc     ::= { ( paraefff ) { ( paraeffv ) }0/1 }0/1  ;
+
+paraefff      ::= { valeur  { , valeur  }* }0/1 ;
+
+paraeffv      ::= { ident  { , ident }* }0/1 ;
+
+valeur        ::= ident  |
+                  libelle  |
+                  nbentier  |
+                  vrai  |
+                  faux  ;
+

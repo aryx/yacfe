@@ -1,0 +1,4 @@
+class KigInputDialog
+   : KDialogBase
+{
+};

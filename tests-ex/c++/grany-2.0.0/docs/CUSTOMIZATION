@@ -1,0 +1,67 @@
+How to customize grany ?
+------------------------
+
+0. User support
+1. GTK `rc' files
+2. Internationalization
+3. Creation of new files
+
+
+
+0. Grany now supports `users' (as Gimp does for example), because I believe
+ this Unix notion is in the core of Unix power. But let's not digress.
+
+   So, on the first time a user launches Grany (detected by the absence of
+ ~/.grany/), a script will be invoked (I ripped the idea and the script from
+ Gimp) which will create ~/.grany/, copy the RC file (see 1. for more details),
+ then copy the example Grany files (you will see this happening on the error
+ output stream).
+
+
+
+1. Grany support GTK `rc' files. These files are intended to have a look-like
+  of GTK different for each user or even each application.
+
+  To setup the look of your GTK applications, just put a ~/.gtkrc file with
+  appropriate values. (please install gtk+-engines for more details.)
+
+  Now Grany can have its own themes. Please erase ~/.grany/granyrc by your
+  own nice GTKRC file.
+
+  My personal advice: go to http://gtk.themes.org, there's many themes and
+  certainly one for you!
+
+  WARNING THIS IS OUTDATED INFORMATION THAT IS NOT RELIABLE ANYMORE WITH GTK2.
+
+
+
+2. Grany supports internationalization, which means it will speak in french
+  if you setup your LANGUAGE environment string to `fr'. Please have a look
+  to ../README.i18n for more details.
+
+
+
+3. In the `Phase parameters' window of the gui, the program proposes you a
+  suite of rules file (in the second page of the notebook).
+  These files are read from your own directory, which should contain at least
+  the rules copied during the user-installation, in:
+	~/.grany/files/rules/
+
+  So if you are bored with our initial rules please delete the installed rules
+  files. In the other hand, if you create some wonderful new rules, don't
+  forget to write them in your home directory, for example:
+	~/.grany/files/rules/wonderful1
+	~/.grany/files/rules/brilliant2.rule
+	~/.grany/files/rules/amazing3.anything.you.like.extension
+	...
+
+[ IMPORTANT: ]
+    At the beginning of the program, the `file' dialogs will go automatically
+  to ~/.grany/files/
+    And through your Grany session, program will keep in mind where your last
+  file was loaded and open the next time the `open a file' in the last
+  directory. Same for `save as'.
+
+
+
+<gcottenc at altern dot org>

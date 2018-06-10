@@ -1,0 +1,9 @@
+#!/bin/sh
+
+chargf textrelf relf
+
+chargmf textrelmf relmf
+
+joindre relf relmf relj
+
+voirjoint relj

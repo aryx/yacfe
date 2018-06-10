@@ -1,0 +1,28 @@
+[TEST************] methodes getPonderation ************************
+----------- Ponderation --------------
+Valeur de la ponderation : NORD = 1
+Valeur de la ponderation : NE = 2
+Valeur de la ponderation : SE = 3
+Valeur de la ponderation : SUD = 4
+Valeur de la ponderation : SW = 5
+Valeur de la ponderation : NW = 6
+1
+2
+3
+4
+5
+6
+---------Valeur attendue-------------
+----------- Ponderation --------------
+Valeur de la ponderation : NORD = 1
+Valeur de la ponderation : NE = 2
+Valeur de la ponderation : SE = 3
+Valeur de la ponderation : SUD = 4
+Valeur de la ponderation : SW = 5
+Valeur de la ponderation : NW = 6
+1
+2
+3
+4
+5
+6

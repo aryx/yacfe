@@ -1,0 +1,20 @@
+[TEST************] methode getNom ************************
+----------- Regle d'exclusion  --------------
+Nom : Ma vrai premiere regle
+Valeur de la contrainte NORD = Contrainte nulle ; deplacement = Deplacement possible
+Valeur de la contrainte NE = Contrainte nulle ; deplacement = Deplacement possible
+Valeur de la contrainte SE = Contrainte phi inferieur ; deplacement = Deplacement impossible
+Valeur de la contrainte SUD = Contrainte meme phi ; deplacement = Deplacement impossible
+Valeur de la contrainte SW = Contrainte phi inferieur ; deplacement = Deplacement possible
+Valeur de la contrainte NW = Contrainte phi inferieur phi solide ; deplacement = Deplacement possible
+Ma vrai premiere regle
+---------Valeur attendue-------------
+----------- Regle d'exclusion  --------------
+Nom : Ma vrai premiere regle
+Valeur de la contrainte NORD = Contrainte nulle ; deplacement = Deplacement possible
+Valeur de la contrainte NE = Contrainte nulle ; deplacement = Deplacement possible
+Valeur de la contrainte SE = Contrainte phi inferieur ; deplacement = Deplacement impossible
+Valeur de la contrainte SUD = Contrainte meme phi ; deplacement = Deplacement impossible
+Valeur de la contrainte SW = Contrainte phi inferieur ; deplacement = Deplacement possible
+Valeur de la contrainte NW = Contrainte phi inferieur phi solide ; deplacement = Deplacement possible
+Ma vrai premiere regle

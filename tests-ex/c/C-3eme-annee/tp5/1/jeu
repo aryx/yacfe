@@ -1,0 +1,18 @@
+
+Donner une liste d'entiers terminee par -1
+1
+2
+-1
+Donner une liste d'entiers terminee par -1
+3
+4
+5
+-1
+Donner le nombre a supprimer 
+4
+Voici la liste d'entiers  : 
+3 4 5 
+Voici la liste d'entiers  : 
+1 2 3 5 
+Voici la liste d'entiers  : 
+1 2 3 4 5 

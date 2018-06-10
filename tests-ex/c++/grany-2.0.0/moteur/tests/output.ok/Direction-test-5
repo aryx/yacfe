@@ -1,0 +1,14 @@
+[TEST************] methode estPreponderante ************************
+NORD1
+NE0
+SE1
+SUD0
+SW1
+NW0
+---------Valeur attendue-------------
+NORD1
+NE0
+SE1
+SUD0
+SW1
+NW0

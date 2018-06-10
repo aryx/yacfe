@@ -1,0 +1,44 @@
+[TEST************] operateur += ************************
+----------- Ponderation --------------
+Valeur de la ponderation : NORD = 1
+Valeur de la ponderation : NE = 2
+Valeur de la ponderation : SE = 3
+Valeur de la ponderation : SUD = 4
+Valeur de la ponderation : SW = 5
+Valeur de la ponderation : NW = 6
+----------- Ponderation --------------
+Valeur de la ponderation : NORD = 1
+Valeur de la ponderation : NE = 1
+Valeur de la ponderation : SE = 1
+Valeur de la ponderation : SUD = 1
+Valeur de la ponderation : SW = 1
+Valeur de la ponderation : NW = 1
+----------- Ponderation --------------
+Valeur de la ponderation : NORD = 2
+Valeur de la ponderation : NE = 3
+Valeur de la ponderation : SE = 4
+Valeur de la ponderation : SUD = 5
+Valeur de la ponderation : SW = 6
+Valeur de la ponderation : NW = 7
+---------Valeur attendue-------------
+----------- Ponderation --------------
+Valeur de la ponderation : NORD = 1
+Valeur de la ponderation : NE = 2
+Valeur de la ponderation : SE = 3
+Valeur de la ponderation : SUD = 4
+Valeur de la ponderation : SW = 5
+Valeur de la ponderation : NW = 6
+----------- Ponderation --------------
+Valeur de la ponderation : NORD = 1
+Valeur de la ponderation : NE = 1
+Valeur de la ponderation : SE = 1
+Valeur de la ponderation : SUD = 1
+Valeur de la ponderation : SW = 1
+Valeur de la ponderation : NW = 1
+----------- Ponderation --------------
+Valeur de la ponderation : NORD = 2
+Valeur de la ponderation : NE = 3
+Valeur de la ponderation : SE = 4
+Valeur de la ponderation : SUD = 5
+Valeur de la ponderation : SW = 6
+Valeur de la ponderation : NW = 7

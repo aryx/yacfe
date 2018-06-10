@@ -1,0 +1,57 @@
+Grany BUGS file
+---------------
+
+*** A COMMON PROBLEM is to have `virtual memory exhausted'.
+In such a case consider removing the optimizing flag, `-O'.
+
+
+Known problems
+--------------
+
+-> Compiler problems
+
+1.
+Apparently if you've got a SPARC Solaris 2.x and EGCS 1.1.1 there is a
+`virtual memory exhausted' bug in the compiler. Please upgrade your compiler.
+
+
+2.
+Apparently a bug in EGCS, but with the -O2 option you can get `virtual memory
+exhausted' on i386 hosts easily, especially when using GUIs.
+They don't say how to prevent from it. So I chose to setup default CXX flags
+to `-O' and not `-O2' for the whole application, shamelessly adding `-O2' by
+hand for the engine makefile.
+
+
+3.
+Apparently a bug in EGCS 1.1.2 (because it's ok with GCC-2.95), when compiling there
+is a strange warning message:
+
+Automate.cpp: In method `class Particule * Automate::getParticuleByNumber(int) const':
+Automate.cpp:360: warning: `const class Particule * this' might be used uninitialized in this function
+
+If you look at the code you will find it strange, like me. (I hope)
+
+(and, last but not least, no need to tell you that for the same version of the compiler,
+it happens on i686 but not on sparc.)
+
+
+
+-> flex++/bison++
+
+1.
+If you use flex++-2.3.8-6 to re-generate the headers, there is a bug which appears while
+compiling the *Compiler.cpp (actually, it's a lack of some #define related to the fstream)
+
+It works ok with flex++-2.3.8-7
+
+
+
+Known bugs
+----------
+
+-> waiting your feedback for tons of bugs
+
+
+
+<gcottenc at altern dot org>

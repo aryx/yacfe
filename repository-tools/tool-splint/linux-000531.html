@@ -1,0 +1,285 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html><head><title>[splint-discuss] Using Splint on Linux kernel modules</title>
+
+ 
+   
+   <link rel="Index" href="http://www.cs.virginia.edu/pipermail/splint-discuss/2005-January/index.html">
+   <link rel="made" href="mailto:splint-discuss%40ares.cs.Virginia.EDU?Subject=%5Bsplint-discuss%5D%20Using%20Splint%20on%20Linux%20kernel%20modules&amp;In-Reply-To=">
+   <meta name="robots" content="index,nofollow">
+   <meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <link rel="Next" href="http://www.cs.virginia.edu/pipermail/splint-discuss/2005-January/000532.html"></head><body bgcolor="#ffffff">
+   <h1>[splint-discuss] Using Splint on Linux kernel modules</h1>
+    <b>Brian Quinlan</b> 
+    <a href="mailto:splint-discuss%40ares.cs.Virginia.EDU?Subject=%5Bsplint-discuss%5D%20Using%20Splint%20on%20Linux%20kernel%20modules&amp;In-Reply-To=" title="[splint-discuss] Using Splint on Linux kernel modules">brian.quinlan at iolfree.ie
+       </a><br>
+    <i>Tue Jan  4 09:53:22 EST 2005</i>
+    <p></p><ul>
+        
+        <li>Next message: <a href="http://www.cs.virginia.edu/pipermail/splint-discuss/2005-January/000532.html">[splint-discuss] using splint for large projects
+</a></li>
+         <li> <b>Messages sorted by:</b> 
+              <a href="http://www.cs.virginia.edu/pipermail/splint-discuss/2005-January/date.html#531">[ date ]</a>
+              <a href="http://www.cs.virginia.edu/pipermail/splint-discuss/2005-January/thread.html#531">[ thread ]</a>
+              <a href="http://www.cs.virginia.edu/pipermail/splint-discuss/2005-January/subject.html#531">[ subject ]</a>
+              <a href="http://www.cs.virginia.edu/pipermail/splint-discuss/2005-January/author.html#531">[ author ]</a>
+         </li>
+       </ul>
+    <hr>  
+<!--beginarticle-->
+<pre>Hi,
+We (Duolog Technologies) use the steps below to use splint on Linux
+driver code. This works for us on a 2.4.23 kernel.
+
+Originally, we started off on a different kernel and when we changed to
+2.4.23, it broke a few things. These were easy to fix, but it may
+indicate that there could be other problems if you try to apply them to
+other kernel versions.
+
+We had to make 3 sets of changes to get splint working for Linux kernel
+modules:
+
+(1) The main problem that we have with using splint for Linux kernel
+modules is that splint can't parse some of the gcc specific features
+used by the Linux kernel. To get around this we redefine a few things in
+our Makefile (see end of email).
+
+It is probably not necessary to give splint a definition of all the
+flags defined by gcc, but it was easier than finding out which ones are
+actually required. We also redefine asm &amp; __signed__ via our Makefile.
+See also:
+
+<a href="http://www.splint.org/pipermail/splint-discuss/2002-December/000002.html">http://www.splint.org/pipermail/splint-discuss/2002-December/000002.html</a>
+
+(2) We also found it necessary to change the implementation of a few
+macros (for splint only, not for gcc). This was done by creating and
+including a file called SplintLinuxKernelHelper.h (see end of email). It
+must be included (AFTER any kernel headers) in any files where the
+redefined macros are used. We were lucky that this occurred for
+relatively few files - those that dealt specifically with Linux.
+
+(3) Finally, we had to surround lots of calls to kernel functions with
+splint annotations because we couldn't put the annotations directly into
+the kernel headers. This was a little tedious, but fortunately in our
+case it was restricted to relatively few file and in any case was well
+worth the tedium because of the number of errors that splint found.
+
+(4) We don't use +gnuextensions because it didn't fix anything for us.
+It might fix a few things for you.
+
+(5) It's possible that -sysdirerrors will also help (type "splint -help
+sysdirerrors" and "splint -help sysdirs"). We haven't had to try it, so
+it might cause other problems with the kernel code that we're not aware
+of. See also:
+
+<a href="http://www.splint.org/pipermail/splint-discuss/2003-January/000025.html">http://www.splint.org/pipermail/splint-discuss/2003-January/000025.html</a>
+
+
+Hope this helps someone. I am subscribed to the list, so if I can I'll
+try to answer questions.
+
+Bye,
+Brian Quinlan
+Duolog Technologies
+www.duolog.com
+
+
+*******************************************************************
+Makefile:
+
+
+DEFINED_FOR_KERNEL=-D__KERNEL__ -DMODULE
+
+ifeq ($(SAVE_TEMPS_ENABLE), TRUE)
+SAVE_TEMPS=--save-temps
+SPLINT_KEEP=+keep
+endif
+
+# Splint fails to compile code for the Linux kernel largely because it does
+# not have some gcc specific features that the kernel code relies on. Defining
+# a list of FLAGS for splint that gcc defines by default helps with this.
+# Run "gcc -dM -E - &lt; /dev/null" to see a list of gcc defined symbols.
+#
+# Note that __GNUC__ is defined to be 2, not 3, because of problems splint has
+# when compiling "typedef struct { } spinlock_t;" in &lt;linux/splinlock.h&gt;.
+GCC_DEFINED_FLAGS_FOR_SPLINT=          \
+-D__HAVE_BUILTIN_SETJMP__=1            \
+-D__unix__=1                           \
+-Dunix=1                               \
+-D__i386__=1                           \
+-D__SIZE_TYPE__="unsigned int"         \
+-D__ELF__=1                            \
+-D__GNUC_PATCHLEVEL__=0                \
+-D__linux=1                            \
+-D__unix=1                             \
+-D__linux__=1                          \
+-D__USER_LABEL_PREFIX__                \
+-Dlinux=1                              \
+-D__STDC_HOSTED__=1                    \
+-D__WCHAR_TYPE__="long int"            \
+-D__gnu_linux__=1                      \
+-D__WINT_TYPE__="unsigned int"         \
+-D__GNUC__=2                           \
+-D__GXX_ABI_VERSION=102                \
+-Di386=1                               \
+-D__GNUC_MINOR__=2                     \
+-D__STDC__=1                           \
+-D__PTRDIFF_TYPE__=int                 \
+-D__tune_i386__=1                      \
+-D__REGISTER_PREFIX__                  \
+-D__NO_INLINE__=1                      \
+-D__i386=1                             \
+-D__VERSION__="3.2 20020903 (Red Hat Linux 8.0 3.2-7)"
+
+# Splint flags
+#
+# Don't skip ansi headers because this causes linux/signal.h to be excluded,
+# which leads to parse errors.
+# "asm" is redefined as an empty macro because it would otherwise cause
+# parse errors for splint. 
+SPLINT_FLAGS = $(SPLINT_KEEP)                \
+             -skip-ansi-headers              \
+             $(DEFINED_FOR_KERNEL)           \
+             $(GCC_DEFINED_FLAGS_FOR_SPLINT) \
+             -Dasm'('w,x,y,z')'=""           \
+             -D__signed__=signed 
+
+SPLINT=Path to splint executable.
+SRCS=List of all C source files in your Linux kernel module.
+INC_FLAGS=List of all include paths (with -I prefix), e.g.,  -I/usr/src/linux-2.4.23/include -I/my/include/path
+
+do_splint:
+	$(SPLINT) $(SPLINT_FLAGS) $(INC_FLAGS) $(SRCS)
+
+
+*******************************************************************
+SplintLinuxKernelHelper.h:
+
+/*
+ * Filename:    $Id: SplintLinuxKernelHelper.h,v 1.2 2004/03/03 18:30:53 bquinl01 Exp $
+ * Description: Helps splint cope with Linux kernel headers.
+ */
+
+#ifndef __KERNEL__
+#error This header should not be included in a non-kernel module.
+#endif
+
+#ifdef S_SPLINT_S
+
+#ifdef access_ok
+#undef access_ok
+#endif
+
+#define access_ok(type, addr, size) (addr = addr, TRUE)
+
+
+#ifdef get_user
+#undef get_user
+#endif
+
+#define get_user(x, ptr) (x = *ptr, 0)
+
+
+#ifdef put_user
+#undef put_user
+#endif
+
+#define put_user(x, ptr) (x = *ptr, 0)
+
+
+#ifdef copy_from_user
+#undef copy_from_user
+#endif
+
+#define copy_from_user(to, from, n) (memcpy(to, from, n), 0)
+
+
+#ifdef copy_to_user
+#undef copy_to_user
+#endif
+
+#define copy_to_user(to,from,n) (memcpy(to, from, n), 0)
+
+#ifdef wait_event_interruptible
+#undef wait_event_interruptible
+#endif
+
+#define wait_event_interruptible(wq, condition)
+
+
+#ifdef SET_MODULE_OWNER
+#undef SET_MODULE_OWNER
+#endif
+
+#define SET_MODULE_OWNER(dev)
+
+
+#ifdef module_init
+#undef module_init
+#endif
+
+typedef void* __splint_module_fptr;
+
+#define __splint_module_use_fptr(fn)                \
+  /*@unused@*/ static                               \
+    __splint_module_fptr __splint_module_fptr##fn = \
+      (__splint_module_fptr)fn
+
+#define module_init(fn)  __splint_module_use_fptr(fn)
+
+
+#ifdef module_exit
+#undef module_exit
+#endif
+
+#define module_exit(fn) __splint_module_use_fptr(fn)
+
+
+#ifdef MODULE_GENERIC_TABLE
+#undef MODULE_GENERIC_TABLE
+#endif
+
+#define MODULE_GENERIC_TABLE(gtype,name)	\
+static const unsigned long __module_##gtype##_size \
+  __attribute__ ((unused)) = (const unsigned long)sizeof(struct gtype##_id); \
+static const struct gtype##_id * __module_##gtype##_table \
+  __attribute__ ((unused)) = name
+
+
+
+#ifdef MODULE_DEVICE_TABLE
+#undef MODULE_DEVICE_TABLE
+#endif
+
+#define MODULE_DEVICE_TABLE(type,name)		\
+  MODULE_GENERIC_TABLE(type##_device,name)
+
+
+
+#endif /* S_SPLINT_S */
+
+
+
+
+</pre>
+
+<!--endarticle-->
+    <hr>
+    <p></p><ul>
+        <!--threads-->
+	
+	<li>Next message: <a href="http://www.cs.virginia.edu/pipermail/splint-discuss/2005-January/000532.html">[splint-discuss] using splint for large projects
+</a></li>
+         <li> <b>Messages sorted by:</b> 
+              <a href="http://www.cs.virginia.edu/pipermail/splint-discuss/2005-January/date.html#531">[ date ]</a>
+              <a href="http://www.cs.virginia.edu/pipermail/splint-discuss/2005-January/thread.html#531">[ thread ]</a>
+              <a href="http://www.cs.virginia.edu/pipermail/splint-discuss/2005-January/subject.html#531">[ subject ]</a>
+              <a href="http://www.cs.virginia.edu/pipermail/splint-discuss/2005-January/author.html#531">[ author ]</a>
+         </li>
+       </ul>
+
+<hr>
+<a href="http://www.cs.virginia.edu/mailman-2.1.5/listinfo/splint-discuss">More information about the splint-discuss
+mailing list</a><br>
+
+</body></html>

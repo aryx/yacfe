@@ -1,0 +1,27 @@
+[TEST************] test sur sablier.frontiere ************************
+Liste des frontieres
+
+Frontiere
+Forme:
+Rectangle(4,2,6,5)
+type:
+CLASSIQUE
+
+Frontiere
+Forme:
+Ellipse(1,2,3,4)
+type:
+GENERATRICE
+
+Frontiere
+Forme:
+Polygone(
+Ligne(0,0,11,0)
+Ligne(11,0,2,12)
+Ligne(2,12,6,12)
+Ligne(6,12,8,11)
+Ligne(8,11,8,0)
+)
+type:
+CLASSIQUE
+

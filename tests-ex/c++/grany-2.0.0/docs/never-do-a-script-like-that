@@ -1,0 +1,1368 @@
+#!/bin/sh
+
+# Hi. How are you today ?
+#
+# If you're looking at this script because of its name, well I got you and
+# it was easy. :)
+#
+# More seriously, this is the script I used when I passed all my interface
+# code from `french' identifiers to english identifiers.
+# Those marvellous seds worked but were so sloow... :) anyway I don't care,
+# sorry.
+#
+# <gcottenc at altern dot org>
+
+
+# Just had one problem: there's also a `getCouleur' function in some part
+# of the engine and in some part of the scene, so I had to correct back
+# these translations in the interface. Not really a pain.
+
+
+echo -n "Hacking $1"
+sed 's/COMMUNINTERFACE/COMMONINTERFACE/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/CommunInterface/CommonInterface/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/APROPOSWINDOW/ABOUTWINDOW/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/AproposWindow/AboutWindow/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_buttonFermer/_buttonClose/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_frameApropos/_frameAbout/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_labelApropos/_labelAbout/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/initCouleurs/initColors/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onQuitter/onQuit/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_handleQuitter/_handleQuit/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onActiverNouveau/onActivateNew/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onActiverSelection/onActivateSelection/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onActiverSupprimer/onActivateDelete/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onActiverRectangle/onActivateRectangle/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onActiverEllipse/onActivateEllipse/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onActiverPolygone/onActivatePolygon/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onActiverGrid/onActivateGrid/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/creeFormeFrontiere/createFormBorder/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_pixmapNouveau/_pixmapNew/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_pixmapSupprimer/_pixmapDelete/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_pixmapPolygone/_pixmapPolygon/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_buttonNouveau/_buttonNew/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_buttonSupprimer/_buttonDelete/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_zoneDessin/_drawingArea/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_gris/_grey/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_couleurParoiClassique/_colorClassicalBorder/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_couleurParoiGeneratrice/_colorGeneratingBorder/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_antiAppelRecursif/_noRecursivePlease/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onFichierNouveau/onFileNew/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onFichierOuvrir/onFileOpen/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onFichierEnregistrer/onFileSave/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onFichierEnregistrerSous/onFileSaveAs/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onFichierQuitter/onFileQuit/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onOkFichierOuvrir/onOkFileOpen/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onOkFichierEnregistrerSous/onOkFileSaveAs/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onFermetureFileSelection/onCloseFileSelection/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/makeMenuFichier/makeFileMenu/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_buttonNouveau/_buttonNew/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_buttonOuvrir/_buttonOpen/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_buttonEnregister/_buttonSave/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_pixmapOuvrir/_pixmapOpen/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_pixmapEnregister/_pixmapSave/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/DESSINFIGURES/GTKFIGURES/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/DessinFigures/GtkFigures/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/DessinForme/GtkForm/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/estInvalide/isInvalid/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/setCouleur/setColor/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/setTemporaire/setTemporary/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/estDessus/isOn/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/estDedans/isInside/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/dessineToi/drawYourself/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/remplieToi/fillYourself/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/setCouleurPreSelection/setColorPreSelection/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/faitContexteSelectionFrontiere/makeContextSelectionBorder/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/faitContexteSelectionZonage/makeContextSelectionZoning/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/faitContextePreSelection/makeContextPreSelection/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/faitContexteTemporaire/makeContextTemporary/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/faitContexteNormal/makeContextNormal/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_couleur/_color/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_temporaire/_temporary/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/DessinSegment/GtkLine/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/modifieExtremiteTerminale/modifyEnd/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/donneTesCoordonnees/gimmeYourCoordinates/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/DessinArcEllipse/GtkArcEllipse/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/modifieCentre/modifyCenter/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/DessinRectangle/GtkRectangle/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/DessinEllipse/GtkEllipse/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/DessinPolygone/GtkPolygon/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/EDITEURFRONTIEREWINDOW/BORDERSEDITOR/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/EditeurFrontiereWindow/BordersEditor/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/EnumGenreParois/EnumTypeBorders/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/effaceFigureSelectionnee/deleteSelectedFigure/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onActiverSegment/onActivateLine/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onActiverArcEllipse/onActivateArcEllipse/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onActiverParoiClassique/onActivateClassicalBorders/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onActiverParoiGeneratrice/onActivateGeneratingBorders/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onActiverGrid/onActivateGrid/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/creeFormeFrontiere/createFormBorders/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_pixmapParoiClassique/_pixmapClassicalBorders/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_pixmapParoiGeneratrice/_pixmapGeneratingBorders/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_buttonSegment/_buttonLine/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_buttonArcEllipse/_buttonArcEllipse/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_buttonParoiClassique/_buttonClassicalBorder/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_buttonParoiGeneratrice/_buttonGeneratingBorder/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_genreParoi/_typeBorder/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_handleSegment/_handleLine/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_handleArcEllipse/_handleArcEllipse/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_handleParoiClassique/_handleClassicalBorder/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_handleParoiGeneratrice/_handleGeneratingBorder/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_nomFichier/_fileName/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/EDITEURREGLEWINDOW/RULESEDITOR/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/NB_BOULES/NB_BALLS/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/RACINE_DEUX_SUR_DEUX/SQRT_2_ON_2/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/EditeurRegleWindow/RulesEditor/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onActiverSamePhi/onActivateSamePhi/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onActiverUpperPhi/onActivateUpperPhi/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onActiverLowerPhi/onActivateLowerPhi/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onActiverAnyPhi/onActivateAnyPhi/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onActiverAllowedMove/onActivateAllowedMove/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onActiverNotAllowedMove/onActivateNotAllowedMove/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/passage_auhtorise/moveThroughAllowed/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_pixmapPhiIdentique/_pixmapPhiId/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_pixmapPhiSuperieur/_pixmapPhiSup/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_pixmapPhiInferieur/_pixmapPhiInf/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_pixmapPhiQuelconque/_pixmapPhiAny/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_buttonPhiIdentique/_buttonPhiId/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_buttonPhiSuperieur/_buttonPhiSup/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_buttonPhiInferieur/_buttonPhiInf/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_buttonPhiQuelconque/_buttonPhiAny/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_handlePhiIdentique/_handlePhiId/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_handlePhiSuperieur/_handlePhiSup/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_handlePhiInferieur/_handlePhiInf/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_handlePhiQuelconque/_handlePhiAny/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_antiAppelRecursif/_noRecursiveInfiniteLoop/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_bouleX/_xBall/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_bouleY/_yBall/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_rouge/_red/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_bleu/_blue/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_vert/_green/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_noir/_black/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_boules/_balls/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_fleches/_arrows/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_authorisation/_allowed/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_selection_phi/_selectionPhi/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_rayon/_ray/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_boule_selectionnee/_selectedBall/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_fleche_selectionnee/_selectedArrow/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_nomRegle/_ruleName/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/EDITEURSCENEWINDOW/SCENEEDITOR/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/EditeurSceneWindow/SceneEditor/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onFermetureFileSelectionInterne/onCloseFileSelectionInternal/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/convertitVersScene/convertsToScene/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/passante/allowedMove/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/estPassante/isAllowedMove/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/estDessus/isOn/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_extremite1/_extremity1/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_extremite2/_extremity2/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_corps/_body/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_rayure/_stripe/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_rayon/_ray/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/initCouleurs/initColors/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/effaceCouleurs/deleteColors/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/getCouleurBlanc/getColorWhite/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/getCouleurNoir/getColorBlack/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/ajouteCouleur/addColor/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/getCouleur/getColor/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/getProchainNumeroLibre/getNextFreeNumber/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/supprimeCouleur/deleteColor/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/ajouteCouleurDirect/addColorDirect/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/EntreeTableauCouleurs/EntryTableColors/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/creeCouleurFromMelange/createColorFromMix/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onOutilsEditeurScene/onToolsSceneEditor/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onOutilsEditeurFrontiere/onToolsBordersEditor/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onOutilsEditeurRegle/onToolsRuleEditor/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onOutilsParametreModifiable/onToolsUpdatableParameters/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onControleStop/onControlStop/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onControleLecture/onControlPlay/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onControlePause/onControlPause/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onControleEnregistrer/onControlRecord/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onAppliquerParametreModifiable/onApplyUpdatableParameters/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onFermetureEditeurScene/onCloseSceneEditor/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onFermetureEditeurRegle/onCloseRuleEditor/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onFermetureEditeurFrontiere/onCloseBordersEditor/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onFichierNouveau/onFileNew/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onOkNouvelleSimulation/onOkNewSimulation/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onFermetureNouvelleSimulation/onCloseNewSimulation/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onOkParamEnregistrement/onOkParamRecord/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onFermetureParamEnregistrement/onCloseParamRecord/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onOkFichierOuvrir/onOkFileOpen/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onFichierEnregistrer/onFileSave/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onOkFichierEnregistrerSous/onOkFileSaveAs/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onFichierQuitter/onFileQuit/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/dessineCellule/drawCell/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/dessineCellules/drawCells/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/redimensionneCellules/fitCells/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/enregistreNouvelAutomate/registerNewAutomaton/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/pasSuivantAutomate/nextStepAutomaton/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/dessinePasCourant/drawCurrentStep/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_buttonLecture/_buttonPlay/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_pixmapLecture/_pixmapPlay/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_winFrontiere/_winBorders/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_winRegle/_winRule/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_dialogNouvelleSimulation/_dialogNewSimulation/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_dialogParamEnregistrement/_dialogParamRecord/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_handleParametreModifiable/_handleUpdatableParameters/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_automateDebut/_automatonBeginning/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_nomScene/_sceneName/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_dimReseau/_networkSize/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_nbrePas/_numberSteps/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_germe/_seed/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_bordx/_edgex/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_bordy/_edgey/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_freqAffichage/_displayFrequency/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_pasCourant/_currentStep/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_lecture/_play/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_progression/_progressing/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/NOUVELLESIMULATIONDIALOG/NEWSIMULATIONDIALOG/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/NouvelleSimulationDialog/NewSimulationDialog/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/getButtonAnnuler/getCancelButton/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/getButtonRechercher/getBrowseButton/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/getNomScene/getSceneName/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/getDimReseau/getNetworkSize/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/getNbrePas/getNumberSteps/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/getGerme/getSeed/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/nomSceneInvalide/sceneNameInvalod/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/dimReseauInvalide/networkSizeInvalid/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/nbrePasInvalide/numberStepsInvalid/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/germeInvalide/seedInvalid/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_frameNomScene/_frameSceneName/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_frameParametre/_frameParameters/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_hboxNomScene/_hboxSceneName/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_hboxDimReseau/_hboxNetworkSize/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_hboxNbrePas/_hboxNumberSteps/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_hboxGerme/_hboxSeed/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_vboxParametre/_vboxParameters/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_buttonAnnuler/_buttonCancel/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_buttonRechercher/_buttonBrowse/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_entryNomScene/_entrySceneName/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_entryDimReseau/_entryNetworkSize/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_entryNbrePas/_entryNumberSteps/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_entryGerme/_entrySeed/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_labelDimReseau/_labelNetworkSize/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_labelNbrePas/_labelNumberSteps/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_labelGerme/_labelSeed/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onRechercher/onBrowse/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onFermetureFileSelection/onCloseFileSelection/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onOkRechercher/onOkBrowse/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/PARAMENREGISTREMENTDIALOG/PARAMRECORDDIALOG/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/ParamEnregistrementDialog/ParamRecordDialog/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_frameNomFichier/_frameFileName/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_frameParametre/_frameParameters/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_hboxNomFichier/_hboxFileName/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_hboxFreqEnregistrement/_hboxDisplayFrequency/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_vboxNomFichier/_vboxFileName/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_vboxParametre/_vboxParameters/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_buttonAnnuler/_cancelButton/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_buttonRechercher/_browseButton/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_entryNomFichier/_entryFileName/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_entryFreqEnregistrement/_entryRecordFrequency/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_labelFreqEnregistrement/_labelRecordFrequency/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_vboxGeneral/_vboxGeneral/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_vboxAutresParametresGeneral/_vboxOtherParametersGeneral/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_hboxNomGeneral/_hboxNameGeneral/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_hboxParametresGeneral/_hboxParametersGeneral/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_hboxCouleurGeneral/_hboxColorGeneral/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_hboxInertie/_hboxInertia/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_radioPhaseSolide/_radioSolidPhase/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_radioPhaseFluide/_radioFluidPhase/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_labelNomGeneral/_labelNameGeneral/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_entryNomGeneral/_entryNameGeneral/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_labelInertie/_labelInertia/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_entryInertie/_entryInertia/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_buttonCouleurGeneral/_buttonColorGeneral/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_hboxRegle/_hboxRule/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_vboxRegleDisponible/_vboxUsableRule/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_labelTabRegle/_labelTabRule/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_labelRegleDisponible/_labelUsableRule/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_scrwinRegleDisponible/_scrwinUsableRule/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_listRegleDisponible/_listUsableRule/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_buttonNouvelle/_buttonNew/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/PARAMETREMODIFIABLEWINDOW/UPDATABLEPARAMETERS/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/ParametreModifiableWindow/UpdatableParameters/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/getButtonAppliquer/getApplyButton/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/getNbrePas/getNumberSteps/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/getFreqAffichage/getDisplayFrequency/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/nbrePasInvalide/numberStepsInvalid/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/freqAffichageInvalide/displayFrequencyInvalid/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/modifierPhaseNumerotee/modifyNumberedPhase/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onModifierPhaseSelectionnee/onModifySelectedPhase/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onOkModifierPhase/onOkModifyPhase/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onFermetureModifierPhase/onCloseModifyPhase/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onAnnulerModifierPhase/onCancelModifyPhase/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onOuvrirColorSelection/onOpenColorSelection/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onFermetureColorSelection/onCloseColorSelection/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_hboxNbrePas/_hboxNumberSteps/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_hboxFreqAffichage/_hboxDisplayFrequency/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_labelNbrePas/_labelNumberSteps/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_labelFreqaffichage/_labelDisplayFrequency/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_entryNbrePas/_entryNumberSteps/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_entryFreqAffichage/_entryDisplayFrequency/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_vboxBouttons/_vboxButtons/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_buttonAppliquer/_buttonApply/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_buttonModifier/_buttonModify/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_numPhaseModifiee/_numModifiedPhase/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_phaseModifiee/_modifiedPhase/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/SEGMENT/SPECIALLINE/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/Segment/SpecialLine/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/modifieExtremite/ModifyExtremity/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/ZONEDESSIN/GRANYDRAWINGAREA/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/ZoneDessin/GranyDrawingArea/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/ajouteFigureFrontiere/addFigureBorder/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/ajouteFigureZonage/addFigureZoning/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/ajouteFigureColoration/addFigureColoration/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/retireFigure/removeFigure/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/effaceFrontieres/clearBorders/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/effaceZonages/clearZonings/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/effaceColorations/clearColorations/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/dessineFigures/drawFigures/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/trouveFigureFrontiereSelectionnee/findSelectedBorder/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/trouveFigureZonageSelectionnee/findSelectedZoning/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/trouveFigureColorationSelectionne/findSelectedColoration/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_segmentEnCours/_lineInProgress/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_segment2EnCours/_line2InProgress/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_arcEllipseEnCours/_arcEllipseInProgress/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_polygoneEnCours/_polygonInProgress/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_ellipseFrontEnCours/_ellipseBordersInProgress/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_rectangleEnCours/_rectangleInProgress/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_ellipseEnCours/_ellipseInProgress/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_polygoneZonEnCours/_polygonAreaInProgress/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_dessinFiguresFrontiere/_gtkBorderFigures/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_dessinFiguresZonage/_gtkZoningFigures/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_dessinFiguresColoration/_gtkColorationFigures/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/couleur/color/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+sed 's/onAideApropos/onHelpAbout/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onAideSommaire/onHelpContents/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onAideIndex/onHelpIndex/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onAide/onHelp/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onFermetureApropos/onCloseAbout/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/makeMenuAide/makeHelpMenu/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onFermetureErreur/onCloseError/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/popupFenetreErreur/popupErrorWindow/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onFermetureWarning/onCloseWarning/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/popupFenetreWarning/popupWarningWindow/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_buttonAide/_buttonHelp/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_pixmapAide/_pixmapHelp/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/_erreur/_error/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/EDITEURZONAGEWINDOW/ZONINGEDITOR/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/EditeurZonageWindow/ZoningEditor/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/creeCouleurFromSliders/createColorFromSliders/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/pourcentagesPhasesCourant/percentageCurrentPhases/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/trouvePourcentagePhase/findPhasePercentage/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/modifiePositionsSliders/modifySlidersPositions/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/slidersAuMoinsUn/slidersAtLeastOne/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/onActiverAppliquerMelange/onActivateApplyMix/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/creeFormeZonage/createFormZoning/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/ErreurWindow/ErrorWindow/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo -n "."
+sed 's/Fleche/Arrow/g' $1 > tmpfile
+rm $1
+mv tmpfile $1
+echo "done"

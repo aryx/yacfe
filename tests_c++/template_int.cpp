@@ -1,0 +1,1 @@
+BAD:!!!!! template<int N>

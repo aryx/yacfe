@@ -1,0 +1,8 @@
+process_start SceneCompiler
+
+match_max 200000
+process_test "test1"
+process_test "test2"
+process_test "phasegen"
+process_test "no coloration"
+process_test "no regles"

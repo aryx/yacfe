@@ -1,0 +1,805 @@
+
+AC_INIT(moteur/src/Automate.cpp)
+AC_PREREQ(2.50)
+
+AM_INIT_AUTOMAKE(grany, 2.0.0)
+AM_CONFIG_HEADER(config.h)
+
+
+echo  
+echo checks for programs.
+echo  
+
+AC_PROG_CC
+AC_PROG_CPP
+AC_PROG_MAKE_SET
+
+
+AC_MSG_CHECKING(if we create the tests)
+AC_ARG_ENABLE(tests,
+[  --enable-tests      creation of the tests [default=yes]],
+[case "${enableval}" in
+  yes) ac_tests=yes ;;
+   no) ac_tests=no ;;
+    *) AC_MSG_ERROR(bad value ${enableval} for --enable-tests) ;;
+esac],[ ac_tests=yes ])
+if test x$ac_tests = xyes; then
+  TESTSUITE=yes
+fi
+AC_MSG_RESULT([$ac_tests])
+
+
+if test x$TESTSUITE = xyes; then
+dnl pad: je mets RUNTESTT comme ca automake me fait pas chier
+dnl pad: car il veut des AUTOMAKE_OPTIONS = dejagnu partout apres
+	AC_PATH_PROG(RUNTESTT,runtest)
+	if test x$ac_cv_path_RUNTESTT = x; then
+		AC_MSG_WARN("I can\'t find dejagnu so the testsuite will not be available")
+		TESTSUITE=no
+	fi
+fi
+
+AM_CONDITIONAL(GRANY_TESTSUITE, test x$TESTSUITE = xyes)
+
+dnl ------------------------------------------------------------------------------
+dnl checks for header files
+dnl ------------------------------------------------------------------------------
+echo
+echo checks for posix/standard/X11 headers.
+echo
+
+AC_ISC_POSIX()
+dnl pad: je sais pas si c'est utile car le test de gtk doit detecter ces erreurs
+dnl pad: je sais pas pkoi mais avant ce test etait apres les tests de gtk et du
+dnl pad: coup ca foirait.
+AC_HEADER_STDC()
+
+AC_PATH_XTRA()
+if test x$ac_x_includes = x; then
+AC_MSG_WARN(X11 is not on your system. You will
+	not be able to compile the X11 test program. )	
+X11TEST=no
+fi
+
+AC_HEADER_DIRENT()
+
+
+AM_CONDITIONAL(GRANY_X11TEST, test x$X11TEST != xno)
+
+dnl ------------------------------------------------------------------------------
+dnl Set of available languages. gettext
+dnl ------------------------------------------------------------------------------
+
+echo
+echo checks for GNU Gettext.
+echo
+dnl pad: j'ai mis ca car gettext le veut
+dnl pad: je sais pas pkoi mais il faut mettre ce test avant le test de gtk
+dnl pad: sinon ca fait des merdes
+ALL_LINGUAS="fr"
+
+dnl internationalization macros
+AM_GNU_GETTEXT
+
+
+
+
+dnl checks for typedefs
+dnl checks for structures
+
+
+
+dnl ------------------------------------------------------------------------------
+dnl the documentation
+dnl ------------------------------------------------------------------------------
+echo
+echo checks for the html/latex/man documentation using Doxygen.
+echo
+
+dnl pad: The documentation generation
+AC_MSG_CHECKING(if html documentation and postscripts are generated)
+AC_ARG_ENABLE(docs,
+[  --enable-docs    Turn on document generation [default=no]],
+[case "${enableval}" in
+  yes) ac_docgen=yes ;;
+   no) ac_docgen=no ;;
+    *) AC_MSG_ERROR(bad value ${enableval} for --enable-docs) ;;
+esac],[ ac_docgen=no ])
+dnl pad: old:if test x$ac_docgen = xyes; then
+dnl pad: old:	     GRANY_GENDOCS=yes
+dnl pad: old:	     else
+dnl pad: old:	     GRANY_GENDOCS=no
+dnl pad: old:fi
+dnl pad: old:AC_SUBST(GRANY_GENDOCS)
+AC_MSG_RESULT([$ac_docgen])
+
+dnl pad: faut verifier si il y a doxygen
+dnl pad: si il y a pas mettre un warning (mais ne pas exiter)
+dnl pad: si y a pas doxygen -> la variable ac_cv_path_DOXYGEN (faut regarder
+dnl pad: dans le fichier config.cache, c'est la que l'on voit le nom de la variable)
+dnl pad: est mise a rien (sinon elle contient le chemin de doxygen)
+if test x$ac_docgen = xyes; then
+	AC_PATH_PROG(DOXYGEN,doxygen)
+	if test x$ac_cv_path_DOXYGEN = x; then
+	AC_MSG_WARN(i can't find doxygen so )
+	AC_MSG_WARN(there will be no documentation for the developper.)
+	AC_MSG_WARN(you can get doxygen on the web at http://www.stack.nl/~dimitri/doxygen/)
+	ac_docgen=no
+	fi
+fi
+AM_CONDITIONAL(GRANY_GENDOCS, test x$ac_docgen = xyes)
+
+dnl pad: check for latex
+if test x$ac_docgen = xyes; then
+	AC_PATH_PROG(LATEX,latex)
+	if test x$ac_cv_path_LATEX = x; then
+	AC_MSG_WARN(I can't find latex so )
+	AC_MSG_WARN(there will be no postscript documentation for the developper.)
+	AC_MSG_WARN(You can get the teTeX distribution of latex at http://www.tug.org/tetex/index.html)
+	ac_docgen=no
+	fi
+fi
+
+dnl pad: check for latex is good enough
+
+dnl pad: comme les crochet sont utilise par autoconf il faut
+dnl pad: ruser -> je passer par changequote comme ca il me fera plus chier
+if test x$ac_docgen = xyes; then
+AC_MSG_CHECKING(if latex is good enough to process Doxygen output)
+changequote(`, ')
+echo "-------------testing latex-----------" 1>&5
+cat > conftest.tex <<EOF 
+\documentclass[a4paper]{book}
+\usepackage{a4wide}
+\usepackage{makeidx}
+\usepackage{fancyheadings}
+\usepackage{epsf}
+\usepackage{float}
+\begin{document}
+\end{document}
+EOF
+dnl pad: faut absolument mettre le EOF dans la premier colonne
+changequote([,])
+	if($LATEX '\nonstopmode\input{conftest.tex}' 2>&1 1>&5); then
+		echo "-------------latex test successful!--------" 1>&5
+		AC_MSG_RESULT([$ac_docgen])
+			else 
+		ac_docgen=no
+		AC_MSG_RESULT([$ac_docgen])
+		AC_MSG_WARN(I found latex but it is an old/no good version. Maybe you're lacking)
+		AC_MSG_WARN(some installed stylefiles or fonts. There will be no postscript documentation.)
+		AC_MSG_WARN(You can get the teTeX distribution of latex at http://www.tug.org/tetex/index.html)
+		    
+	fi
+	rm -f conftest.tex conftest.log conftest.aux texput.log
+fi
+
+AM_CONDITIONAL(GRANY_GENDOCS_PS, test x$ac_docgen = xyes)
+
+
+
+
+
+dnl ------------------------------------------------------------------------------
+dnl checks for compiler characteristics
+dnl ------------------------------------------------------------------------------
+echo
+echo checks for compiler characteristics.
+echo 
+AC_C_CONST()
+AC_C_INLINE()
+
+AC_PROG_CXX
+CXXFLAGSENGINE=$CXXFLAGS
+
+AC_LANG_CPLUSPLUS
+
+AC_MSG_CHECKING(if the C++ code is linked against libg++ (may cause problems))
+AC_TRY_COMPILE(
+[
+#include <String.h>
+
+String toto;
+],[
+  
+],[
+  AC_MSG_WARN(I detected libg++ which may conflict with the STL. You're warned!)
+  AC_MSG_RESULT([yes])
+],[
+  AC_MSG_RESULT([no])
+]) 
+
+
+dnl pad: does c++ support exception
+
+AC_MSG_CHECKING(if C++ compiler supports exceptions (required))
+CXXOLDFLAGS=$CXXFLAGS
+
+CXXFLAGS="$CXXOLDFLAGS"
+AC_TRY_COMPILE(
+[
+],[
+   class Direction{};
+   throw Direction();
+
+],[
+  ac_exception=yes
+  CXXEXEPTIONFLAGS=""  
+],[
+  config_error_exception=yes
+]) 
+
+
+if test x$config_error_exception = xyes; then
+   dnl on va essayer un autre flag
+   CXXFLAGS="$CXXOLDFLAGS -fexception"
+	AC_TRY_COMPILE(
+	[
+	],[
+	   class Direction{};
+	   throw Direction();
+
+	],[
+	  ac_exception=yes
+	  CXXEXEPTIONFLAGS=" -fexception"  
+	],[
+	  config_error_exception=yes
+	]) 
+
+	if test x$config_error_exception = xyes; then
+	   dnl on va essayer un autre flag
+	   CXXFLAGS="$CXXOLDFLAGS -fhandle-exception"
+		AC_TRY_COMPILE(
+		[
+		],[
+		   class Direction{};
+		   throw Direction();
+
+		],[
+		  ac_exception=yes
+		  CXXEXEPTIONFLAGS=" -fhandle-exception"  
+		],[
+		  config_error_exception=yes
+		]) 
+	fi
+fi
+
+
+if test "x$config_error_exception" = xyes ; then
+  AC_MSG_RESULT([no])
+  AC_MSG_ERROR([Your compiler is not powerful enough to compile grany. If it should be, see config.log for more information of why it failed.])
+fi
+AC_MSG_RESULT([yes])
+CXXFLAGS="$CXXOLDFLAGS $CXXEXCEPTIONFLAGS"
+
+
+AC_MSG_CHECKING(if C++ compiler knows iostream (required))
+AC_TRY_COMPILE(
+[
+#include <iostream>
+],[
+],[
+  ac_iostream=yes
+],[
+  config_error_iostream=yes
+]) 
+
+if test "x$config_error_iostream" = xyes ; then
+  AC_MSG_RESULT([no])
+  AC_MSG_ERROR([Your compiler is not powerful enough to compile grany. If it should be, see config.log for more information of why it failed.])
+fi
+AC_MSG_RESULT([yes])
+
+
+
+
+
+AC_MSG_CHECKING(if C++ compiler has standard STL+template implementation)
+AC_TRY_LINK(
+[
+#include <string>
+#include <list>
+#include <vector>
+using namespace std;
+template <class Type>
+class Mat
+{
+private:
+  vector<vector<Type> > _matr;
+public:
+  Mat(int);
+};
+template <class Type>
+Mat<Type>::Mat(int h) : _matr(h){}
+],[
+  Mat<int> _values = Mat<int>(1);
+  string s = "hello, world!";
+  list<int> l;
+  l.push_back(0);
+],[
+  ac_stl_impl=yes
+],[
+  config_error_stl_impl=yes
+]) 
+
+if test "x$config_error_stl_impl" = xyes ; then
+  AC_MSG_RESULT([no])
+  AC_MSG_ERROR([Your compiler is not powerful enough to compile grany. If it should be, see config.log for more information of why it failed. Please read README.])
+fi
+AC_MSG_RESULT([yes])
+
+
+dnl ------------------------------------------------------------------------------
+dnl Check some things if we create the interface
+dnl ------------------------------------------------------------------------------
+echo
+echo checks for the interface.
+echo 
+
+dnl pad: grany-interface
+AC_MSG_CHECKING(if we create grany-interface)
+AC_ARG_ENABLE(interface,
+[  --enable-interface      creation of the interface [default=yes]],
+[case "${enableval}" in
+  yes) ac_interface=yes ;;
+   no) ac_interface=no ;;
+    *) AC_MSG_ERROR(bad value ${enableval} for --enable-interface) ;;
+esac],[ ac_interface=yes ])
+if test x$ac_interface = xyes; then
+  INTERFACE=yes
+fi
+AC_MSG_RESULT([$ac_interface])
+
+
+PKG_CHECK_MODULES(GRANY_GTKMM, gtkmm-2.0, INTERFACE=yes, INTERFACE=no)
+AC_SUBST(GRANY_GTKMM_CFLAGS)
+AC_SUBST(GRANY_GTKMM_LIBS)
+
+if test x$INTERFACE != xyes; then
+	AC_MSG_WARN(*** gtkmm2 is required for the graphical interface, the interface will not be generated.)
+	INTERFACE=no
+else
+	INTERFACE=yes	
+fi
+
+
+if test x$INTERFACE = xyes; then
+
+AC_MSG_CHECKING(if we use -fhuge-objects)
+AC_ARG_ENABLE(hugeobjects,
+[  --enable-hugeobjects               pass -fhuge-objects to the C++ compiler [default=no]],
+[case "${enableval}" in
+  yes) ac_huge=yes ;;
+   no) ac_huge=no ;;
+    *) AC_MSG_ERROR(bad value ${enableval} for --enable-hugeobjects) ;;
+esac],[ ac_huge=no ])
+if test x$ac_huge = xyes; then
+ CXXFLAGS="$CXXFLAGS -fhuge-objects "
+dnl TODO enleve -g et -O2
+fi
+AC_MSG_RESULT([$ac_huge])
+
+
+dnl C++ compiler feature check start here
+
+dnl pad inutile:AC_MSG_CHECKING(if C++ compiler needs namespaces)
+dnl pad inutile:AC_TRY_COMPILE(
+dnl pad inutile:[
+dnl pad inutile:#include <iostream>
+dnl pad inutile:namespace std{}
+dnl pad inutile:using namespace std;
+dnl pad inutile:],[
+dnl pad inutile:cout << "test" << endl;
+dnl pad inutile:],[
+dnl pad inutile: ac_namespaces=yes
+dnl pad inutile: AC_DEFINE(GRANY_CXX_HAVE_NAMESPACES)
+dnl pad inutile:],[
+dnl pad inutile: ac_namespaces=no
+dnl pad inutile:])
+dnl pad inutile:AC_MSG_RESULT([$ac_namespaces]) 
+
+dnl pad: granyinterface
+
+AC_MSG_CHECKING(if C++ compiler supports bool (required))
+AC_TRY_COMPILE(
+[
+],[
+   bool b=true;
+   bool b1=false;
+   while (b == b1) {}
+],[
+  ac_bool=yes
+],[
+  config_error=yes
+  AC_WARN(bool type is not supported by your compiler)
+]) 
+AC_MSG_RESULT([$ac_bool])
+
+
+
+
+AC_MSG_CHECKING([if C++ compiler supports const_cast<> (required)])
+AC_TRY_COMPILE(
+[
+   class foo;
+],[
+   const foo *c=0;
+   foo *c1=const_cast<foo*>(c);
+   while (c1) {}
+],[
+  ac_const_cast=yes
+],[
+  AC_WARN(C++ compiler const_cast<> does not work)
+  config_error=yes
+]) 
+AC_MSG_RESULT([$ac_const_cast])
+
+AC_MSG_CHECKING(if C++ compiler supports member templates (required))
+AC_TRY_COMPILE(
+[
+class foo
+{
+public:
+  template <class T> void method(T t);
+};
+
+template <class T> void foo::method(T t) {t = 0;}
+],[
+],[
+   ac_member_templates=yes
+],[
+  AC_WARN(Test for member templates failed.)
+  config_error=yes
+])
+AC_MSG_RESULT([$ac_member_templates])
+
+dnl pad inutile:AC_MSG_CHECKING(if C++ compiler supports mutable)
+dnl pad inutile:AC_TRY_COMPILE(
+dnl pad inutile:[
+dnl pad inutile:class k { 	
+dnl pad inutile:	mutable char *c;
+dnl pad inutile:public:
+dnl pad inutile:   void foo() const { c=0; }
+dnl pad inutile:};
+dnl pad inutile:],[
+dnl pad inutile:],[
+dnl pad inutile:  ac_mutable=yes
+dnl pad inutile:  AC_DEFINE(GRANY_CXX_HAVE_MUTABLE)
+dnl pad inutile:],[
+dnl pad inutile:  ac_mutable=no
+dnl pad inutile:]) 
+dnl pad inutile:AC_MSG_RESULT([$ac_mutable])
+dnl pad inutile:
+dnl pad inutile:AC_MSG_CHECKING(if C++ compiler supports partial specialization)
+dnl pad inutile:AC_TRY_COMPILE(
+dnl pad inutile:[
+dnl pad inutile:template<class T, class K>
+dnl pad inutile:class k { 	
+dnl pad inutile:public:
+dnl pad inutile:};
+dnl pad inutile:template<class T> class k<void,T> { };
+dnl pad inutile:],[
+dnl pad inutile:  k<float, float> b;
+dnl pad inutile:  k<void,void> a;
+dnl pad inutile:],[
+dnl pad inutile:  ac_partial_specialization=yes
+dnl pad inutile:  AC_DEFINE(GRANY_CXX_HAVE_PARTIAL_SPECIALIZATION)
+dnl pad inutile:],[
+dnl pad inutile:  ac_partial_specialization=no
+dnl pad inutile:]) 
+dnl pad inutile:AC_MSG_RESULT([$ac_partial_specialization])
+
+dnl unused at the moment, disabled
+dnl mirko, 99/1/15
+dnl AC_MSG_CHECKING(if C++ compiler supports qualification of return types with templates)
+dnl AC_TRY_COMPILE(
+dnl [
+dnl template<class T>
+dnl class foo {
+dnl public:
+dnl   typedef int iterator;
+dnl   iterator begin();
+dnl };
+dnl template<class T> foo<T>::iterator foo<T>::begin() { }
+dnl ],[
+dnl   foo<int> f;
+dnl   f.begin();
+dnl ],[
+dnl   ac_template_qualification=yes
+dnl ],[
+dnl   AC_DEFINE(GRANY_CXX_HAVE_NO_TEMPLATE_QUALIFICATION)
+dnl   ac_template_qualification=no
+dnl ]) 
+dnl AC_MSG_RESULT([$ac_template_qualification])
+
+dnl unused at the moment, disabled
+dnl mirko, 99/1/15
+dnl AC_MSG_CHECKING(if C++ compiler supports static data inside templates)
+dnl AC_TRY_LINK(
+dnl [
+dnl template<class T>
+dnl class foo { public: static T a; };
+dnl template<class T>
+dnl static T foo<T>::a=0;
+dnl ],[
+dnl   foo<int> b;
+dnl ],[
+dnl   ac_static_templates=yes
+dnl ],[
+dnl   AC_DEFINE(GRANY_CXX_HAVE_NO_STATIC_TEMPLATES)
+dnl   ac_static_templates=no
+dnl ]) 
+dnl AC_MSG_RESULT([$ac_static_templates])
+
+AC_MSG_CHECKING(if C++ compiler supports templates well enough (required))
+AC_TRY_LINK(
+[
+class foo { public: int a(float,int,int,foo*,foo**) { return 0; } };
+template<class rettype, class T, class P1, class P2, class P3, class P4, class P5>
+class k { 	
+public:
+   rettype (T::*method)(P1,P2,P3,P4,P5);   
+};
+],[
+  k<int,foo,float,int,int,foo*,foo**> a;
+  while (&a) {}
+],[
+  ac_grany_cxx_template_support_well=yes
+],[
+  ac_grany_cxx_template_support_well=no
+  config_error=yes
+  AC_WARN(your C++ compiler does not support templates well enough)
+]) 
+AC_MSG_RESULT([$ac_grany_cxx_template_support_well])
+
+dnl unused at the moment & not working, disabled
+dnl mirko, 98/11/06
+dnl AC_MSG_CHECKING(if C++ compiler supports void type with return statement)
+dnl AC_TRY_COMPILE(
+dnl [
+dnl void f() { }
+dnl void g() { return f(); }
+dnl ],[
+dnl   if (g()) {
+dnl      f();
+dnl   }
+dnl ],[
+dnl    ac_void_return_type=yes
+dnl    AC_DEFINE(GRANY_CXX_HAVE_VOID_RETURN_TYPE)
+dnl ],[
+dnl   ac_void_return_type=no
+dnl ])
+dnl AC_MSG_RESULT([$ac_void_return_type])
+
+dnl pad inutile:AC_MSG_CHECKING(if C++ environment has working auto_ptr<>)
+dnl pad inutile:AC_TRY_COMPILE(
+dnl pad inutile:[
+dnl pad inutile:#include <memory>
+dnl pad inutile:#ifdef GRANY_CXX_NAMESPACES
+dnl pad inutile:namespace std{}
+dnl pad inutile:using namespace std;
+dnl pad inutile:#endif /* GRANY_CXX_NAMESPACES */
+dnl pad inutile:
+dnl pad inutile:],[
+dnl pad inutile:  auto_ptr<int> a;
+dnl pad inutile:],[
+dnl pad inutile:  grany_autoptr_ok=yes
+dnl pad inutile:  AC_DEFINE(GRANY_CXX_HAVE_AUTO_PTR)
+dnl pad inutile:],[
+dnl pad inutile:  grany_autoptr_ok=no
+dnl pad inutile:])
+dnl pad inutile:AC_MSG_RESULT([$grany_autoptr_ok])
+
+dnl pad inutile:dnl gtk--draw doesn't use list anymore, disabled
+dnl pad inutile:dnl mirko, 99/1/15
+dnl pad inutile:AM_CONDITIONAL(GRANYDRAW, true)
+dnl pad inutile:dnl AC_MSG_CHECKING(if C++ environment has working STL's list<>)
+dnl pad inutile:dnl AC_TRY_LINK(
+dnl pad inutile:dnl [
+dnl pad inutile:dnl #include <list>
+dnl pad inutile:dnl ],[
+dnl pad inutile:dnl   list<int> a;
+dnl pad inutile:dnl   a.insert(a.begin(), 10);
+dnl pad inutile:dnl ],[
+dnl pad inutile:dnl   granydraw_ok=yes
+dnl pad inutile:dnl ],[
+dnl pad inutile:dnl   granydraw_ok=no
+dnl pad inutile:dnl   AC_WARN(your C++ compiler's STL version does not work. Disabling gtk--draw)
+dnl pad inutile:dnl ]) 
+dnl pad inutile:dnl AC_MSG_RESULT([$granydraw_ok])
+dnl pad inutile:dnl AM_CONDITIONAL(GRANYDRAW, test x$granydraw_ok = xyes)
+dnl pad inutile:dnl AC_SUBST(granydraw_ok)
+
+
+AC_MSG_CHECKING(if C++ environment has working string class (required))
+AC_TRY_LINK(
+[
+#include <string>
+using namespace std;
+  class foo {
+  public:
+    void f(const string &s);
+  };
+  void foo::f(const string &s) {
+    f(s.c_str());
+  }
+],[
+   foo f1;
+   f1.f("test");
+],[
+  grany_string_ok=yes
+],[
+  grany_string_ok=no
+  config_error=yes 
+  AC_WARN(C++ compilers string support does not work)
+])
+AC_MSG_RESULT([$grany_string_ok])
+
+
+CXXFLAGSOLD=$CXXFLAGS
+LIBSOLD=$LIBS
+CXXFLAGS="$CXXFLAGS $GRANY_GTKMM_CFLAGS"
+LIBS="$LIBS $GRANY_GTKMM_LIBS"
+
+
+  
+AC_MSG_CHECKING(if C++ environment provides all required features)
+if test "x$config_error" = xyes ; then
+  AC_MSG_RESULT([no])
+  AC_MSG_WARN([Your compiler is not powerful enough to compile grany interface. \
+	If it should be, see config.log for more information of why it failed.\
+	The interface will not be generated])
+fi
+AC_MSG_RESULT([yes])
+
+
+
+fi dnl if test x$INTERFACE = xyes; then
+AM_CONDITIONAL(GRANY_INTERFACE, test x$INTERFACE = xyes)
+
+
+dnl checks for library functions
+
+dnl ------------------------------------------------------------------------------
+dnl pad: Listing de fichiers
+dnl ------------------------------------------------------------------------------
+dnl pad: note: ne pas oublier d'enlever les espaces entre le nom de 
+dnl pad: note: variable et le =
+dnl pad: les _H_INCLUDE contiennent include/*.h
+dnl pad: tandis que _H definit juste *.h
+MOTEUR_H=`cd $srcdir/moteur/include; ls *.h |xargs echo`
+MOTEUR_H_INCLUDE=`cd $srcdir/moteur; ls include/*.h |xargs echo`
+dnl pad: ancien MOTEUR_CPP=`echo $MOTEUR_H_INCLUDE |sed -e "s/include\///g" |sed -e "s/.h/.cpp/g" |xargs echo`
+MOTEUR_CPP=`cd $srcdir/moteur/src; ls *.cpp |xargs echo`
+MOTEUR_TEST_OUTPUTOK=`cd $srcdir/moteur/tests; ls output.ok/*test* |xargs echo`
+MOTEUR_TEST_EXPECT=`cd $srcdir/moteur/tests; ls test.moteur/*.exp |xargs echo`
+
+
+
+FICHIER_H=`cd $srcdir/fichiers/include; ls *.h |xargs echo`
+FICHIER_H_INCLUDE=`cd $srcdir/fichiers; ls include/*.h |xargs echo`
+FICHIER_CPP=`cd $srcdir/fichiers/src; ls *.cpp |xargs echo`
+FICHIER_TEST_OUTPUTOK=`cd $srcdir/fichiers/tests; ls output.ok/*test* |xargs echo`
+FICHIER_TEST_EXPECT=`cd $srcdir/fichiers/tests; ls test.fichiers/*.exp |xargs echo`
+
+FICHIER_TEST_FILES=`cd $srcdir/fichiers/tests; ls files/*.* |xargs echo`
+
+INTERFACE_H=`cd $srcdir/interface/include; ls *.h |xargs echo`
+INTERFACE_H_INCLUDE=`cd $srcdir/interface; ls include/*.h |xargs echo`
+INTERFACE_CPP=`cd $srcdir/interface/src; ls *.cpp |xargs echo`
+dnl PIXMAPS_FILES=`cd $srcdir/interface/src; ls pixmaps/*.xpm |xargs echo`
+
+
+FIGURES_H=`cd $srcdir/figures/include; ls *.h |xargs echo`
+FIGURES_H_INCLUDE=`cd $srcdir/figures; ls include/*.h |xargs echo`
+FIGURES_CPP=`cd $srcdir/figures/src; ls *.cpp |xargs echo`
+FIGURES_TEST_OUTPUTOK=`cd $srcdir/figures/tests; ls output.ok/*test* |xargs echo`
+FIGURES_TEST_EXPECT=`cd $srcdir/figures/tests; ls test.figures/*.exp |xargs echo`
+
+SCENE_H=`cd $srcdir/scene/include; ls *.h |xargs echo`
+SCENE_H_INCLUDE=`cd $srcdir/scene; ls include/*.h |xargs echo`
+SCENE_CPP=`cd $srcdir/scene/src; ls *.cpp |xargs echo`
+SCENE_TEST_OUTPUTOK=`cd $srcdir/scene/tests; ls output.ok/*test* |xargs echo`
+SCENE_TEST_EXPECT=`cd $srcdir/scene/tests; ls test.scene/*.exp |xargs echo`
+
+CONSOLE_H=`cd $srcdir/console/include; ls *.h |xargs echo`
+CONSOLE_H_INCLUDE=`cd $srcdir/console; ls include/*.h |xargs echo`
+CONSOLE_CPP=`cd $srcdir/console/src; ls *.cpp |xargs echo`
+CONSOLE_TEST_OUTPUTOK=`cd $srcdir/console/tests; ls output.ok/*test* |xargs echo`
+CONSOLE_TEST_EXPECT=`cd $srcdir/console/tests; ls test.console/*.exp |xargs echo`
+
+CONSOLE_TEST_FILES=`cd $srcdir/console/tests; ls files/*.* |xargs echo`
+
+INTERFACEFILES=`cd $srcdir/interface/src/; ls files/*/* |xargs echo`
+AC_SUBST(INTERFACEFILES)
+
+
+
+AC_SUBST(CONSOLE_CPP)
+AC_SUBST(CONSOLE_H)
+AC_SUBST(CONSOLE_H_INCLUDE)
+AC_SUBST(CONSOLE_TEST_OUTPUTOK)
+AC_SUBST(CONSOLE_TEST_EXPECT)
+AC_SUBST(CONSOLE_TEST_FILES)
+
+
+AC_SUBST(SCENE_CPP)
+AC_SUBST(SCENE_H)
+AC_SUBST(SCENE_H_INCLUDE)
+AC_SUBST(SCENE_TEST_OUTPUTOK)
+AC_SUBST(SCENE_TEST_EXPECT)
+
+
+AC_SUBST(FIGURES_CPP)
+AC_SUBST(FIGURES_H)
+AC_SUBST(FIGURES_H_INCLUDE)
+AC_SUBST(FIGURES_TEST_OUTPUTOK)
+AC_SUBST(FIGURES_TEST_EXPECT)
+
+AC_SUBST(MOTEUR_CPP)
+AC_SUBST(MOTEUR_H)
+AC_SUBST(MOTEUR_H_INCLUDE)
+AC_SUBST(MOTEUR_TEST_OUTPUTOK)
+AC_SUBST(MOTEUR_TEST_EXPECT)
+
+AC_SUBST(FICHIER_CPP)
+AC_SUBST(FICHIER_H)
+AC_SUBST(FICHIER_H_INCLUDE)
+AC_SUBST(FICHIER_TEST_OUTPUTOK)
+AC_SUBST(FICHIER_TEST_EXPECT)
+AC_SUBST(FICHIER_TEST_FILES)
+
+
+
+AC_SUBST(INTERFACE_CPP)
+AC_SUBST(INTERFACE_H)
+AC_SUBST(INTERFACE_H_INCLUDE)
+
+dnl AC_SUBST(PIXMAPS_FILES)
+
+
+
+dnl ------------------------------------------------------------------------------
+dnl Final
+dnl ------------------------------------------------------------------------------
+echo
+echo ok, your system can compile Grany, creating the Makefiles
+echo
+dnl pad: faut mettre les noms des fichiers qui seront transforme par configure a la fin
+dnl pad: configure prend les fichier Makefile.in et les transforme en Makefile
+dnl pad: en faisant les substitutions de variables (par ex @CC@ devient CC=g++)
+dnl AC_OUTPUT(Makefile moteur/Makefile interface/Makefile)
+AC_OUTPUT(Makefile \
+	moteur/Makefile \
+	moteur/src/Makefile \
+	moteur/tests/Makefile \
+	moteur/doxygen/Makefile \
+	
+	interface/Makefile \
+	interface/src/Makefile \
+	interface/src/granyrc \
+	interface/tests/Makefile \
+	interface/doxygen/Makefile \
+
+	docs/Makefile \
+	docs/developper/Makefile \
+
+	fichiers/Makefile \
+	fichiers/src/Makefile \
+	fichiers/tests/Makefile \
+
+	figures/Makefile \
+	figures/src/Makefile \
+	figures/tests/Makefile \
+
+	scene/Makefile \
+	scene/src/Makefile \
+	scene/tests/Makefile \
+
+	console/Makefile \
+	console/src/Makefile \
+	console/tests/Makefile \
+
+	
+	intl/Makefile \
+	po/Makefile.in	)

@@ -1,0 +1,13 @@
+Thanks to 
+ - eric cooper for the Java parser
+
+
+Thanks to 
+ - Richard Jones for his dumper module, 
+ - Troestler Christophe for his ANSITerminal module,
+ - Brian Hurt and Nicolas Cannasse for their dynArray module,
+ - Sebastien Ferré for his implementation in OCaml of a suffix tree library, 
+
+
+Thanks of course also to Stallman, Linus, Leroy, Knuth and their
+acolytes for respectively Emacs, Linux, OCaml, and (La)Tex.

@@ -1,0 +1,22 @@
+@ ok @
+identifier f;
+position p1;
+@@
+
+void f@p1(...);
+
+
+@ r1 @
+identifier f;
+type T;
+position p2 != ok.p1;
+@@
+
+T f@p2(...); 
+
+
+@@
+identifier r1.f;
+@@
+
+* f(...);

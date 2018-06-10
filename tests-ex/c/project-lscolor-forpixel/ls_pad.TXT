@@ -1,0 +1,5 @@
+j ai rajoute le fait de colorier de la couleur ORPHAN les .qqchose
+
+puis si sunsite.doc est un rep alors couleur de rep et pas couleur de doc
+
+bug: ne gere pas le d -l sur colorie les objet .qqvhose pointe (par un symlink)

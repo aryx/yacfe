@@ -1,0 +1,10 @@
+statistics_code.cmi: ../commons/common.cmi 
+statistics_parsing.cmi: ../commons/common.cmi 
+place_code.cmo: ../commons/common.cmi ast_generic.cmo 
+place_code.cmx: ../commons/common.cmx ast_generic.cmx 
+programming_language.cmo: ../commons/common.cmi 
+programming_language.cmx: ../commons/common.cmx 
+statistics_code.cmo: ../commons/common.cmi statistics_code.cmi 
+statistics_code.cmx: ../commons/common.cmx statistics_code.cmi 
+statistics_parsing.cmo: ../commons/common.cmi statistics_parsing.cmi 
+statistics_parsing.cmx: ../commons/common.cmx statistics_parsing.cmi 

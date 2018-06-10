@@ -1,0 +1,80 @@
+* parsing C++
+
+** firefox
+
+*** C part: (-parse_c)
+nb files = 1460
+nb lines (+ 991205 61358)
+
+ 90%
+ 94% (after simple (1h work) adjust of standard.h and lexer_c.mll)
+ 95.5%  with -filter_define_error (following numbers also use that now)
+
+*** C++ part: (-parse_c++)
+nb files = 3967
+nb lines =  (+ 384579 1415548)
+
+last: 
+
+cf yacfe-notes for the initial logging of scores while gradually
+improving the parser.
+
+
+
+*** H part (parse_h++)
+day4: firefox 2(but perhaps many C headers)
+ 66%   after having 91% on cpp and implemented the class support
+ 68%   misc_macro
+ 70%   misc_macro 
+ 71%   
+
+day5: firefox 3
+ 59%  :(((
+ 62%
+ 65% 
+ 67% 
+day6:
+ 79% firefox 2
+ 74% firefox 3
+ 75%
+ note: full (fast) pass on all errors
+ 76%
+ 77%
+
+*** H and C++ (parse_ch++)
+
+ 90%
+
+** mysql
+
+ 85% after having a 90% for firefox, just text mysql (without adding anything)
+ 87%
+
+* parsing C
+
+** linux 
+
+99.1% for .h and .c
+
+
+* parsing Java
+
+Almost 100% each time ... too easy :)
+
+
+* parsing -dir tests/
+
+** sans -add_typedef_root 
+
+NB total files = 2212; perfect = 1810; pbs = 402; timeout = 0; =========> 81%
+nb good = 2903297,  nb bad = 151164    =========> 95%
+
+
+** avec -add_typedef_root,  moins bon :(
+
+NB total files = 2212; perfect = 1802; pbs = 410; timeout = 0; =========> 81%
+nb good = 2899792,  nb bad = 154669    =========> 94%
+
+
+** avec -ifdef_to_if ? avec  -retry_ifdef ?
+

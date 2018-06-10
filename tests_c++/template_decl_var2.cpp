@@ -1,0 +1,1 @@
+nsCOMPtr<nsIPersistentProperties> attributes;
