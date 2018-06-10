@@ -82,7 +82,7 @@ my $error = 0;
 #---------------------------------------------------------------------
 $error += 
     check_config("echo \"1;;\\n\" | ocaml |",
-                 "Objective(.*) 3.*",
+                 "(Objective|OCaml)(.*) ([34]\.*.*)",
                  "OCaml (the wonderful language) is present.",
                  "The program ocaml is missing or is not a good version. We need at least 3.09",
                  );
@@ -95,7 +95,7 @@ pr2 "";
 
 $error += check_config(
   "make -v 2>&1 |grep Make|",
-  "GNU Make 3\.[0-9]+", #version 3.81
+  "GNU Make [34]\.[0-9]+", #version 3.81
   "make (gnu version) is present.",
   "The program gnu make is missing or is not a good version.
 We need  3.XX",
