@@ -16,7 +16,6 @@ open Common
  * full list of options in the "the options" section below), this 
  * program also depends on the external file 
  * - macro files in macros/standard.h, 
- * - some iso files such as isos/standard.h, 
  * - and typing environment in environment_unix.h
  * Then can be set via -macro_file, -envir_file.
  *)
@@ -34,77 +33,18 @@ let macro_file = ref ""
 (* Helpers *)
 (*****************************************************************************)
 
-let detect_pl_of_file_with_cplusplus_header_addon file = 
-    let (d,b,e) = Common.dbe_of_filename file in
-    if e = "h" && Parse_cplusplus.is_problably_cplusplus_file file
-    then begin
-      pr2 ("MISC: c++ .h file, using c++ parser not c parser:" ^ file);
-      Programming_language.Cplusplus
-    end
-    else Programming_language.detect_pl_of_file file
-
-
 let parse_and_comments_of_file file = 
-  match detect_pl_of_file_with_cplusplus_header_addon file with
-  | Programming_language.C -> 
-      let (program2, parsing_stat) = 
-        Parse_c.parse_c_and_cpp file in
-
-      let program = Parse_c.program_of_program2 program2 in
+  let (program2, parsing_stat) = 
+    Parse_c.parse_c_and_cpp file in
+  
+  let program = Parse_c.program_of_program2 program2 in
 
       (* let _estat = Statistics_c.statistics_of_program program in *)
-
-      program2 +> List.iter (fun (ast, (s, toks)) -> 
-        Parse_c.print_commentized toks
-      );
-      
-      let parsing_stat = 
-        Language_helper.conv_c_parsing_stat parsing_stat in
-
-(*      
-      let (comments_packed, unpacked_info_comments, 
-        (comment_stat, entities_stat)) = 
-        Comments_c_extraction.comments_of_program 
-          ~do_packing:(!use_c_comment_packing)
-          program in
-      comments_packed, unpacked_info_comments,
-      (parsing_stat, comment_stat, entities_stat)
-*)
-      parsing_stat
-  | Programming_language.Cplusplus -> 
-      
-      let (program, parsing_stat) = 
-        Parse_cplusplus.parse_c_and_cpp file in
-      
-      let parsing_stat = 
-        Language_helper.conv_cplusplus_parsing_stat parsing_stat in
-(*      
-      let (comments_packed, unpacked_info_comments, 
-          (comment_stat, entities_stat)) = 
-        Comments_cplusplus_extraction.comments_of_program 
-          ~do_packing:true
-          program in
-      comments_packed, unpacked_info_comments, 
-      (parsing_stat, comment_stat, entities_stat)
-*)
-      parsing_stat
-
-  | Programming_language.Java -> 
-      let (program, parsing_stat) = 
-        Parse_java.parse_java file in
-      
-      let parsing_stat = 
-        Language_helper.conv_java_parsing_stat parsing_stat in
-(*      
-      let (comments_packed, unpacked_info_comments, 
-          (comment_stat, entities_stat)) = 
-        Comments_java_extraction.comments_of_program program in
-      comments_packed, unpacked_info_comments,
-      (parsing_stat, comment_stat, entities_stat)
-*)
-
-      parsing_stat
-
+  
+  program2 +> List.iter (fun (ast, (s, toks)) -> 
+    Parse_c.print_commentized toks
+  )
+       
 
 (*****************************************************************************)
 (* Main action *)
@@ -199,24 +139,18 @@ let parse_all xs =
   *)
   Flag_parsing_c.debug_cpp := true;
 
-
   Flag_parsing_c.verbose_parsing := true;
 
   (*
   Flag_parsing_c.filter_classic_passed := true;
-
   Flag_parsing_c.filter_msg := false;
-  Flag_parsing_cplusplus.filter_msg := false;
   *)
 
   (* sure ? *)
   Flag_parsing_c.filter_define_error := false;
-  Flag_parsing_cplusplus.filter_define_error := false;
-
 
   let newscore  = Common.empty_score () in
   let parsing_stat_list = ref [] in
-
 
   let biglist = (fun () -> 
 
@@ -280,10 +214,8 @@ let parse_all xs =
     !parsing_stat_list, newscore
   ) in
   (* will call either map_ex for worker or reduce_ex for server *)
-  biglist +> Features.Distribution.mpi_main2 ~debug_mpi:true map_ex reduce_ex
-
-
-let _ = Software_cc09.parse_all := parse_all
+  (* TODO biglist map_ex reduce_ex *)
+  ()
 
 
 (* ------------------------------------------------------------------------- *)
@@ -298,25 +230,9 @@ let yacfe_extra_actions () = [
 
 let all_actions () = 
    yacfe_extra_actions() ++
-   Software_cc09.extra_actions() ++
-(*
-   Software_os_src2.extra_actions() ++
-*)
-
    Test.actions() ++
    Test_parsing_c.actions() ++
-   Test_parsing_cplusplus.actions() ++
-   Test_parsing_java.actions() ++
 
-(*
-   Test_analyze_c.actions() ++
-   Test_parsing_cocci.actions() ++
-
-   Database_c.actions() ++
-   Database_c_query.actions() ++
-   Database_c_build.actions() ++
-   Database_c_statistics.actions() ++
-*)
    []
 
 let options () = 
@@ -328,18 +244,6 @@ let options () =
   Flag_parsing_c.cmdline_flags_verbose () ++
   Flag_parsing_c.cmdline_flags_debugging () ++
   Flag_parsing_c.cmdline_flags_checks () ++
-
-
-  Flag_parsing_cplusplus.cmdline_flags_macrofile () ++
-
-  Flag_parsing_cplusplus.cmdline_flags_verbose () ++
-  Flag_parsing_cplusplus.cmdline_flags_debugging () ++
-
-(*
-  Flag_analyze_c.cmdline_flags_verbose () ++
-*)
-
-  Software_cc09.extra_options() ++
 
   [
     "-macro_file", Arg.Set_string macro_file, 
@@ -384,7 +288,6 @@ let main () =
 
   (* must be done after Arg.parse, because -macro_file can set it *)
   Parse_c.init_defs_builtins !Flag_parsing_c.std_h;
-  Parse_cplusplus.init_defs !Flag_parsing_cplusplus.std_h;
 
   if !macro_file <> "" 
   then Parse_c.init_defs !macro_file;

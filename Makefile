@@ -25,23 +25,17 @@ LIBS= commons/commons.cma \
       globals/globals.cma \
       pl_info/code_info.cma \
       parsing_c/parsing_c.cma \
-      pl_wrapper/code_wrapper.cma \
-      src_repository/src_repository.cma
 
 MAKESUBDIRS=commons \
   globals \
   pl_info \
   parsing_c \
-  pl_wrapper \
-  src_repository \
   demos 
 
 INCLUDEDIRS=commons \
   globals \
   pl_info \
   parsing_c \
-  pl_wrapper \
-  src_repository
 
 
 ##############################################################################

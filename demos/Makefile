@@ -4,13 +4,9 @@
 SYSLIBS=str.cma bigarray.cma unix.cma
 
 LIBS= ../commons/commons.cma ../pl_info/code_info.cma \
-      ../parsing_c/parsing_c.cma ../parsing_cplusplus/parsing_cplusplus.cma \
+      ../parsing_c/parsing_c.cma
 
-#      ../analyze_c/analyze_c.cma
-
-INCLUDEDIRS=../commons ../pl_info ../parsing_c ../parsing_cplusplus \
-
-# ../analyze_c
+INCLUDEDIRS=../commons ../pl_info ../parsing_c
 
 ##############################################################################
 # Generic variables
