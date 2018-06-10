@@ -1,3 +1,16 @@
+(* Yoann Padioleau
+ * 
+ * Copyright (C) 2008, 2009 University of Urbana Champaign
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License (GPL)
+ * version 2 as published by the Free Software Foundation.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * file license.txt for more details.
+ *)
 open Common
 
 open Ast_c
@@ -9,10 +22,11 @@ open Ast_c
 (*
  * cpp-include-expander-builtin.
  * 
- * alternative1: parse and call cpp tour a tour ?
+ * alternative1: parse and call cpp tour a tour. So let cpp work at 
+ *  the token level. That's what most tools do.
  * alternative2: apply cpp at the very end. Process that go through ast
- * and do the stuff such as #include,  macro expand, 
- * ifdef. 
+ *  and do the stuff such as #include,  macro expand, 
+ *  ifdef but on the ast!
  * 
  * But need keep those info in ast at least, even bad
  * macro for instance, and for parse error region ? maybe can 
@@ -35,6 +49,8 @@ open Ast_c
  * ??add such info about what was done somewhere ? could build new
  * ??ast each time but too tedious (maybe need delta-programming!)
  *
+ * todo? maybe change cpp_ast_c to go deeper on local "" ?
+ * 
  * 
  * TODO: macro expand, 
  * TODO: handle ifdef
@@ -53,7 +69,7 @@ open Ast_c
 (*****************************************************************************)
 
 type cpp_option = 
-  | I of Common.filename
+  | I of Common.dirname
   | D of string * string option
 
 
@@ -79,8 +95,23 @@ let cpp_option_of_cmdline (xs, ys) =
 (* Helpers *)
 (*****************************************************************************)
 
+let _hcandidates = Hashtbl.create 101
+
+let init_adjust_candidate_header_files dir = 
+  let ext = "[h]" in
+  let files = Common.files_of_dir_or_files ext [dir] in
+
+  files +> List.iter (fun file -> 
+    let base = Filename.basename file in
+    pr2 file;
+    Hashtbl.add _hcandidates base file;
+  );
+  ()
+
+
+
 (* may return a list of match ? *)
-let find_header_file cppopts dirname inc_file =
+let find_header_file1 cppopts dirname inc_file =
   match inc_file with
   | Local f -> 
       let finalfile = 
@@ -96,11 +127,44 @@ let find_header_file cppopts dirname inc_file =
         then Some finalfile
         else None
       )
-  | Wierd s -> 
-      pr2 ("CPPAST: wierd include not handled:" ^ s);
+  | Weird s -> 
+      pr2 ("CPPAST: weird include not handled:" ^ s);
+      []
+
+(* todo? can try find most precise ? first just use basename but
+ * then maybe look if have also some dir in common ?
+ *)
+let find_header_file2 inc_file = 
+  match inc_file with
+  | Local f 
+  | NonLocal f -> 
+      let s = (Ast_c.s_of_inc_file inc_file) in
+      let base = Filename.basename s in
+
+      let res = Hashtbl.find_all _hcandidates base in
+      (match res with
+      | [file] -> 
+          pr2 ("CPPAST: find header in other dir: " ^ file);
+          res
+      | [] -> 
+          []
+      | x::y::xs -> res
+      )
+  | Weird s -> 
       []
 
 
+let find_header_file cppopts dirname inc_file =
+  let res1 = find_header_file1 cppopts dirname inc_file in
+  match res1 with
+  | [file] -> res1 
+  | [] -> find_header_file2 inc_file
+  | x::y::xs -> res1
+
+
+
+
+(* ---------------------------------------------------------------------- *)
 let trace_cpp_process depth mark inc_file =
   pr2 (spf "%s>%s %s" 
           (Common.repeat "-" depth +> Common.join "")
@@ -109,14 +173,53 @@ let trace_cpp_process depth mark inc_file =
   ()
 
 
+(* ---------------------------------------------------------------------- *)
+let _headers_hash = Hashtbl.create 101 
+
+(* On freebsd ocaml is trashing, use up to 1.6Go of memory and then
+ * building the database_c takes ages. 
+ * 
+ * So just limit with following threshold to avoid this trashing, simple.
+ * 
+ * On netbsd, got a Out_of_memory exn on this file;
+ * /home/pad/software-os-src2/netbsd/dev/microcode/cyclades-z/
+ * even if the cache is small. That's because huge single 
+ * ast element and probably the ast marshalling fail.
+ *)
+let threshold_cache_nb_files = ref 200
+
+let parse_c_and_cpp_cache file =
+  if Hashtbl.length _headers_hash > !threshold_cache_nb_files
+  then Hashtbl.clear _headers_hash;
+
+  Common.memoized _headers_hash file (fun () -> 
+    Parse_c.parse_c_and_cpp file
+  )
+
+
+(* ---------------------------------------------------------------------- *)
+let (show_cpp_i_opts: string list -> unit) = fun xs -> 
+  if not (null xs) then begin 
+    pr2 "-I";
+    xs +> List.iter pr2
+  end
+
+  
+let (show_cpp_d_opts: string list -> unit) = fun xs ->
+  if not (null xs) then begin
+    pr2 "-D";
+    xs +> List.iter pr2
+  end
+
 (*****************************************************************************)
 (* Main entry *)
 (*****************************************************************************)
 
 
-let (cpp_expand_include: 
+let (cpp_expand_include2: 
+ ?depth_limit:int option ->
  cpp_option list -> Common.dirname -> Ast_c.program -> Ast_c.program) =
- fun iops dirname ast -> 
+ fun ?(depth_limit=None) iops dirname ast -> 
 
   pr2_xxxxxxxxxxxxxxxxx();
   let already_included = ref [] in
@@ -133,6 +236,10 @@ let (cpp_expand_include:
                    i_content = copt;
                    } 
           -> 
+          (match depth_limit with
+          | Some limit when depth >= limit -> cpp
+          | _ -> 
+           
             (match find_header_file iops dirname inc_file with
             | [file] -> 
                 if List.mem file !already_included
@@ -146,7 +253,7 @@ let (cpp_expand_include:
                   (* CONFIG *)
                   Flag_parsing_c.verbose_parsing := false; 
                   Flag_parsing_c.verbose_lexing := false; 
-                  let (ast2, _stat) = Parse_c.parse_c_and_cpp file in
+                  let (ast2, _stat) = parse_c_and_cpp_cache file in
 
                   let ast = Parse_c.program_of_program2 ast2 in
                   let dirname' = Filename.dirname file in 
@@ -169,6 +276,7 @@ let (cpp_expand_include:
                 pr2 "CPPAST: too much candidates";
                 k cpp
             )
+          )
         | _ -> k cpp
       );
     }
@@ -176,6 +284,9 @@ let (cpp_expand_include:
   aux [] dirname ast
     
 
+let cpp_expand_include ?depth_limit a b c = 
+  Common.profile_code "cpp_expand_include"
+   (fun () -> cpp_expand_include2 ?depth_limit a b c)
 
 (* 
 let unparse_showing_include_content ?
@@ -190,7 +301,7 @@ let unparse_showing_include_content ?
 let is_ifdef_and_same_tag tag x = 
   match x with
   | IfdefStmt (IfdefDirective ((_, tag2),_)) -> 
-      tag = tag2
+      tag =*= tag2
   | StmtElem _ | CppDirectiveStmt _ -> false
   | IfdefStmt2 _ -> raise Impossible
 
@@ -239,17 +350,16 @@ let group_ifdef tag xs =
 let rec cpp_ifdef_statementize ast = 
   Visitor_c.vk_program_s { Visitor_c.default_visitor_c_s with
     Visitor_c.kstatementseq_list_s = (fun (k, bigf) xs -> 
-      
       let rec aux xs = 
         match xs with
         | [] -> []
-        | stseq::xs -> 
+        | stseq::xs ->
             (match stseq with
             | StmtElem st -> 
                 Visitor_c.vk_statement_sequencable_s bigf stseq::aux xs
             | CppDirectiveStmt directive -> 
                 Visitor_c.vk_statement_sequencable_s bigf stseq::aux xs
-            | IfdefStmt ifdef -> 
+            | IfdefStmt ifdef ->
                 (match ifdef with
                 | IfdefDirective ((Ifdef,tag),ii) -> 
 
@@ -258,12 +368,12 @@ let rec cpp_ifdef_statementize ast =
                     then
                       let res = IfdefStmt2 (ifdef::restifdefs, xxs) in
                       Visitor_c.vk_statement_sequencable_s bigf res::aux xs'
-                    else 
+                    else
                       Visitor_c.vk_statement_sequencable_s bigf stseq::aux xs
                       
-                | IfdefDirective (((IfdefElseif|IfdefElse|IfdefEndif),b),ii) -> 
-                    pr2 "wierd: first directive is not a ifdef";
-                    (* maybe not wierd, just that should_ifdefize 
+                | IfdefDirective (((IfdefElseif|IfdefElse|IfdefEndif),b),ii) ->
+                    pr2 "weird: first directive is not a ifdef";
+                    (* maybe not weird, just that should_ifdefize 
                      * returned false *)
                     Visitor_c.vk_statement_sequencable_s bigf stseq::aux xs
                 )
@@ -275,3 +385,14 @@ let rec cpp_ifdef_statementize ast =
       aux xs
     );
   } ast
+
+
+(*****************************************************************************)
+(* Macro *)
+(*****************************************************************************)
+
+let (cpp_expand_macro_expr: 
+  Ast_c.define_kind -> Ast_c.argument Ast_c.wrap2 list -> 
+  Ast_c.expression option) = 
+ fun defkind args -> 
+   raise Todo

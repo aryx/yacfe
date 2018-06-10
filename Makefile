@@ -9,66 +9,41 @@ VERSION=$(shell cat globals/config.ml |grep version |perl -p -e 's/.*"(.*)".*/$$
 ##############################################################################
 # Variables
 ##############################################################################
+TOP=$(shell pwd)
+
+SRC=test.ml main.ml 
+
 TARGET=yacfe
+PROGS=yacfe
 
-SRC=test.ml features.ml software_src.ml cc09.ml main.ml 
+OPTPROGS= $(PROGS:=.opt)
 
-
-ifeq ($(FEATURE_MPI),1)
-MPICMA=ocamlmpi/mpi.cma commons/commons_mpi.cma
-MPIDIR=ocamlmpi
-MPICMD=    $(MAKE) all -C ocamlmpi; $(MAKE) distribution -C commons
-MPICMDOPT= $(MAKE) all.opt -C ocamlmpi; $(MAKE) distribution.opt -C commons
-#MPILIB=dllpycaml_stubs.so
-# the following is essential for yacfe to compile under gentoo (wierd) ???
-#OPTLIBFLAGS=-cclib dllpycaml_stubs.so
-else
-MPICMD=echo "no mpi"
-MPICMDOPT=echo "no mpi"
-endif
-
-ifeq ($(FEATURE_GUI),1)
-GUIDIR=gui
-GUICMD= $(MAKE) backtrace -C commons; \
-        $(MAKE) gui       -C commons; \
-GUICMDOPT= $(MAKE) backtrace.opt -C commons; \
-           $(MAKE) gui.opt       -C commons;
-GUIEXEC=yacfe_browser
-GUIEXECOPT=yacfe_browser.opt
-GUIINCLUDE= +lablgtk2 +lablgtksourceview
-else
-GUICMD=echo "no gui"
-GUICMDOPT=echo "no gui"
-endif
-
-#ifeq ($(FEATURES_GDBM), 1)
-GDBMCMD= $(MAKE) gdbm -C commons
-GDBMCMDOPT= $(MAKE) gdbm.opt -C commons
-GDBMCMA=commons/commons_gdbm.cma
-GDBMSYSCMA=dbm.cma
-#else
-#endif
-
-
-SYSLIBS=str.cma unix.cma $(GDBMSYSCMA)
+#------------------------------------------------------------------------------
+SYSLIBS=str.cma bigarray.cma unix.cma
 LIBS= commons/commons.cma \
+      commons/commons_features.cma \
       globals/globals.cma \
-      $(MPICMA) \
-      $(GDBMCMA) \
-      code_info/code_info.cma \
+      pl_info/code_info.cma \
       parsing_c/parsing_c.cma \
-      parsing_c++/parsing_cplusplus.cma \
+      parsing_cplusplus/parsing_cplusplus.cma \
       parsing_java/parsing_java.cma \
-      matcher_c/matcher.cma \
-      analyze_c/analyze_c.cma \
-      code_wrapper/code_wrapper.cma
+      pl_wrapper/code_wrapper.cma \
+      src_repository/src_repository.cma
 
-MAKESUBDIRS=commons globals $(MPIDIR) code_info \
-  parsing_c parsing_c++ parsing_java matcher_c analyze_c code_wrapper \
-  $(GUIDIR) demos
-INCLUDEDIRS=commons globals $(MPIDIR) code_info \
-  parsing_c parsing_c++ parsing_java matcher_c analyze_c code_wrapper \
-  $(GUIDIR) $(GUIINCLUDE)
+MAKESUBDIRS=commons \
+  globals \
+  pl_info \
+  parsing_c parsing_cplusplus parsing_java \
+  pl_wrapper \
+  src_repository \
+  demos 
+
+INCLUDEDIRS=commons \
+  globals \
+  pl_info \
+  parsing_c parsing_cplusplus parsing_java \
+  pl_wrapper \
+  src_repository
 
 
 ##############################################################################
@@ -111,23 +86,25 @@ BYTECODE_STATIC=-custom
 # Top rules
 ##############################################################################
 
-all: rec $(EXEC) $(GUIEXEC)
-opt: rec.opt $(EXEC).opt $(GUIEXECOPT)
+all: 
+	$(MAKE) rec 
+	$(MAKE) $(PROGS) 
+opt: 
+	$(MAKE) rec.opt 
+	$(MAKE) $(OPTPROGS) 
 all.opt: opt
 top: $(EXEC).top
 
+#note: old: was before all: rec $(EXEC) ... but can not do that cos make -j20
+#could try to compile $(EXEC) before rec. So here force sequentiality.
 rec:
 	$(MAKE) -C commons 
-	$(MPICMD)
-	$(GDBMCMD)
-	$(GUICMD)
-	set -e; for i in $(MAKESUBDIRS); do $(MAKE) -C $$i all; done 
+	$(MAKE) features -C commons 
+	set -e; for i in $(MAKESUBDIRS); do $(MAKE) -C $$i all || exit 1; done 
 rec.opt:
 	$(MAKE) all.opt -C commons 
-	$(MPICMDOPT)
-	$(GDBMCMDOPT)
-	set -e; for i in $(MAKESUBDIRS); do $(MAKE) -C $$i all.opt; done 
-	$(GUICMDOPT)
+	$(MAKE) features.opt -C commons 
+	set -e; for i in $(MAKESUBDIRS); do $(MAKE) -C $$i all.opt || exit 1; done 
 
 $(EXEC): $(LIBS) $(OBJS)
 	$(OCAMLC) $(BYTECODE_STATIC) -o $@ $(SYSLIBS) $^
@@ -151,61 +128,34 @@ depend::
 
 
 static:
-	rm -f spatch.opt spatch
-	$(MAKE) STATIC="-ccopt -static" spatch.opt
-	cp spatch.opt spatch
+	rm -f $(EXEC).opt $(EXEC)
+	$(MAKE) STATIC="-ccopt -static" $(EXEC).opt
+	cp $(EXEC).opt $(EXEC)
 
 purebytecode:
-	rm -f spatch.opt spatch
-	$(MAKE) BYTECODE_STATIC="" spatch
+	rm -f $(EXEC).opt $(EXEC)
+	$(MAKE) BYTECODE_STATIC="" $(EXEC)
 
 
 
 
-features.ml: features.ml.cpp Makefile.config
-	cpp -DFEATURE_MPI=$(FEATURE_MPI) \
-	    -DFEATURE_GUI=$(FEATURE_GUI) \
-	   features.ml.cpp > features.ml
 
-clean::
-	rm -f features.ml
-
-beforedepend:: features.ml
-
-
-
-
-SYSLIBS2=lablgtk.cma lablgtksourceview.cma
-LIBS2=commons/commons_gui.cma gui/gui.cma
-OBJS2=
-
-yacfe_browser: $(LIBS) $(LIBS2) $(OBJS2) main_gui.cmo 
-	$(OCAMLC) -o $@ $(SYSLIBS) $(SYSLIBS2)  $^ 
-
-yacfe_browser.opt: $(LIBS:.cma=.cmxa) $(LIBS2:.cma=.cmxa) $(OBJS2:.cmo=.cmx) main_gui.cmx
-	$(OCAMLOPT) $(STATIC) -o $@ $(SYSLIBS:.cma=.cmxa) $(SYSLIBS2:.cma=.cmxa)  $^ 
-
-clean::
-	rm -f yacfe_browser yacfe_browser.opt
-
-clean::
-	set -e; for i in gui; do $(MAKE) -C $$i clean; done 
 
 ##############################################################################
 # Install
 ##############################################################################
 
-# don't remove DESTDIR, it can be set by package build system like ebuild
+# note: don't remove DESTDIR, it can be set by package build system like ebuild
 install: all
 	mkdir -p $(DESTDIR)$(SHAREDIR)
-	cp data/*.h $(DESTDIR)$(SHAREDIR)
+	cp -a config/ $(DESTDIR)$(SHAREDIR)
 	@echo ""
 	@echo "You can also install yacfe by copying the program yacfe"
 	@echo "(available in this directory) anywhere you want and"
 	@echo "give it the right options to find its configuration files."
 
 uninstall:
-	rm -f $(DESTDIR)$(SHAREDIR)/*.h
+	rm -rf $(DESTDIR)$(SHAREDIR)/config/
 
 version:
 	@echo $(VERSION)
@@ -215,9 +165,10 @@ version:
 # Package rules
 ##############################################################################
 
-PACKAGE=yacfe-$(VERSION)
+PACKAGE=yacfe-light-$(VERSION)
 
-BINSRC=yacfe env.sh env.csh data/*.h \
+BINSRC=yacfe env.sh env.csh \
+       config/macros/*.h config/isos/*.iso config/envos/*.h \
        *.txt docs/* \
        demos/foo.* demos/*.ml
 BINSRC2=$(BINSRC:%=$(PACKAGE)/%)
@@ -290,23 +241,38 @@ clean::
 ocamlversion:
 	@echo $(OCAMLVERSION)
 
+
+
+
+distclean:: clean
+	set -e; for i in $(MAKESUBDIRS); do $(MAKE) -C $$i $@; done
+	rm -f .depend
+	rm -f Makefile.config
+	rm -f TAGS
+
+#	find -name ".#*1.*" | xargs rm -f
+
 ##############################################################################
 # Pad specific rules
 ##############################################################################
 
 DARCSFORESTS=commons \
- parsing_c parsing_c++ parsing_java \
- matcher_c analyze_c \
- code_info code_wrapper \
- data
+ parsing_c parsing_cplusplus parsing_java \
+ pl_info \
+ config/macros config/envos \
+
+# data
+#config/macros but need use $(TOP) then
 
 update_darcs:
 	darcs pull
 	set -e; for i in $(DARCSFORESTS); do cd $$i; darcs pull; cd ..; done 
 
 diff_darcs:
+	@echo "----- REPO:" top "----------------------"
 	darcs diff -u
-	set -e; for i in $(DARCSFORESTS); do cd $$i; darcs diff -u; cd ..; done 
+	set -e; for i in $(DARCSFORESTS); do cd $$i; echo "----- REPO:" $$i "-----------------"; darcs diff -u; cd $(TOP); done 
+
 
 
 

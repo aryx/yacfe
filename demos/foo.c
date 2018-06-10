@@ -12,8 +12,12 @@ int main()
 	int *x;
 	int y;
 
+#ifdef YYY
+
 	if(x == NULL) { // dont, or useless to redo
 	}
+
+#endif
 
 	if(x == CSTNULL) { // dont
 	} 

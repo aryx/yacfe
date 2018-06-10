@@ -1,3 +1,16 @@
+(* Yoann Padioleau
+ * 
+ * Copyright (C) 2006, 2007, 2008 Ecole des Mines de Nantes
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License (GPL)
+ * version 2 as published by the Free Software Foundation.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * file license.txt for more details.
+ *)
 open Common
 
 open Ast_c
@@ -69,6 +82,7 @@ open Ast_c
 
 (*****************************************************************************)
 
+type fullstatement = statement 
 
 (* ---------------------------------------------------------------------- *)
 (* The string is for debugging. Used by Ograph_extended.print_graph. 
@@ -127,23 +141,23 @@ type node = node1 * string
     * if they are in different nodes. Solved by using shared ref
     * and allow the "already-tagged" token.
     *)
-  | SeqStart of statement * int * info
+  | SeqStart of fullstatement * int * info
   | SeqEnd   of int * info
 
 
-  | ExprStatement of statement * (expression option) wrap
+  | ExprStatement of fullstatement * (expression option) wrap
 
 
-  | IfHeader  of statement * expression wrap
+  | IfHeader  of fullstatement * expression wrap
   | Else of info
-  | WhileHeader of statement * expression wrap
-  | DoHeader of statement * info
+  | WhileHeader of fullstatement * expression wrap
+  | DoHeader of fullstatement * info
   | DoWhileTail of expression wrap
-  | ForHeader of statement * 
+  | ForHeader of fullstatement * 
                  (exprStatement wrap * exprStatement wrap * exprStatement wrap)
                  wrap
-  | SwitchHeader of statement * expression wrap
-  | MacroIterHeader of statement * (string * argument wrap2 list) wrap
+  | SwitchHeader of fullstatement * expression wrap
+  | MacroIterHeader of fullstatement * (string * argument wrap2 list) wrap
 
   (* Used to mark the end of if, while, dowhile, for, switch. Later we
    * will be able to "tag" some cocci code on this node.
@@ -184,8 +198,8 @@ type node = node1 * string
    *)
   | EndStatement of info option (* fake_info *)
 
-  | Return     of statement * unit wrap
-  | ReturnExpr of statement * expression wrap
+  | Return     of fullstatement * unit wrap
+  | ReturnExpr of fullstatement * expression wrap
 
   (* ------------------------ *)
   | IfdefHeader of ifdef_directive
@@ -199,6 +213,7 @@ type node = node1 * string
   | DefineExpr of expression 
   | DefineType of fullType
   | DefineDoWhileZeroHeader of unit wrap
+  | DefineTodo
 
   | Include of includ
 
@@ -206,20 +221,20 @@ type node = node1 * string
   | MacroTop of string * argument wrap2 list * il 
 
   (* ------------------------ *)
-  | Case  of statement * expression wrap
-  | Default of statement * unit wrap
+  | Case  of fullstatement * expression wrap
+  | Default of fullstatement * unit wrap
 
-  | Continue of statement * unit wrap
-  | Break    of statement * unit wrap
+  | Continue of fullstatement * unit wrap
+  | Break    of fullstatement * unit wrap
 
   (* no counter part in cocci *)
-  | CaseRange of statement * (expression * expression) wrap
-  | Label of statement * string wrap
-  | Goto of statement * string wrap
+  | CaseRange of fullstatement * (expression * expression) wrap
+  | Label of fullstatement * name * unit wrap (* : *)
+  | Goto of fullstatement * name * unit wrap (* goto *)
 
 
-  | Asm of statement * asmbody wrap
-  | MacroStmt of statement * unit wrap
+  | Asm of fullstatement * asmbody wrap
+  | MacroStmt of fullstatement * unit wrap
 
   (* ------------------------ *)
   (* some control nodes *)
@@ -325,6 +340,7 @@ let extract_fullstatement node =
 
   | Include _ 
   | DefineHeader _ | DefineType _ | DefineExpr  _ | DefineDoWhileZeroHeader _
+  | DefineTodo
   | MacroTop _
       -> None
 
@@ -341,11 +357,11 @@ let extract_fullstatement node =
   | Return     (st, _)
   | ReturnExpr (st, _)
   (* no counter part in cocci *)
-  | Label (st, _)
+  | Label (st, _, _)
   | Case  (st,_)
   | CaseRange (st, _)
   | Default   (st, _)
-  | Goto (st, _)
+  | Goto (st, _, _)
   | Continue (st, _)
   | Break    (st, _)
   | Asm (st,_)

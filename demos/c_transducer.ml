@@ -42,7 +42,9 @@ let visit asts2 =
       | C.Declaration decl -> 
           ()
       | C.Definition (defbis,_ii) -> 
-          let s = defbis.C.f_name in
+          let name = defbis.C.f_name in
+          let s = Ast_c.str_of_name name in
+
           Common.push2 ("function:" ^s) props;
       | C.MacroTop (s,_,_ii) -> 
           Common.push2 ("macrotop:" ^s) props;

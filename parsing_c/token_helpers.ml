@@ -1,3 +1,18 @@
+(* Yoann Padioleau
+ * 
+ * Copyright (C) 2007, 2008 Ecole des Mines de Nantes
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License (GPL)
+ * version 2 as published by the Free Software Foundation.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * file license.txt for more details.
+ *)
+
+
 open Common
 
 open Parser_c
@@ -6,6 +21,12 @@ open Parser_c
 (* Is_xxx, categories *)
 (*****************************************************************************)
 
+(* could define a type  token_class = Comment | Ident | Operator | ... 
+ * update: now token_c can maybe do that.
+ * but still, sometimes tokens belon to multiple classes. Could maybe 
+ * return then a set of classes.
+ *)
+
 let is_space = function
   | TCommentSpace _ -> true
   | TCommentNewline _ -> true
@@ -13,16 +34,19 @@ let is_space = function
 
 let is_whitespace = is_space
 
-let is_comment_or_space = function
+let is_just_comment_or_space = function
   | TComment _ -> true
   | TCommentSpace _ -> true
   | TCommentNewline _ -> true
   | _ -> false
-let is_real_comment = is_comment_or_space
+let is_real_comment = is_just_comment_or_space
 
 let is_just_comment = function
   | TComment _ -> true
   | _ -> false
+
+
+
 
 let is_comment = function
   | TComment _    
@@ -31,7 +55,12 @@ let is_comment = function
   | TCommentMisc _ -> true
   | _ -> false
 
-
+(* coupling with comment_annotater_c.ml.
+ * In fact more tokens than comments are not in the ast, but
+ * they were usually temporally created by ocamllex and removed 
+ * in parsing_hacks.
+*)
+let is_not_in_ast = is_comment
 
 let is_fake_comment = function
   | TCommentCpp _    | TCommentMisc _ 
@@ -42,8 +71,7 @@ let is_not_comment x =
   not (is_comment x)
 
 
-
-
+(* ---------------------------------------------------------------------- *)
 
 let is_cpp_instruction = function
   | TInclude _ 
@@ -67,6 +95,7 @@ let is_gcc_token = function
 
 
 
+(* ---------------------------------------------------------------------- *)
 let is_opar = function
   | TOPar _ | TOParDefine _ -> true
   | _ -> false
@@ -87,6 +116,7 @@ let is_cbrace = function
 
 
 
+(* ---------------------------------------------------------------------- *)
 let is_eof = function
   | EOF x -> true
   | _ -> false
@@ -148,6 +178,28 @@ let is_stuff_taking_parenthized = function
     -> true 
   | _ -> false
 
+
+(* used in the algorithms for "10 most problematic errors" *)
+let is_ident_like = function
+  | TIdent _
+  | TypedefIdent _
+  | TIdentDefine  _
+  | TDefParamVariadic _
+
+  | TUnknown _
+
+  | TMacroAttr _
+  | TMacroAttrStorage _
+  | TMacroStmt _
+  | TMacroString _
+  | TMacroDecl _
+  | TMacroDeclConst _
+  | TMacroIterator _
+      -> true
+
+  | _ -> false 
+
+
 (*****************************************************************************)
 (* Visitors *)
 (*****************************************************************************)
@@ -182,16 +234,18 @@ let info_of_tok = function
   | TCppEscapedNewline (ii) -> ii
   | TDefParamVariadic (s, i1) ->     i1
 
+  | TCppConcatOp (ii) -> ii
+
   | TOBraceDefineInit (i1) ->     i1
 
   | TUnknown             (i) -> i
 
+  | TMacroIdentBuilder             (s, i) -> i
   | TMacroAttr             (s, i) -> i
   | TMacroAttrStorage             (s, i) -> i
   | TMacroStmt             (s, i) -> i
   | TMacroString             (s, i) -> i
   | TMacroDecl             (s, i) -> i
-  | TMacroStructDecl             (s, i) -> i
   | TMacroDeclConst             (i) -> i
   | TMacroIterator             (s,i) -> i
 (*  | TMacroTop             (s,i) -> i *)
@@ -204,6 +258,9 @@ let info_of_tok = function
   | TCommentNewline      (i) -> i
   | TCommentCpp          (cppkind, i) -> i
   | TCommentMisc         (i) -> i
+
+  | TCommentSkipTagStart (i) -> i
+  | TCommentSkipTagEnd (i) -> i
 
   | TIfdef               (_, i) -> i
   | TIfdefelse           (_, i) -> i
@@ -319,6 +376,9 @@ let visitor_info_of_tok f = function
 
   | TCppEscapedNewline (i1) -> TCppEscapedNewline (f i1)
   | TDefEOL (i1) -> TDefEOL (f i1)
+
+  | TCppConcatOp (ii) -> TCppConcatOp (f ii)
+
   | TOParDefine (i1) -> TOParDefine (f i1)
   | TIdentDefine  (s, i) -> TIdentDefine (s, f i)
 
@@ -329,12 +389,12 @@ let visitor_info_of_tok f = function
 
   | TUnknown             (i) -> TUnknown                (f i)
 
+  | TMacroIdentBuilder             (s, i) -> TMacroIdentBuilder (s, f i)
   | TMacroAttr           (s, i)   -> TMacroAttr            (s, f i)
   | TMacroAttrStorage           (s, i)   -> TMacroAttrStorage         (s, f i)
   | TMacroStmt           (s, i)   -> TMacroStmt            (s, f i)
   | TMacroString         (s, i)   -> TMacroString          (s, f i)
   | TMacroDecl           (s, i) -> TMacroDecl            (s, f i)
-  | TMacroStructDecl     (s, i) -> TMacroStructDecl      (s, f i)
   | TMacroDeclConst      (i)   -> TMacroDeclConst       (f i)
   | TMacroIterator       (s, i) -> TMacroIterator        (s, f i)
 (*  | TMacroTop          (s,i) -> TMacroTop             (s,f i) *)
@@ -348,6 +408,9 @@ let visitor_info_of_tok f = function
   | TCommentNewline      (i) -> TCommentNewline      (f i) 
   | TCommentCpp          (cppkind, i) -> TCommentCpp (cppkind, f i) 
   | TCommentMisc         (i) -> TCommentMisc         (f i) 
+
+  | TCommentSkipTagStart         (i) -> TCommentSkipTagStart         (f i) 
+  | TCommentSkipTagEnd         (i) -> TCommentSkipTagEnd         (f i) 
 
   | TIfdef               (t, i) -> TIfdef               (t, f i) 
   | TIfdefelse           (t, i) -> TIfdefelse           (t, f i) 
@@ -458,3 +521,12 @@ let is_fake x =
   match pinfo_of_tok x with Ast_c.FakeTok _ -> true | _ -> false
 let is_abstract x =
   match pinfo_of_tok x with Ast_c.AbstractLineTok _ -> true | _ -> false
+
+(*****************************************************************************)
+(* Helpers *)
+(*****************************************************************************)
+let is_same_line_or_close line tok = 
+  line_of_tok tok =|= line || 
+  line_of_tok tok =|= line - 1 ||
+  line_of_tok tok =|= line - 2
+

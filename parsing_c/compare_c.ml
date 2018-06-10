@@ -1,3 +1,16 @@
+(* Yoann Padioleau
+ * 
+ * Copyright (C) 2006, 2007 Ecole des Mines de Nantes
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License (GPL)
+ * version 2 as published by the Free Software Foundation.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * file license.txt for more details.
+ *)
 open Common
 
 open Ast_c
@@ -198,7 +211,7 @@ let compare_ast filename1 filename2  =
     
         );
         (match () with
-        | _ when !pb_notparsed > 0 && !error = 0 -> 
+        | _ when !pb_notparsed > 0 && !error =|= 0 -> 
             PbOnlyInNotParsedCorrectly ""
         | _ when !error > 0 -> Pb ""
         | _ -> Correct
@@ -268,7 +281,7 @@ let compare_token filename1 filename2 =
     | x::xs, y::ys -> 
         let x' = normal_form_token x in
         let y' = normal_form_token y in
-        if x' = y' 
+        if x' =*= y' 
         then loop xs ys
         else 
           let str1, pos1 = 
@@ -365,4 +378,4 @@ let compare_result_to_string (correct, diffxs) =
 
 
 let compare_result_to_bool correct = 
-  correct = Correct
+  correct =*= Correct

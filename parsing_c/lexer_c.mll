@@ -1,5 +1,7 @@
 {
-(* Copyright (C) 2002, 2006, 2007, 2008 Yoann Padioleau
+(* Yoann Padioleau
+ * 
+ * Copyright (C) 2002, 2006, 2007, 2008, 2009, Ecole des Mines de Nantes
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License (GPL)
@@ -29,6 +31,8 @@ open Ast_c (* to factorise tokens, OpAssign, ... *)
  *   TComment (tokinfo lexbuf +> tok_add_s (comment lexbuf)) 
  * 
  * because of the "wierd" order of evaluation of OCaml.
+ * 
+ * 
  *
  * note: can't use Lexer_parser._lexer_hint here to do different
  * things, because now we call the lexer to get all the tokens
@@ -67,7 +71,7 @@ let tokinfo lexbuf  =
     comments_tag = ref Ast_c.emptyComments;
   }
 
-(* must generate a new ref each time, otherwise share *)
+(* cppext: must generate a new ref each time, otherwise share *)
 let no_ifdef_mark () = ref (None: (int * int) option)
 
 let tok_add_s s ii = Ast_c.rewrap_str ((Ast_c.str_of_info ii) ^ s) ii
@@ -213,7 +217,17 @@ rule token = parse
   | "/*" 
       { let info = tokinfo lexbuf in 
         let com = comment lexbuf in
-        TComment(info +> tok_add_s com) 
+
+        let info' = info +> tok_add_s com in
+        let s = Ast_c.str_of_info info' in
+        (* could be more flexible, use [\t ]* instead of hardcoded 
+         * single space. *)
+        match s with
+        | "/* {{coccinelle:skip_start}} */" -> 
+            TCommentSkipTagStart (info')
+        | "/* {{coccinelle:skip_end}} */" -> 
+            TCommentSkipTagEnd (info')
+        | _ -> TComment(info') 
       }
 
 
@@ -233,7 +247,7 @@ rule token = parse
    *                        |	_	{ endline lexbuf} 
    *)
 
-  (* todo?:
+  (* less?:
    *  have found a # #else  in "newfile-2.6.c",  legal ?   and also a  #/* ... 
    *    => just "#" -> token {lexbuf} (that is ignore)
    *  il y'a 1 #elif  sans rien  apres
@@ -258,7 +272,7 @@ rule token = parse
    * http://gcc.gnu.org/onlinedocs/gcc/Pragmas.html
    *)
 
-  | "#" spopt "pragma"  sp [^'\n']*  '\n'
+  | "#" spopt "pragma"  sp  [^'\n']* '\n'
   | "#" spopt "ident"   sp  [^'\n']* '\n' 
   | "#" spopt "line"    sp  [^'\n']* '\n' 
   | "#" spopt "error"   sp  [^'\n']* '\n' 
@@ -447,29 +461,35 @@ rule token = parse
   (* only in cpp directives normally *)
   | "\\" '\n' { TCppEscapedNewline (tokinfo lexbuf) }
 
-
-  | ((id as s)  "...")
-      { TDefParamVariadic (s, tokinfo lexbuf) }
-
-
-  (* could generate separate token for #, ## and then extend grammar,
-   * but there can be ident in many different places, in expression
-   * but also in declaration, in function name. So having 3 tokens
+  (* We must generate separate tokens for #, ## and extend the grammar.
+   * Note there can be "elaborated" idents in many different places, in 
+   * expression but also in declaration, in function name. So having 3 tokens
    * for an ident does not work well with how we add info in
-   * ast_c. So better to generate just one token, for now, just one info,
-   * even if have later to reanalyse those tokens and unsplit.
+   * ast_c. Was easier to generate just one token, just one info,
+   * even if have later to reanalyse those tokens and unsplit. But then,
+   * handling C++ lead to having not just a string for ident but something
+   * more complex. Also when we want to parse elaborated function headers
+   * (e.g. void METH(foo)(int x)), we need anyway to go from a string
+   * to something more. So having also for C something more than just
+   * string for ident is natural.
    * 
    * todo: our heuristics in parsing_hacks rely on TIdent. So maybe
    * an easier solution would be to augment the TIdent type such as 
    *   TIdent of string * info * cpp_ident_additionnal_info
+   * 
+   * old:
+   * |  id   ([' ''\t']* "##" [' ''\t']* id)+ 
+   *   { let info = tokinfo lexbuf in
+   *     TIdent (tok lexbuf, info)
+   *   }
+   * |  "##" spopt id
+   *   { let info = tokinfo lexbuf in
+   *     TIdent (tok lexbuf, info)
+   *   }
+   * 
    *)
-
-
-  (* cppext: string concatenation of idents *)
-  |  id   ([' ''\t']* "##" [' ''\t']* id)+ 
-      { let info = tokinfo lexbuf in
-        TIdent (tok lexbuf, info)
-      }
+  (* cppext: string concatenation of idents, also ##args for variadic macro. *)
+  | "##" { TCppConcatOp (tokinfo lexbuf) }
 
   (* cppext: stringification.
    * bugfix: this case must be after the other cases such as #endif
@@ -479,12 +499,11 @@ rule token = parse
       { let info = tokinfo lexbuf in
         TIdent (tok lexbuf, info)
       }
+  (* the ... next to id, e.g. arg..., works with ##, e.g. ##arg *)
+  | ((id as s)  "...")
+      { TDefParamVariadic (s, tokinfo lexbuf) }
 
-  (* cppext: gccext: ##args for variadic macro *)
-  |  "##" spopt id
-      { let info = tokinfo lexbuf in
-        TIdent (tok lexbuf, info)
-      }
+
 
 
 
@@ -522,7 +541,7 @@ rule token = parse
   | "%=" { TAssign (OpAssign Mod, (tokinfo lexbuf))} 
   | "&=" { TAssign (OpAssign And, (tokinfo lexbuf))}  
   | "|=" { TAssign (OpAssign Or, (tokinfo lexbuf)) } 
-  | "^=" { TAssign(OpAssign Xor, (tokinfo lexbuf))} 
+  | "^=" { TAssign (OpAssign Xor, (tokinfo lexbuf))} 
   | "<<=" {TAssign (OpAssign DecLeft, (tokinfo lexbuf)) } 
   | ">>=" {TAssign (OpAssign DecRight, (tokinfo lexbuf))}
 
@@ -619,6 +638,8 @@ rule token = parse
   (* Take care of the order ? No because lex try the longest match. The
    * strange diff between decimal and octal constant semantic is not
    * understood too by refman :) refman:11.1.4, and ritchie.
+   * 
+   * todo: attach type info to constant, like for float
    *)
 
   | (( decimal | hexa | octal) 

@@ -7,18 +7,65 @@ open Common
 (* GUI via lablgtk. 
  *
  * Alternatives:
- *  - tk
+ *  - tk, but tk ... a little bit old style
  *  - qt, but poor wrapper
  *  - wxwindow, but poor wrapper or inexistant
- * So lablgtk seems the most mature.
+ * => lablgtk seems the most mature.
  * 
- * Cf also ocaml.org library notes on lablgtk.
+ * cf also ocaml.org library notes on lablgtk.
  * 
  *   
  * old: 
  * This file was named gCommon.ml to be coherent with the other lalbgtk files.
  * 
  *)
+
+(*****************************************************************************)
+(* Example of overall organisation to follow: *)
+(*****************************************************************************)
+
+(* Overall layout organisation:
+ *  - menu (File, Edit, View, X, Help)
+ *  - toolbar
+ *  - mainview
+ *    left         right
+ *    ----         -----
+ *    playlist     instrinc props
+ *                 objects
+ *                 source
+ *  - statusbar 
+ * 
+ * Conventions:
+ *  w = window, [hv]box = box, [hv]p, paned
+ *  b = button, e = entry,  m = menu, mi = menuitem, r = range, fc = factory
+ *  l = list, lbl = label
+ * 
+ * Model/View/Controller for global organization 
+ * (model.ml, controller.ml, view.ml)
+ * 
+ * Model/View/Controller organization for many columns too. 
+ *   - model = GTree columns+GTree store+fill function
+ *   - view = GTree view+GTree view columns
+ *   - controler = fill callback+change callback
+ * So sometimes have a double model, the real data model (model.ml) and
+ * then the model that is needed by Gtk to work with some TreeView.
+ * 
+ * 
+ * When want add a feature:
+ *  - add it to the model
+ *  - add helpers and maybe fields in database/, comments/, etc
+ *  - add gui code
+ * 
+ * Also try first to add the feature as a command line option by 
+ * adding some -text_xx code in a test.ml file. That way
+ * you ensure that you separate concern clearly and then add in the gui
+ * just the gui specific stuff.
+ *)
+
+
+(*###########################################################################*)
+(*  *)
+(*###########################################################################*)
 
 (*****************************************************************************)
 (* Widgets composition *)
@@ -96,16 +143,6 @@ open Common
  * For example of uses, look at one of my gui.ml
  * 
  * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
  *)
 
 
@@ -159,6 +196,22 @@ let add_menu menu_item f w =
   w#add menu_item
 
 
+(*---------------------------------------------------------------------------*)
+let rec paneds orientation xs = 
+  match xs with
+  | [] | [_] -> failwith "paneds: need at least 2 elements"
+  | [x;y] -> 
+      let hp = GPack.paned orientation () in
+      hp#add1 x;
+      hp#add2 y;
+      hp#coerce
+  | x::xs -> 
+      let hp = GPack.paned orientation () in
+      hp#add1 x;
+      hp#add2 (paneds orientation xs);
+      hp#coerce
+
+
 
 (*****************************************************************************)
 (* Widget wrappers *)
@@ -199,50 +252,62 @@ let with_viewport2 widget =
   scrw#coerce
 
 
-(*****************************************************************************)
-(* Composite widgets *)
-(*****************************************************************************)
-let rec paneds orientation xs = 
-  match xs with
-  | [] | [_] -> failwith "paneds: need at least 2 elements"
-  | [x;y] -> 
-      let hp = GPack.paned orientation () in
-      hp#add1 x;
-      hp#add2 y;
-      hp#coerce
-  | x::xs -> 
-      let hp = GPack.paned orientation () in
-      hp#add1 x;
-      hp#add2 (paneds orientation xs);
-      hp#coerce
-
-(*****************************************************************************)
-(* Helpers *)
-(*****************************************************************************)
-
-(* used by completion entry code *)
-let model_of_list conv l =
-  let cols = new GTree.column_list in
-  let column = cols#add conv in
-  let model = GTree.list_store cols in
-  List.iter
-    (fun data ->
-      let row = model#append () in
-      model#set ~row ~column data)
-    l ;
-  (model, column)
-
 
 
 (*****************************************************************************)
 (* Keyboards/Mouse *)
 (*****************************************************************************)
 
+(*---------------------------------------------------------------------------*)
+(* Mouse *)
+(*---------------------------------------------------------------------------*)
+
 let pos_of_ev ev = 
   let x = int_of_float (GdkEvent.Button.x ev) in
   let y = int_of_float (GdkEvent.Button.y ev) in
   x,y
 
+
+(*---------------------------------------------------------------------------*)
+(* Keyboard (key and also entry completion) *)
+(*---------------------------------------------------------------------------*)
+
+let key_press_escape_quit key =
+  if GdkEvent.Key.keyval key = GdkKeysyms._Escape then
+    GMain.Main.quit();
+  false
+
+
+
+
+(*****************************************************************************)
+(* Models (used by completion entry code) *)
+(*****************************************************************************)
+(* But take care, bad complexity:
+ *  - with 25000 -> 6s
+ *  - with 50000 -> 12s
+ *  - with 100000 -> 44s
+*)
+
+let model_of_list conv l =
+  let cols = new GTree.column_list in
+  let column = cols#add conv in
+  let model = GTree.list_store cols in
+  pr2 (spf "model_of_list: length= %d" (List.length l));
+
+  Common.profile_code2 "model_of_list" (fun () -> 
+  List.iter
+    (fun data ->
+      let row = model#append () in
+      model#set ~row ~column data)
+    l;
+  );
+  (model, column)
+
+
+(*****************************************************************************)
+(* Completion *)
+(*****************************************************************************)
 
 let entry_with_completion ~text ~completion = 
   let entry = GEdit.entry ~text () in
@@ -251,6 +316,37 @@ let entry_with_completion ~text ~completion =
   let c = GEdit.entry_completion ~model ~entry () in
   c#set_text_column col;
   entry
+
+(* It takes time to build the model with model_of_list when
+ * have model with huge number of elements. The bottleneck is in the
+ * model building. So caller can cache this model and then call this
+ * function to be more efficient.
+ * 
+ * Note that caching the widget instead of the underlying model
+ * apparently does not work well. The widget displays well the first
+ * time but not the second. Probably the gtk gc erase it and I don't know
+ * how to avoid that.
+ *)
+let entry_with_completion_eff ~text ~model_col ?minimum_key_length () = 
+  let entry = GEdit.entry ~text:"" () in
+  let (model, col) = model_col in
+  let c = GEdit.entry_completion ~model ~entry ?minimum_key_length () in
+  c#set_text_column col;
+  entry
+
+
+
+
+
+
+
+
+
+(*###########################################################################*)
+(* Special bigger widgets *)
+(*###########################################################################*)
+
+
 
 
 
@@ -333,6 +429,41 @@ let view_column ~title ~renderer ()  =
 
 
 
+let view_expand_level (view: GTree.view) depth_limit = 
+  view#collapse_all();
+  let store = view#model in
+  store#foreach (fun path iter -> 
+    let depth = GTree.Path.get_depth path in
+    if depth <= depth_limit
+    then view#expand_row ~all:false path;
+    false
+  )
+
+
+(*****************************************************************************)
+(* GEdit and GSourceView *)
+(*****************************************************************************)
+
+
+(*****************************************************************************)
+(* Html related *)
+(*****************************************************************************)
+
+(* todo? gHTML ? gtk_xmhtml ? but apparently only for gtk1.2 :( *)
+
+
+
+
+
+(*###########################################################################*)
+(*  *)
+(*###########################################################################*)
+
+
+
+
+
+
 
 (*****************************************************************************)
 (* Menu *)
@@ -367,9 +498,15 @@ let mk_right_click_menu_on_store view fpath =
   )
 
 
+
+
 (*****************************************************************************)
 (* Dialogs *)
 (*****************************************************************************)
+
+(*---------------------------------------------------------------------------*)
+(* Special case *)
+(*---------------------------------------------------------------------------*)
 let dialog_text ~text ~title =
   let dialog = GWindow.dialog ~modal:true ~border_width:1 ~title () in
   let _label  = GMisc.label    ~text     ~packing:dialog#vbox#add () in
@@ -386,6 +523,10 @@ as there is very few chances that I do it one day"
               ~title: "TODO" 
 
 
+
+(*---------------------------------------------------------------------------*)
+(* Obsolete *)
+(*---------------------------------------------------------------------------*)
 
 (* Taken from uigtk2.ml from unison. Quite hard to communicate info between
  * windows. I tried stuff but it does not work. 
@@ -459,11 +600,17 @@ let dialog_ask_generic_bis ~title callerw fbuild fget_val  =
 
 
 
+(*---------------------------------------------------------------------------*)
+(* Dialog_ask_generic *)
+(*---------------------------------------------------------------------------*)
+
 (* no need to callerw. src: cameleon ? *)
-let dialog_ask_generic ~title fbuild fget_val  = 
+let dialog_ask_generic ?width ~title fbuild fget_val  = 
   let res = ref None in
 
-  let w = GWindow.dialog ~modal:true ~border_width:1 ~title () in
+  let w = 
+    GWindow.dialog ~modal:true ~border_width:1 ~title ?width () 
+  in
   w#connect#destroy ~callback: GMain.Main.quit;
 
   let ok_button = GButton.button ~stock: `YES ()in
@@ -505,6 +652,10 @@ let dialog_ask_generic ~title fbuild fget_val  =
 
 
 
+(*---------------------------------------------------------------------------*)
+(* Dialog_ask_generic users *)
+(*---------------------------------------------------------------------------*)
+
 let dialog_ask_with_y_or_no ~text ~title  = 
   let entry = GEdit.entry ~text:"" ~editable:true () in
   dialog_ask_generic ~title 
@@ -532,6 +683,10 @@ let dialog_ask_y_or_no ~text ~title  =
   | None -> false
 
 
+
+(*---------------------------------------------------------------------------*)
+(* dialog_ask_filename *)
+(*---------------------------------------------------------------------------*)
 
 let dialog_ask_filename ~title ~filename = 
 
@@ -569,6 +724,25 @@ let about () =
   md#destroy()
 *)
 
+
+(*****************************************************************************)
+(* Estethisme *)
+(*****************************************************************************)
+
+let mapping_color = 
+  ["Black";"DarkOrange";"DarkGreen";"DarkBlue";"DarkGray";"DarkYellow";] 
+
+(*****************************************************************************)
+(* Misc *)
+(*****************************************************************************)
+let create_menu m label =
+  let item = GMenu.menu_item ~label ~packing:m#append () in
+  GMenu.menu ~packing:item#set_submenu ()
+
+
+(* dumb widget *)
+(* (G.mk (GMisc.label ~text:"other") (fun x -> ())); *)
+
 (*****************************************************************************)
 (* Main widget and loop *)
 (*****************************************************************************)
@@ -598,19 +772,5 @@ let mk_gui_main ~title ?(width=800) ?(height=600) f =
   GMain.Main.main ()
 
 
-let key_press_escape_quit key =
-  if GdkEvent.Key.keyval key = GdkKeysyms._Escape then
-    GMain.Main.quit();
-  false
 
 
-(*****************************************************************************)
-(* Misc *)
-(*****************************************************************************)
-let create_menu m label =
-  let item = GMenu.menu_item ~label ~packing:m#append () in
-  GMenu.menu ~packing:item#set_submenu ()
-
-
-(* dumb widget *)
-(* (G.mk (GMisc.label ~text:"other") (fun x -> ())); *)

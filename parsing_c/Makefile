@@ -3,26 +3,39 @@
 ##############################################################################
 TARGET=parsing_c
 
-# ast_cocci.ml and unparse_cocci2.ml should be deleted in the futur
-# to make parsing_c really independent of coccinelle. 
-# control_flow_c have also coccinelle dependencies.
+
 SRC= flag_parsing_c.ml parsing_stat.ml \
  type_cocci.ml ast_cocci.ml \
- ast_c.ml control_flow_c.ml \
+ token_c.ml ast_c.ml control_flow_c.ml type_c.ml \
  visitor_c.ml lib_parsing_c.ml \
  ast_to_flow.ml \
  pretty_print_c.ml \
  semantic_c.ml lexer_parser.ml parser_c.ml lexer_c.ml \
- token_helpers.ml parsing_hacks.ml \
+ token_helpers.ml token_views_c.ml \
+ cpp_token_c.ml parsing_hacks.ml \
  unparse_cocci.ml unparse_c.ml \
  parse_c.ml \
  cpp_ast_c.ml \
- compare_c.ml type_annoter_c.ml \
+ type_annoter_c.ml comment_annotater_c.ml \
+ compare_c.ml \
  test_parsing_c.ml
 
-SYSLIBS= str.cma unix.cma 
+
+
+# ast_cocci.ml and unparse_cocci.ml should be deleted in the futur
+# to make parsing_c really independent of coccinelle. 
+# control_flow_c have also coccinelle dependencies.
+# old: parsing_c now depends on cocci_parser because in addition to decorate 
+# the token in Ast_c with some parse info, we now also make some place to
+# welcome some mcodekind of Ast_cocci.
+#LIBS=../commons/commons.cma ../globals/globals.cma \
+#     ../parsing_cocci/cocci_parser.cma
+#
+#INCLUDES= -I ../commons -I ../globals -I  ../parsing_cocci 
+
 LIBS=../commons/commons.cma
-INCLUDES= -I ../commons
+INCLUDES= -I ../commons -I ../commons/ocollection
+SYSLIBS= str.cma unix.cma 
 
 ##############################################################################
 # Generic variables
@@ -127,6 +140,9 @@ clean::
 	rm -f *~ .*~ gmon.out #*#
 
 beforedepend::
+
+distclean::
+	rm -f .depend
 
 depend:: beforedepend
 	$(OCAMLDEP) *.mli *.ml    > .depend

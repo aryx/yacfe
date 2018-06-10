@@ -1,17 +1,28 @@
 (*****************************************************************************)
-(* convenient globals to pass to parse_c.init_defs *)
+(* convenient globals. *)
 (*****************************************************************************)
 let path = ref 
   (try (Sys.getenv "YACFE_HOME")
     with Not_found-> "/home/pad/c-yacfe"
   )
-let std_h   = ref (Filename.concat !path "data/standard.h")
-let common_h   = ref (Filename.concat !path "data/common_macros.h")
+
+(*****************************************************************************)
+(* macros *)
+(*****************************************************************************)
+
+let macro_dir = "config/macros/" 
+let mk_macro_path ~cocci_path file = 
+  Filename.concat cocci_path (macro_dir ^ file) 
+
+
+(* to pass to parse_c.init_defs *)
+let std_h   = ref (mk_macro_path ~cocci_path:!path "standard.h")
+let common_h   = ref (mk_macro_path ~cocci_path:!path "common_macros.h")
 
 
 let cmdline_flags_macrofile () = 
   [
-    "-macro_file", Arg.Set_string std_h,
+    "-macro_file_builtins", Arg.Set_string std_h,
     " <file> (default=" ^ !std_h ^ ")";
   ]
 
@@ -30,12 +41,25 @@ let cmdline_flags_cpp () = [
   ]
 
 (*****************************************************************************)
+(* types *)
+(*****************************************************************************)
+let std_envir = ref (Filename.concat !path "config/envos/environment_splint.h")
+
+let cmdline_flags_envfile () = 
+  [
+    "-env_file", Arg.Set_string std_envir,
+    " <file> (default=" ^ !std_envir ^ ")";
+  ]
+
+
+(*****************************************************************************)
 (* verbose *)
 (*****************************************************************************)
 
 let verbose_lexing = ref true
 let verbose_parsing = ref true
 let verbose_type    = ref true
+let verbose_annotater = ref true
 
 let filter_msg = ref false
 let filter_msg_define_error = ref false
@@ -45,6 +69,8 @@ let filter_define_error = ref false
 let filter_passed_level = ref 0
 
 let pretty_print_type_info = ref false
+let pretty_print_comment_info = ref false
+let pretty_print_typedef_value = ref false
 
 (* cocci specific *)
 let show_flow_labels = ref true
@@ -52,9 +78,11 @@ let show_flow_labels = ref true
 
 let cmdline_flags_verbose () = 
   [
-    "-no_parse_error_msg", Arg.Clear verbose_parsing, " ";
     "-no_verbose_parsing", Arg.Clear verbose_parsing , "  ";
     "-no_verbose_lexing", Arg.Clear verbose_lexing , "  ";
+    "-no_verbose_annotater", Arg.Clear verbose_annotater , "  ";
+
+    "-no_parse_error_msg", Arg.Clear verbose_parsing, " ";
     "-no_type_error_msg",  Arg.Clear verbose_type, " ";
     
     
@@ -95,6 +123,17 @@ let cmdline_flags_debugging () =
   ]
 
 (*****************************************************************************)
+(* checks *)
+(*****************************************************************************)
+
+let check_annotater = ref true
+let cmdline_flags_checks () = 
+  [
+  "-disable_check_annotater",          Arg.Clear  check_annotater, " ";
+  "-enable_check_annotater",          Arg.Set  check_annotater, " ";
+  ]
+
+(*****************************************************************************)
 (* change algo *)
 (*****************************************************************************)
 
@@ -113,7 +152,7 @@ let cmdline_flags_algos () =
 let cpp_directive_passing = ref false
 let ifdef_directive_passing = ref false 
 
-let disable_two_pass = ref false
+let disable_multi_pass = ref false
 let disable_add_typedef = ref false
 
 let if0_passing = ref true
@@ -131,7 +170,7 @@ let cmdline_flags_parsing_algos () = [
     "-noadd_typedef_root",   Arg.Clear add_typedef_root, " ";
     "-noadd_typedef",   Arg.Set disable_add_typedef, " ";
 
-    "-disable_two_pass", Arg.Set disable_two_pass, " ";
+    "-disable_multi_pass", Arg.Set disable_multi_pass, " ";
 ]
 
 (*****************************************************************************)
@@ -153,6 +192,4 @@ let cmdline_flags_other () =
     "   use .ast_raw pre-parsed cached C file";
   ]
 
-
 (*****************************************************************************)
-

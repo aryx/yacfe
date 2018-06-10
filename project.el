@@ -6,18 +6,25 @@
    pad-ocaml-project-subdirs 
    (split-string 
     "commons globals extra 
-     parsing_c parsing_c++ parsing_java
+     parsing_c parsing_cplusplus parsing_java
      analyze_c
-     matcher
+     matcher_c
+     smpl
     ")
 
    pad-ocaml-project-toplevel "yacfe.top"
+   )
+
+  ; --------------------------------------------------------------------------
+  ; command line
+  ; --------------------------------------------------------------------------
+  (setq
    pad-ocaml-project-prog     "yacfe"
    pad-ocaml-project-args 
    (join-string 
     (list 
      "-debugger"
-     (case 700
+     (case 9
        (0 "")
 
        (1 "/home/pad/comments/tests/basic.c")
@@ -26,7 +33,9 @@
        (6 "-parse_c /home/pad/software-os-src/linux/fs/afs/inode.c")
        (7 "-parse_c /home/pad/comments/tests/macro_expansion.c")
        (8 "-parse_c /home/pad/software-os-src/linux/arch/powerpc/platforms/pseries/setup.c")
-       (9 "-parse_c /home/pad/comments/tests/macro_expansion2.c")
+       ;(9 "-parse_c /home/pad/comments/tests/macro_expansion2.c")
+       (9 "-macro_file /home/pad/c-yacfe/config/macros/empty.h -env_file /home/pad/c-yacfe/config/envos/empty.h
+             -parse_c /home/pad/c-yacfe/tests_c/typedef/function_pointer_jesper.c")
 
 
        (10 "/home/pad/software-src/kernels/git/linux-2.6/init")
@@ -34,6 +43,8 @@
        (12 "/home/pad/software-src/kernels/git/linux-2.6/fs")
 
        (20 "-parse_c -D /home/pad/c-yacfe/data/test.h /home/pad/c-yacfe/tests_cpp/hints_required.c")
+
+       (21 "-macro_file /home/pad/c-yacfe/macros/macros_linux.h -parse_c /home/pad/linux/arch/arm/mach-davinci/gpio.c")
 
        (52 "/home/pad/software-src/devel/sparse-git/")
        (53 "/home/pad/software-os-src/freebsd/vm/")
@@ -55,7 +66,8 @@
        ;constructor_multi.cpp 
        ;constructed_template2.cpp
        ;false_positif_cast_is_constructor.cpp
-       (100 "-parse_c++ /home/pad/c-yacfe/tests_c++/attribute_passing.cpp")
+       ;(100 "-parse_c++ /home/pad/c-yacfe/tests_c++/attribute_passing.cpp")
+       (100 "-parse_c++ /home/pad/c-yacfe/tests_c++/ex_tara.cpp")
        ;constructed_bool1
        
        (201 "-parse_java /home/pad/c-yacfe/tests-ex/java/objet-4eme-annee/tp7/Reference.java")
@@ -71,11 +83,58 @@
        (600 "-test_cpp /home/pad/linux/block/blk-core.c")
 
        (700 "-test_build_db /home/pad/linux/block")
+       (701 "-test_build_db /home/pad/software-src/devel/sparse-git/")
+
+       (800 "-test_cfg_ifdef /home/pad/c-yacfe/tests-components/cfg/flow_ifdef.c")
+
+
+       (900 "-test_query_smpl /home/pad/c-yacfe/data/sgrep/blk_plug_device.sgrep /home/pad/linux/YACFEDB/")
+       (901 "-test_query_smpl /home/pad/c-yacfe/data/sgrep/field_suspend.sgrep /home/pad/c-yacfe/tests-components/database/YACFEDB")
+
+       (1000 "-test_function_pointer_call_in_ast /home/pad/c-yacfe/tests-components/database/pointer_function.c")
+       (1001 "-parse_c /home/pad/c-yacfe/tests-components/database/pointer_function_typedef.c")
+
+       (1100 "-type_c /home/pad/software-os-src2/freebsd/contrib/ipfilter/netinet/ip_fil_freebsd.c")
+       (1101 "-type_c /home/pad/c-yacfe/tests-components/typeur/function.c")
+       (1102 "-type_c /home/pad/c-yacfe/tests-components/typeur/enum.c")
+
+
+       (1200 "-tweak_reindex2 /home/pad/c-yacfe/tests-components/database2/YACFEDB")
+       (1201 "-index_db4 /home/pad/c-yacfe/tests-components/database2/YACFEDB")
+       (1203 "-batch_mode -build_db_src database2")
+
+       (1300 "-batch_mode -stat_src sparse")
+       (1301 "-batch_mode -build_db_src sparse")
+
+       (1400 "-check_db /home/pad/linux/YACFEDB")
+       (1401 "-check_db /home/pad/c-yacfe/tests-components/database/YACFEDB")
 
        )
      )
     )
    )
+
+
+  ; --------------------------------------------------------------------------
+  ; browser
+  ; --------------------------------------------------------------------------
+  (setq
+   pad-ocaml-project-prog     "yacfe_browser"
+   pad-ocaml-project-args 
+   (join-string 
+    (list 
+     "-debugger"
+     (case 1
+       (0 "/home/pad/c-yacfe/tests-components/database/YACFEDB/")
+       (1 "/home/pad/c-yacfe/tests-components/database2/YACFEDB/")
+       (2 "-verbose_level 4 -test caller:foo_open /home/yyzhou/pad/mobile/project-yacfe/code/tests-components/database/YACFEDB/")
+       )
+     ))
+   )
+
+; time ~/c-yacfe/yacfe_browser.opt  -verbose_level 4 -profile  -test file:/home/pad/linux/drivers/input/mouse/pc110pad.c    /home/pad/linux/YACFEDB/
+
+
 
   ; for the help system, for C-c C-h to find where to look for
   (mapcar (lambda (p) 
@@ -83,6 +142,9 @@
             (ocaml-add-path "/home/pad/packages/lib/ocaml/std-lib")
             (ocaml-add-path "/usr/lib/ocaml/3.09.2/lablgtk2")
             (ocaml-add-path "/usr/lib/ocaml/3.09.2/lablgtksourceview")
+            (ocaml-add-path "/home/pad/packages/lib/ocaml/std-lib")
+            (ocaml-add-path "/home/pad/packages/lib/ocaml/pkg-lib/lablgtk2")
+            (ocaml-add-path "/home/pad/packages/lib/ocaml/pkg-lib/lablgtksourceview")
             )
           pad-ocaml-project-subdirs)
   )

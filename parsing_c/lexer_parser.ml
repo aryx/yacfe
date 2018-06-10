@@ -1,4 +1,6 @@
-(* Copyright (C) 2002-2008 Yoann Padioleau
+(* Yoann Padioleau
+ * 
+ * Copyright (C) 2002, 2006 Yoann Padioleau
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License (GPL)
@@ -32,6 +34,8 @@ open Common
 (* parse_typedef_fix *)
 let _handle_typedef = ref true
 
+let _always_look_typedef = ref false
+
 (* parse_typedef_fix2 *)
 let enable_typedef ()  = _handle_typedef := true
 let disable_typedef () = _handle_typedef := false
@@ -52,7 +56,7 @@ type identkind = TypeDefI | IdentI
 let (_typedef : (string, identkind) Common.scoped_h_env ref) = 
   ref (Common.empty_scoped_h_env ())
    
-let is_typedef s  = if !_handle_typedef then
+let is_typedef s  = if !_handle_typedef || !_always_look_typedef then
   (match (Common.optionise (fun () -> Common.lookup_h_env s !_typedef)) with
   | Some TypeDefI -> true
   | Some IdentI -> false
@@ -94,6 +98,9 @@ type context =
   | InParameter
   | InInitializer
   | InEnum
+(* InExpr ? but then orthogonal to InFunction. Could assign InExpr for 
+ * instance after a '=' as in 'a = (irq_t) b;' 
+ *)
 
 let is_top_or_struct = function
   | InTopLevel

@@ -1,13 +1,16 @@
 ##############################################################################
 # Variables
 ##############################################################################
-SYSLIBS=str.cma unix.cma
+SYSLIBS=str.cma bigarray.cma unix.cma
 
-LIBS= ../commons/commons.cma ../code_info/code_info.cma \
-      ../parsing_c/parsing_c.cma ../parsing_c++/parsing_cplusplus.cma \
-      ../analyze_c/analyze_c.cma
+LIBS= ../commons/commons.cma ../pl_info/code_info.cma \
+      ../parsing_c/parsing_c.cma ../parsing_cplusplus/parsing_cplusplus.cma \
 
-INCLUDEDIRS=../commons ../code_info ../parsing_c ../parsing_c++ ../analyze_c
+#      ../analyze_c/analyze_c.cma
+
+INCLUDEDIRS=../commons ../pl_info ../parsing_c ../parsing_cplusplus \
+
+# ../analyze_c
 
 ##############################################################################
 # Generic variables
@@ -36,7 +39,8 @@ OCAMLMKTOP=ocamlmktop -g -custom $(INCLUDES) -thread
 # Top rules
 ##############################################################################
 
-PROGS=c_transducer.byte simple_zero_to_null.byte
+PROGS=simple_zero_to_null.byte
+#c_transducer.byte 
 
 all: $(PROGS)
 opt: $(PROGS:.byte=.opt)
@@ -85,6 +89,9 @@ clean::
 	rm -f *.cm[iox] *.o *.annot
 clean::
 	rm -f *~ .*~ *.exe #*#
+
+distclean::
+	rm -f .depend
 
 beforedepend::
 

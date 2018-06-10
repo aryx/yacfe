@@ -37,6 +37,10 @@ $(TARGET).cmxa: $(OPTOBJS) $(LIBS:.cma=.cmxa)
 
 
 
+
+
+
+
 ##############################################################################
 # Developer rules
 ##############################################################################
@@ -62,6 +66,8 @@ beforedepend::
 
 depend:: beforedepend
 	$(OCAMLDEP) *.mli *.ml    > .depend
+
+distclean::
 
 -include .depend
 

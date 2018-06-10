@@ -37,7 +37,8 @@
 (* Modified code *)
 
 type info = { line : int; column : int;
-	      strbef : string list; straft : string list }
+	      strbef : (string * int (* line *) * int (* col *)) list;
+	      straft : (string * int (* line *) * int (* col *)) list }
 type line = int
 type meta_name = string * string
 (* need to be careful about rewrapping, to avoid duplicating pos info
@@ -47,7 +48,7 @@ type 'a wrap =
       node_line : line;
       free_vars : meta_name list; (*free vars*)
       minus_free_vars : meta_name list; (*minus free vars*)
-      fresh_vars : meta_name list; (*fresh vars*)
+      fresh_vars : (meta_name * string (*seed*) option) list; (*fresh vars*)
       inherited : meta_name list; (*inherited vars*)
       saved_witness : meta_name list; (*witness vars*)
       bef_aft : dots_bef_aft;
@@ -84,8 +85,8 @@ and keep_binding = Type_cocci.keep_binding
 and multi = bool (*true if a nest is one or more, false if it is zero or more*)
 
 and end_info =
-    meta_name list (*free vars*) * meta_name list (*inherited vars*) *
-      meta_name list (*witness vars*) * mcodekind
+    meta_name list (*free vars*) * (meta_name * string option) list (*fresh*) *
+      meta_name list (*inherited vars*) * mcodekind
 
 (* --------------------------------------------------------------------- *)
 (* Metavariables *)
@@ -94,8 +95,9 @@ and arity = UNIQUE | OPT | MULTI | NONE
 
 and metavar =
     MetaIdDecl of arity * meta_name (* name *)
-  | MetaFreshIdDecl of arity * meta_name (* name *)
+  | MetaFreshIdDecl of meta_name (* name *) * string option (* seed *)
   | MetaTypeDecl of arity * meta_name (* name *)
+  | MetaInitDecl of arity * meta_name (* name *)
   | MetaListlenDecl of meta_name (* name *)
   | MetaParamDecl of arity * meta_name (* name *)
   | MetaParamListDecl of arity * meta_name (*name*) * meta_name option (*len*)
@@ -146,7 +148,7 @@ and ident = base_ident wrap
 (* --------------------------------------------------------------------- *)
 (* Expression *)
 
-and base_expression = 
+and base_expression =
     Ident          of ident
   | Constant       of constant mcode
   | FunCall        of expression * string mcode (* ( *) *
@@ -228,9 +230,9 @@ and base_fullType =
   | OptType         of fullType
   | UniqueType      of fullType
 
-and base_typeC = 
-    BaseType        of baseType mcode * sign mcode option
-  | ImplicitInt     of sign mcode
+and base_typeC =
+    BaseType        of baseType * string mcode list (* Yoann style *)
+  | SignedT         of sign mcode * typeC option
   | Pointer         of fullType * string mcode (* * *)
   | FunctionPointer of fullType *
 	          string mcode(* ( *)*string mcode(* * *)*string mcode(* ) *)*
@@ -244,18 +246,19 @@ and base_typeC =
 
   | Array           of fullType * string mcode (* [ *) *
 	               expression option * string mcode (* ] *)
+  | EnumName        of string mcode (*enum*) * ident (* name *)
   | StructUnionName of structUnion mcode * ident option (* name *)
   | StructUnionDef  of fullType (* either StructUnionName or metavar *) *
 	string mcode (* { *) * declaration dots * string mcode (* } *)
-  | TypeName        of string mcode
+  | TypeName        of string mcode (* pad: should be 'of ident' ? *)
 
   | MetaType        of meta_name mcode * keep_binding * inherited
 
 and fullType = base_fullType wrap
 and typeC = base_typeC wrap
-     
+
 and baseType = VoidType | CharType | ShortType | IntType | DoubleType
-| FloatType | LongType
+  | FloatType | LongType | LongLongType
 
 and structUnion = Struct | Union
 
@@ -275,7 +278,7 @@ and base_declaration =
   | TyDecl of fullType * string mcode (* ; *)
   | MacroDecl of ident (* name *) * string mcode (* ( *) *
         expression dots * string mcode (* ) *) * string mcode (* ; *)
-  | Typedef of string mcode (*typedef*) * fullType * 
+  | Typedef of string mcode (*typedef*) * fullType *
                typeC (* either TypeName or metavar *) * string mcode (*;*)
   | DisjDecl of declaration list
   (* Ddots is for a structure declaration *)
@@ -292,24 +295,26 @@ and declaration = base_declaration wrap
 (* Initializers *)
 
 and base_initialiser =
-    InitExpr of expression 
+    MetaInit of meta_name mcode * keep_binding * inherited
+  | InitExpr of expression
   | InitList of string mcode (*{*) * initialiser list * string mcode (*}*) *
 	initialiser list (* whencode: elements that shouldn't appear in init *)
-  | InitGccDotName of
-      string mcode (*.*) * ident (* name *) * string mcode (*=*) *
+  | InitGccExt of
+      designator list (* name *) * string mcode (*=*) *
 	initialiser (* gccext: *)
   | InitGccName of ident (* name *) * string mcode (*:*) *
 	initialiser
-  | InitGccIndex of
-      string mcode (*[*) * expression * string mcode (*]*) *
-	string mcode (*=*) * initialiser
-  | InitGccRange of
-      string mcode (*[*) * expression * string mcode (*...*) *
-        expression * string mcode (*]*) * string mcode (*=*) * initialiser
   | IComma of string mcode (* , *)
 
   | OptIni    of initialiser
   | UniqueIni of initialiser
+
+and designator =
+    DesignatorField of string mcode (* . *) * ident
+  | DesignatorIndex of string mcode (* [ *) * expression * string mcode (* ] *)
+  | DesignatorRange of
+      string mcode (* [ *) * expression * string mcode (* ... *) *
+      expression * string mcode (* ] *)
 
 and initialiser = base_initialiser wrap
 
@@ -522,13 +527,21 @@ and top_level = base_top_level wrap
 and rulename =
     CocciRulename of string option * dependency *
 	string list * string list * exists * bool
+  | GeneratedRulename of string option * dependency *
+	string list * string list * exists * bool
   | ScriptRulename of string * dependency
+  | InitialScriptRulename of string
+  | FinalScriptRulename of string
+
+and ruletype = Normal | Generated
 
 and rule =
-    CocciRule of string (* name *) * 
+    CocciRule of string (* name *) *
 	(dependency * string list (* dropped isos *) * exists) * top_level list
-	* bool list
+	* bool list * ruletype
   | ScriptRule of string * dependency * (string * meta_name) list * string
+  | InitialScriptRule of string (*language*) * string (*code*)
+  | FinalScriptRule of string (*language*) * string (*code*)
 
 and dependency =
     Dep of string (* rule applies for the current binding *)
@@ -564,6 +577,7 @@ and anything =
   | CaseLineTag         of case_line
   | ConstVolTag         of const_vol
   | Token               of string * info option
+  | Pragma              of string list
   | Code                of top_level
   | ExprDotsTag         of expression dots
   | ParamDotsTag        of parameterTypeDef dots
@@ -625,8 +639,9 @@ let get_wcfvs (whencode : ('a wrap, 'b wrap) whencode list) =
 
 let get_meta_name = function
     MetaIdDecl(ar,nm) -> nm
-  | MetaFreshIdDecl(ar,nm) -> nm
+  | MetaFreshIdDecl(nm,seed) -> nm
   | MetaTypeDecl(ar,nm) -> nm
+  | MetaInitDecl(ar,nm) -> nm
   | MetaListlenDecl(nm) -> nm
   | MetaParamDecl(ar,nm) -> nm
   | MetaParamListDecl(ar,nm,nm1) -> nm

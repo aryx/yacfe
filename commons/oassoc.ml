@@ -1,3 +1,5 @@
+open Common
+
 open Ocollection
 
 (* assoc, also called map or dictionnary *)
@@ -15,10 +17,20 @@ object(o: 'o)
   (* pre: must not be in *)
   (* method add: ('a * 'b) -> 'o = *)
 
-  (* method virtual keys: 'a oset *)
+  (*
+    method keys = 
+    List.map fst (o#tolist)
+  *)
+  method virtual keys: 'a list (* or 'a oset ? *)
 
   method find: 'a -> 'b = fun k -> 
     o#assoc k
+
+  method find_opt: 'a -> 'b option = fun k -> 
+    try 
+      let res = o#assoc k in
+      Some res
+    with Not_found -> None
 
   method haskey: 'a -> bool = fun k -> 
     try (ignore(o#assoc k); true) 
@@ -36,5 +48,9 @@ object(o: 'o)
         with Not_found -> default ()
       in
       o#replkey (k, f old)
+
+  method apply_with_default2 = fun k f default -> 
+    o#apply_with_default k f default +> ignore
+    
 
 end

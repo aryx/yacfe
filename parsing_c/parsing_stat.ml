@@ -1,3 +1,17 @@
+(* Yoann Padioleau
+ * 
+ * Copyright (C) 2008, 2009 University of Urbana Champaign
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License (GPL)
+ * version 2 as published by the Free Software Foundation.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * file license.txt for more details.
+ *)
+
 open Common 
 
 (* if do .mli:
@@ -25,6 +39,9 @@ type parsing_stat = {
      * function to end of function.
      *)
 
+    mutable problematic_lines: 
+      (string list (* ident in error line *) * int (* line_error *)) list;
+
   } 
 
 let default_stat file =  { 
@@ -32,6 +49,7 @@ let default_stat file =  {
     have_timeout = false;
     correct = 0; bad = 0;
     commentized = 0;
+    problematic_lines = [];
   }
 
 (* todo: stat per dir ?  give in terms of func_or_decl numbers:   
@@ -100,19 +118,71 @@ let print_parsing_stat_list ?(verbose=false) = fun statxs ->
   let passedf = float_of_int passed in
   pr (
   (sprintf "nb good = %d,  nb passed = %d " good passed) ^
-  (sprintf "=========> %f"  (100.0 *. (passedf /. gf)) ^ "%")
+  (sprintf "=========> %f"  (100.0 *. (passedf /. gf)) ^ "% passed")
    );
   pr (
   (sprintf "nb good = %d,  nb bad = %d " good bad) ^
-  (sprintf "=========> %f"  (100.0 *. (gf /. (gf +. badf))) ^ "%"
+  (sprintf "=========> %f"  (100.0 *. (gf /. (gf +. badf))) ^ "% good"
    )
   )
+
+(*****************************************************************************)
+(* Recurring error diagnostic *)
+(*****************************************************************************)
+(* asked/inspired by reviewer of CC'09 *)
+
+let lines_around_error_line ~context (file, line) = 
+  let arr = Common.cat_array file in
+  
+  let startl = max 0 (line - context) in
+  let endl   = min (Array.length arr) (line + context) in
+  let res = ref [] in 
+
+  for i = startl to endl -1 do 
+    Common.push2 arr.(i) res
+  done;
+  List.rev !res
+
+
+
+let print_recurring_problematic_tokens xs = 
+  let h = Hashtbl.create 101 in
+  xs +> List.iter (fun x -> 
+    let file = x.filename in 
+    x.problematic_lines +> List.iter (fun (xs, line_error) -> 
+      xs +> List.iter (fun s -> 
+        Common.hupdate_default s
+          (fun (old, example)  -> old + 1, example) 
+          (fun() -> 0, (file, line_error)) h;
+      )));
+  pr2_xxxxxxxxxxxxxxxxx();
+  pr2 ("maybe 10 most problematic tokens");
+  pr2_xxxxxxxxxxxxxxxxx();
+  Common.hash_to_list h
+  +> List.sort (fun (k1,(v1,_)) (k2,(v2,_)) -> compare v2 v1) 
+  +> Common.take_safe 10
+  +> List.iter (fun (k,(i, (file_ex, line_ex))) -> 
+    pr2 (spf "%s: present in %d parsing errors" k i);
+    pr2 ("example: ");
+    let lines = lines_around_error_line ~context:2 (file_ex, line_ex) in
+    lines +> List.iter (fun s -> pr2 ("       " ^ s));
+    
+  );
+  pr2_xxxxxxxxxxxxxxxxx();
+  ()
+
+  
+
 
 (*****************************************************************************)
 (* Stat *)
 (*****************************************************************************)
 
-(* coupling: if you add a new var, modify also assoc_stat_number below *)
+(* Those variables were written for CC09, to evaluate the need for 
+ * some of our heuristics and extensions.
+ * 
+ * coupling: if you add a new var, modify also assoc_stat_number below 
+ *)
 
 let nTypedefInfer = ref 0
 

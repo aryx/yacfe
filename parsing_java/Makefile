@@ -36,8 +36,8 @@ SRC= flag_parsing_java.ml \
 # place_c.ml statistics_c.ml  comment_annotater.ml  \
 
 SYSLIBS= str.cma unix.cma 
-LIBS=../commons/commons.cma ../code_info/code_info.cma
-INCLUDES= -I ../commons -I ../code_info
+LIBS=../commons/commons.cma ../pl_info/code_info.cma
+INCLUDES= -I ../commons -I ../pl_info
 
 ##############################################################################
 # Generic variables
@@ -111,6 +111,9 @@ clean::
 	rm -f *.cm[ioxa] *.o *.a *.cmxa *.annot
 clean::
 	rm -f *~ .*~ gmon.out #*#
+
+distclean::
+	rm -f .depend
 
 beforedepend::
 

@@ -1,3 +1,16 @@
+(* Yoann Padioleau
+ * 
+ * Copyright (C) 2006, 2007 Ecole des Mines de Nantes
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License (GPL)
+ * version 2 as published by the Free Software Foundation.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * file license.txt for more details.
+ *)
 open Common
 
 open Ast_c
@@ -40,6 +53,7 @@ type error =
   | DuplicatedLabel of string
   | NestedFunc
   | ComputedGoto
+  | Define of Common.parse_info
 
 exception Error of error
 
@@ -160,10 +174,12 @@ let compute_labels_and_create_them st =
     st +> Visitor_c.vk_statement { Visitor_c.default_visitor_c with 
       Visitor_c.kstatement = (fun (k, bigf) st -> 
         match st with
-        | Labeled (Ast_c.Label (s, _st)),ii -> 
+        | Labeled (Ast_c.Label (name, _st)),ii -> 
             (* at this point I put a lbl_0, but later I will put the
              * good labels. *)
-            let newi = !g +> add_node (Label (st,(s,ii))) lbl_0  (s^":") in
+            let s = Ast_c.str_of_name name in
+            let newi = !g +> add_node (Label (st,name, ((),ii))) lbl_0  (s^":") 
+            in
             begin
               (* the C label already exists ? *)
               if (!h#haskey s) then raise (Error (DuplicatedLabel s));
@@ -328,7 +344,8 @@ let rec (aux_statement: (nodei option * xinfo) -> statement -> nodei option) =
 
 
    (* ------------------------- *)        
-  | Labeled (Ast_c.Label (s, st)), ii -> 
+  | Labeled (Ast_c.Label (name, st)), ii -> 
+      let s = Ast_c.str_of_name name in
       let ilabel = xi.labels_assoc#find s in
       let node = mk_node (unwrap (!g#nodes#find ilabel)) lbl [] (s ^ ":") in
       !g#replace_node (ilabel, node);
@@ -336,9 +353,11 @@ let rec (aux_statement: (nodei option * xinfo) -> statement -> nodei option) =
       aux_statement (Some ilabel, xi_lbl) st
 
 
-  | Jump (Ast_c.Goto s), ii -> 
+  | Jump (Ast_c.Goto name), ii -> 
+      let s = Ast_c.str_of_name name in
      (* special_cfg_ast: *)
-     let newi = !g +> add_node (Goto (stmt, (s,ii))) lbl ("goto " ^ s ^ ":") in
+     let newi = !g +> add_node (Goto (stmt, name, ((),ii))) lbl ("goto "^s^":")
+     in
      !g +> add_arc_opt (starti, newi);
 
      let ilabel = 
@@ -371,16 +390,17 @@ let rec (aux_statement: (nodei option * xinfo) -> statement -> nodei option) =
         | Some e -> 
             let ((unwrap_e, typ), ii) = e in
             (match unwrap_e with
-            | FunCall (((Ident f, _typ), _ii), _args) -> 
-                f ^ "(...)"
-            | Assignment (((Ident var, _typ), _ii), SimpleAssign, e) -> 
-                var ^ " = ... ;"
+            | FunCall (((Ident (namef), _typ), _ii), _args) -> 
+                Ast_c.str_of_name namef ^ "(...)"
+            | Assignment (((Ident (namevar), _typ), _ii), SimpleAssign, e) -> 
+                Ast_c.str_of_name namevar ^ " = ... ;"
             | Assignment 
-                (((RecordAccess (((Ident var, _typ), _ii), field), _typ2), 
+                (((RecordAccess (((Ident (namevar), _typ), _ii), field), _typ2),
                   _ii2),
                  SimpleAssign, 
                  e) -> 
-                   var ^ "." ^ field ^ " = ... ;"
+                let sfield = Ast_c.str_of_name field in
+                Ast_c.str_of_name namevar ^ "." ^ sfield ^ " = ... ;"
                    
             | _ -> "statement"
         )
@@ -798,7 +818,7 @@ let rec (aux_statement: (nodei option * xinfo) -> statement -> nodei option) =
       let context_info =
 	match xi.ctx with
 	  SwitchInfo (startbrace, loopendi, braces, parent_lbl) -> 
-            if x = Ast_c.Break
+            if x =*= Ast_c.Break
 	    then xi.ctx
 	    else
 	      (try 
@@ -853,7 +873,7 @@ let rec (aux_statement: (nodei option * xinfo) -> statement -> nodei option) =
           None
 
       | SwitchInfo (startbrace, loopendi, braces, parent_lbl) ->
-	  assert (x = Ast_c.Break);
+	  assert (x =*= Ast_c.Break);
           let difference = List.length xi.braces - List.length braces in
           assert (difference >= 0);
           let toend = take difference xi.braces in
@@ -901,8 +921,8 @@ let rec (aux_statement: (nodei option * xinfo) -> statement -> nodei option) =
      let s = 
        match decl with
        | (Ast_c.DeclList 
-             ([{v_namei = Some ((s, _),_); v_type = typ; v_storage = sto}, _], _)) ->
-	   "decl:" ^ s
+             ([{v_namei = Some (name, _); v_type = typ; v_storage = sto}, _], _)) ->
+	   "decl:" ^ Ast_c.str_of_name name
        | _ -> "decl_novar_or_multivar"
      in
             
@@ -949,11 +969,11 @@ and aux_statement_list starti (xi, newxi) statxs =
         aux_statement (starti, newxi') statement
 
     | Ast_c.CppDirectiveStmt directive -> 
-        pr2 ("ast_to_flow: filter a directive");
+        pr2_once ("ast_to_flow: filter a directive");
         starti
 
     | Ast_c.IfdefStmt ifdef -> 
-        pr2 ("ast_to_flow: filter a directive");
+        pr2_once ("ast_to_flow: filter a directive");
         starti
 
     | Ast_c.IfdefStmt2 (ifdefs, xxs) -> 
@@ -972,7 +992,7 @@ and aux_statement_list starti (xi, newxi) statxs =
             elsei
           ) in
 
-        let finalxs = 
+        let _finalxs = 
           Common.zip (newi::elsenodes) xxs +> List.map (fun (start_nodei, xs)-> 
             let finalthen = 
               aux_statement_list (Some start_nodei) (newxi, newxi) xs in
@@ -992,16 +1012,17 @@ let (aux_definition: nodei -> definition -> unit) = fun topi funcdef ->
 
   let lbl_start = [!counter_for_labels] in
 
-  let ({f_name = funcs; 
+  let ({f_name = namefuncs; 
         f_type = functype; 
         f_storage= sto; 
         f_body= compound;
         f_attr= attrs;
+        f_old_c_style = oldstyle;
         }, ii) = funcdef in
   let iifunheader, iicompound = 
     (match ii with 
-    | is::ioparen::icparen::iobrace::icbrace::iifake::isto -> 
-        is::ioparen::icparen::iifake::isto,     
+    | ioparen::icparen::iobrace::icbrace::iifake::isto -> 
+        ioparen::icparen::iifake::isto,     
         [iobrace;icbrace]
     | _ -> raise Impossible
     )
@@ -1011,13 +1032,14 @@ let (aux_definition: nodei -> definition -> unit) = fun topi funcdef ->
 
   let headi = !g +> add_node 
     (FunHeader ({ 
-      Ast_c.f_name = funcs;
+      Ast_c.f_name = namefuncs;
       f_type = functype;
       f_storage = sto;
       f_attr = attrs;
-      f_body = [] (* empty body *)
+      f_body = [] (* empty body *);
+      f_old_c_style = oldstyle;
       }, iifunheader))
-    lbl_start ("function " ^ funcs) in
+    lbl_start ("function " ^ Ast_c.str_of_name namefuncs) in
   let enteri     = !g +> add_node Enter     lbl_0 "[enter]"     in
   let exiti      = !g +> add_node Exit      lbl_0 "[exit]"      in
   let errorexiti = !g +> add_node ErrorExit lbl_0 "[errorexit]" in
@@ -1050,11 +1072,14 @@ let (aux_definition: nodei -> definition -> unit) = fun topi funcdef ->
  * the toplevel macro statement as in @@ toplevel_declarator MACRO_PARAM;@@
  * and so I would not need this hack and instead I would to a cleaner
  * match in cocci_vs_c_3.ml of a A.MacroTop vs B.MacroTop
+ * 
+ * todo: update: now I do what I just described, so can remove this code ?
  *)
 let specialdeclmacro_to_stmt (s, args, ii) =
   let (iis, iiopar, iicpar, iiptvirg) = tuple_of_list4 ii in
-  let ident = (Ast_c.Ident s, Ast_c.noType()), [iis] in
-  let f = (Ast_c.FunCall (ident, args), Ast_c.noType()), [iiopar;iicpar] in
+  let ident = Ast_c.RegularName (s, [iis]) in
+  let identfinal = (Ast_c.Ident (ident), Ast_c.noType()), [] in
+  let f = (Ast_c.FunCall (identfinal, args), Ast_c.noType()), [iiopar;iicpar] in
   let stmt = Ast_c.ExprStatement (Some f), [iiptvirg] in
   stmt,  (f, [iiptvirg])
 
@@ -1155,15 +1180,27 @@ let ast_to_control_flow e =
       | Ast_c.DefineFunction def -> 
           aux_definition headeri def;
 
-      | Ast_c.DefineText (s, ii) -> 
-          raise Todo
+      | Ast_c.DefineText (s, s_ii) -> 
+          raise (Error(Define(pinfo_of_ii ii)))
       | Ast_c.DefineEmpty -> 
           let endi = !g +> add_node EndNode lbl_0 "[end]" in
           !g#add_arc ((headeri, endi),Direct);
       | Ast_c.DefineInit _ -> 
-          raise Todo
+          raise (Error(Define(pinfo_of_ii ii)))
       | Ast_c.DefineTodo -> 
-          raise Todo
+          raise (Error(Define(pinfo_of_ii ii)))
+
+(* old:
+      | Ast_c.DefineText (s, ii) -> 
+          let endi = !g +> add_node EndNode lbl_0 "[end]" in
+          !g#add_arc ((headeri, endi),Direct);
+      | Ast_c.DefineInit _ -> 
+          let endi = !g +> add_node EndNode lbl_0 "[end]" in
+          !g#add_arc ((headeri, endi),Direct);
+      | Ast_c.DefineTodo -> 
+          let endi = !g +> add_node EndNode lbl_0 "[end]" in
+          !g#add_arc ((headeri, endi),Direct);
+*)
       );
 
       Some !g
@@ -1234,7 +1271,7 @@ let deadcode_detection g =
       | x -> 
           (match Control_flow_c.extract_fullstatement node with
           | Some (st, ii) -> raise (Error (DeadCode (Some (pinfo_of_ii ii))))
-          | _ -> pr2 "CFG: orphelin nodes, maybe something wierd happened"
+          | _ -> pr2 "CFG: orphelin nodes, maybe something weird happened"
           )
       )
   )
@@ -1288,7 +1325,7 @@ let (check_control_flow: cflow -> unit) = fun g ->
         (match unwrap (nodes#find nodei),  startbraces with
         | SeqStart (_,i,_), xs  -> i::xs
         | SeqEnd (i,_), j::xs -> 
-            if i = j 
+            if i =|= j 
             then xs
             else 
               begin 
@@ -1305,7 +1342,7 @@ let (check_control_flow: cflow -> unit) = fun g ->
       in
 
    
-      if children#tolist = [] 
+      if null children#tolist
       then 
         if (* (depth = 0) *) startbraces <> []
         then print_trace_error trace2
@@ -1347,3 +1384,5 @@ let report_error error =
       pr2 ("FLOW: not handling yet nested function")
   | ComputedGoto -> 
       pr2 ("FLOW: not handling computed goto yet")
+  | Define info ->
+      pr2 ("Unsupported form of #define: " ^ error_from_info info)
