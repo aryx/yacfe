@@ -4,9 +4,9 @@
 Summary 
 -------------------
 
-Yacfe (Yet Another C/C++ Front-End) is mainly an OCaml API to write
+Yacfe (Yet Another C Front-End) is mainly an OCaml API to write
 style-preserving source-to-source transformations such as refactorings
-on C or C++ source code.
+on C source code.
 
 The goal of Yacfe is to parse the code as-is, and to represent it
 internally as-is. We thus maintain in the Abstract Syntax Tree (AST)
@@ -91,7 +91,7 @@ parser just ignores).
 Configuration
 -------------------
 
-The Yacfe parser relies on the fact that in most C and C++ software,
+The Yacfe parser relies on the fact that in most C programs,
 programmers follow a limited number of conventions on the use of cpp
 which makes it possible to represent most of the cpp idioms
 in the AST. It also makes it possible for the parser to disambiguate
@@ -145,7 +145,6 @@ source files:
      - grammar (parser_c.mly)
      - hacks   (parsing_hacks.ml, lexer_parser.ml)
      - "driver", error recovery (parse_c.ml)
-
  - Visitor (visitor_c.ml)
  - Control flow graph (control_flow_c.ml, ast_to_flow.ml)
  - Unparsing (unparse_c.ml, unparse_cocci.ml) (style preserving)
@@ -153,18 +152,4 @@ source files:
  - Type annotater (type_annotater_c.ml)
  - cpp expander on ast (cpp_ast_c.ml)
  - Statistics (parsing_stat.ml statistics_c.ml)
-
  - Comment annotater (comment_annotater.ml)
-
- - Database (database_c.ml)
- - Call graph (callgraph_c.ml, aliasing_function_c.ml, relationc_.ml)
- - Pattern matcher (c_vs_c.ml, cocci_vs_c.ml, pattern.ml, transformation.ml)
-
-The gui/ directory and main_gui.ml also provides a simple graphical interface
-a la lxr or cscope to explore C source code. From the GUI you can
-access at some of the internal services of Yacfe.
- 
-
-The parsing_c++/ and parsing_java/ contain some of those services
-for the C++ and Java language.
-

@@ -25,15 +25,13 @@ LIBS= commons/commons.cma \
       globals/globals.cma \
       pl_info/code_info.cma \
       parsing_c/parsing_c.cma \
-      parsing_cplusplus/parsing_cplusplus.cma \
-      parsing_java/parsing_java.cma \
       pl_wrapper/code_wrapper.cma \
       src_repository/src_repository.cma
 
 MAKESUBDIRS=commons \
   globals \
   pl_info \
-  parsing_c parsing_cplusplus parsing_java \
+  parsing_c \
   pl_wrapper \
   src_repository \
   demos 
@@ -41,7 +39,7 @@ MAKESUBDIRS=commons \
 INCLUDEDIRS=commons \
   globals \
   pl_info \
-  parsing_c parsing_cplusplus parsing_java \
+  parsing_c \
   pl_wrapper \
   src_repository
 
@@ -256,30 +254,6 @@ distclean:: clean
 # Pad specific rules
 ##############################################################################
 
-DARCSFORESTS=commons \
- parsing_c parsing_cplusplus parsing_java \
- pl_info \
- config/macros config/envos \
-
-# data
-#config/macros but need use $(TOP) then
-
-update_darcs:
-	darcs pull
-	set -e; for i in $(DARCSFORESTS); do cd $$i; darcs pull; cd ..; done 
-
-diff_darcs:
-	@echo "----- REPO:" top "----------------------"
-	darcs diff -u
-	set -e; for i in $(DARCSFORESTS); do cd $$i; echo "----- REPO:" $$i "-----------------"; darcs diff -u; cd $(TOP); done 
-
-
-
-
-# first time
-get_darcs:
-	set -e; for i in $(DARCSFORESTS); do darcs get ~/c-yacfe/$$i; done 
-
 
 WEBSITE=/home/pad/mobile/homepage/software/project-yacfe
 
@@ -290,9 +264,6 @@ website:
 syncwiki:
 #	unison ~/public_html/wiki/wiki-LFS/data/pages/ docs/wiki/
 #	set -e; for i in $(TXT); do unison $$i docs/wiki/$$i; done 
-
-darcsweb:
-#	@echo pull from ~/public_html/darcs/c-coccinelle and c-commons and lib-xxx
 
 
 ##############################################################################
