@@ -1,15 +1,5 @@
 Thanks to 
- - Eric Cooper for the Java parser
-
-
-Thanks to 
  - Richard Jones for his Dumper module, 
- - Troestler Christophe for his ANSITerminal module,
- - Brian Hurt and Nicolas Cannasse for their dynArray module,
- - Sebastien Ferré for his implementation in OCaml of a suffix tree library, 
- - Markus Mottl, for the Perl Compatibility Regular Expressions for OCaml
- - Lex Stein for his binding to Berkeley DB
-
 
 Thanks of course also to Stallman, Linus, Leroy, Knuth and their
 acolytes for respectively Emacs, Linux, OCaml, and (La)Tex.

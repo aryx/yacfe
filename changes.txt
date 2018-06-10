@@ -2,15 +2,23 @@
 
 * 0.4
 
+** Applications:
+- removed most applications, to have a "yacfe-light" without
+too much dependencies. Those applications are now anyway better
+in pfff.
+
 ** Language:
-- remove parsing_cplusplus and parsing_java; the code is now better in pfff
+- removed parsing_cplusplus and parsing_java.
+The code for those languages is better in pfff.
 
 ** internals:
+- upgrade to recent commons/ library, the one now in pfff, so cleaner
+and will enable the -dump_c
 
 * 0.3
 
 ** Documentation: 
-- extended readme.txt to explain how quickly evaluate how much yacfe 
+- extended readme.txt to explain how to quickly evaluate how much yacfe 
   can parse your C source code
 - improve yacfe-internal.pdf (based on CC'09 anonymous reviewers feedback).
 
@@ -97,8 +105,6 @@
 - bugfix in parser, better error message.
   Thanks to Ali-Erdem OZCAN <ali-erdem.ozcan@st.com> for the bug report.
 
-
- 
 
 * 0.2
 
@@ -197,4 +203,3 @@
    http://www.lysator.liu.se/c/ANSI-C-grammar-y.html
   in ast_c.ml, lexer_c.mll, parser_c.mly, and initial
   typedef trick in lexer_parser.ml
-
