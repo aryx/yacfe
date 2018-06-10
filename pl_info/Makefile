@@ -6,7 +6,7 @@ TARGET=code_info
 # ast_cocci.ml and unparse_cocci2.ml should be deleted in the futur
 # to make parsing_c really independent of coccinelle. 
 # control_flow_c have also coccinelle dependencies.
-SRC= programming_language.ml ast_generic.ml place_code.ml \
+SRC= programming_language.ml ast_generic.ml place_code.ml parse_info.ml \
      statistics_code.ml statistics_parsing.ml
 
 SYSLIBS= str.cma unix.cma 
