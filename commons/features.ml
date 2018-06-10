@@ -1,6 +1,8 @@
 # 1 "commons/features.ml.cpp"
 # 1 "<built-in>"
-# 1 "<command line>"
+# 1 "<command-line>"
+# 1 "/usr/include/stdc-predef.h" 1 3 4
+# 1 "<command-line>" 2
 # 1 "commons/features.ml.cpp"
 (* yes sometimes cpp is useful *)
 
@@ -8,10 +10,10 @@
 note: in addition to Makefile.config, globals/config.ml is also modified
 by configure
 features.ml: features.ml.cpp Makefile.config
- cpp -DFEATURE_GUI=$(FEATURE_GUI) -DFEATURE_MPI=$(0) -DFEATURE_PCRE=$(FEATURE_PCRE) features.ml.cpp > features.ml
-
-
-
+ cpp -DFEATURE_GUI=$(FEATURE_GUI)
+            -DFEATURE_MPI=$(0)
+     -DFEATURE_PCRE=$(FEATURE_PCRE)
+    features.ml.cpp > features.ml
 
 clean::
  rm -f features.ml
