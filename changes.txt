@@ -1,4 +1,11 @@
--*- org -*-
+# -*- org -*-
+
+* 0.4
+
+** Language:
+- remove parsing_cplusplus and parsing_java; the code is now better in pfff
+
+** internals:
 
 * 0.3
 
