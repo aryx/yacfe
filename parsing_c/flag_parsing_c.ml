@@ -3,7 +3,7 @@
 (*****************************************************************************)
 let path = ref 
   (try (Sys.getenv "YACFE_HOME")
-    with Not_found-> "/home/pad/c-yacfe"
+    with Not_found-> "/home/pad/github/yacfe"
   )
 
 (*****************************************************************************)
