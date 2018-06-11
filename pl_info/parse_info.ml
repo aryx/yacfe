@@ -66,7 +66,7 @@ let full_charpos_to_pos2 = fun filename ->
 
   let size = (Common2.filesize filename + 2) in
 
-    let arr = Array.create size  (0,0) in
+    let arr = Array.make size (0,0) in
 
     let chan = open_in filename in
 
