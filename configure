@@ -5,17 +5,14 @@
 
 # Yes I know about autoconf ... and autoconf sux.
 
-# assume standard: binutils, gcc, as, ld, gnu toolchain
-# assume standard: make, sh?, perl?
-# assume standard: diffutils, fileutils, findutils, grep, patchutils, sh-utils
-## assume standard: diff, patch
-
-
+# I do not check for the following programs; I assume they are standard:
+# - gcc, as, ld (the GNU toolchain)
+# - make, perl, bash
 
 my $project = 
     "yacfe";
 my $projectcmdline = 
-    "./yacfe demos/foo.c";
+    "./yacfe -dump_c demos/foo.c";
 
 ######################################################################
 # Options
@@ -31,10 +28,6 @@ local $_ = join ' ', @ARGV;
 
 
 my $src="$prefix/share/$project";
-
-######################################################################
-# Side effects
-######################################################################
 
 ######################################################################
 # Helpers
@@ -86,16 +79,13 @@ $error +=
 # Developers tools
 #---------------------------------------------------------------
 
-pr2 "";
-
 $error += check_config(
   "make -v 2>&1 |grep Make|",
   "GNU Make [34]\.[0-9]+", #version 3.81
   "make (gnu version) is present.",
   "The program gnu make is missing or is not a good version.
-We need  3.XX",
+We need  3.XX or more",
 );
-
 
 #---------------------------------------------------------------------
 # More developers tools
@@ -104,14 +94,6 @@ We need  3.XX",
 #---------------------------------------------------------------------
 # Librairies
 #---------------------------------------------------------------------
-
-######################################################################
-# Generate config files (platform/portability issues)
-######################################################################
-
-######################################################################
-# Generate globals files (features issues)
-######################################################################
 
 ######################################################################
 # Diagnostic 
@@ -136,16 +118,17 @@ on the $project website. !!!!
 All seems fine for $project.
 
 To compile $project type:
- make depend; make
+ \$ make depend
+ \$ make
 
 Then, to test $project simply type:
- $projectcmdline
+ \$ export YACFE_HOME=`pwd`
+ \$ $projectcmdline
 
 ----------------------------------------------------------------------
 ";
 
 }
-
 
 ######################################################################
 # Generating the configuration
@@ -174,5 +157,3 @@ SHAREDIR=$src
 pr2 "Modifying globals/config.ml";
 my $command = "perl -p -i -e 's#Not_found.\*#Not_found->\\\"$src\\\"#' globals/config.ml";
 `$command`;
-
-
