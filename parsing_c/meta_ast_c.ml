@@ -63,13 +63,13 @@ let rec vof_info x =
 let vof_il v = Ocaml.vof_list vof_info v
 
 let vof_wrap _of_a (v1, v2) =
-  let v1 = _of_a v1 and v2 = vof_il v2 in 
+  let v1 = _of_a v1 (* and v2 = vof_il v2 *) in
   (*
   Ocaml.VTuple [ v1; v2 ]
   *)
   v1
 let vof_wrap2 _of_a (v1, v2) =
-  let v1 = _of_a v1 and v2 = vof_il v2 in 
+  let v1 = _of_a v1 (* and v2 = vof_il v2 *) in
   (*
   Ocaml.VTuple [ v1; v2 ]
   *)

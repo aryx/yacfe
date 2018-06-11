@@ -37,7 +37,7 @@ let parse_and_comments_of_file file =
   let (program2, parsing_stat) = 
     Parse_c.parse_c_and_cpp file in
   
-  let program = Parse_c.program_of_program2 program2 in
+  (* let program = Parse_c.program_of_program2 program2 in *)
 
       (* let _estat = Statistics_c.statistics_of_program program in *)
   
@@ -127,12 +127,14 @@ let parse_one_file (file, i, nbfiles) =
 
 let parse_all xs =
 
+(*
   let dirname_opt = 
     match xs with
     | [x] when Common2.is_directory x -> Some x
     | xs -> 
         Some (xs +> Common.join "" +> Common2.md5sum_of_string)
   in
+*)
 
   (*
   Flag_parsing_c.debug_typedef := true;
@@ -148,7 +150,7 @@ let parse_all xs =
 
   (* sure ? *)
   Flag_parsing_c.filter_define_error := false;
-
+(*
   let newscore  = Common2.empty_score () in
   let parsing_stat_list = ref [] in
 
@@ -215,6 +217,7 @@ let parse_all xs =
   ) in
   (* will call either map_ex for worker or reduce_ex for server *)
   (* TODO biglist map_ex reduce_ex *)
+*)
   ()
 
 
