@@ -1,5 +1,5 @@
-// time 
-//  start 
+// time
+//  start
 
 
 
@@ -15,13 +15,13 @@
 
 //#include <macros_jpeg.h>
 #define jpeg_common_fields
-// conflict with minix 
+// conflict with minix
 #define EXTERN(a) a
 #define JPP(x) x
 
-//#include <macros_hacc.h> 
-#define YY_PROTO(x) x 
-#define yyconst const 
+//#include <macros_hacc.h>
+#define YY_PROTO(x) x
+#define yyconst const
 
 
 //#include <macros_windows.h>
@@ -33,7 +33,7 @@
 #define NEAR
 
 //BAD:!!!!! PVOID APIENTRY WinQueryProperty(HWND hwnd, PCSZ  pszNameOrAtom);
-//BAD:!!!!! BOOL APIENTRY DllMain(  HINSTANCE hModule, 
+//BAD:!!!!! BOOL APIENTRY DllMain(  HINSTANCE hModule,
 #define APIENTRY
 
 
@@ -57,7 +57,7 @@
 #define __P(a) a
 
 #define cairo_private static
-#define cairo_public 
+#define cairo_public
 #define cairo_private_no_warn
 
 #define CG_EXTERN extern
@@ -66,7 +66,7 @@
 
 #define _Xconst const
 
-/* linux also use FASTCALL but as a DefineFunc, not DefineVar, todo my 
+/* linux also use FASTCALL but as a DefineFunc, not DefineVar, todo my
  * hash allow this ? */
 
 #define FASTCALL
@@ -136,26 +136,26 @@
 #define PR_STATIC_CALLBACK static
 
 
-#define LL_CMP(a,op,b) a op b 
+#define LL_CMP(a,op,b) a op b
 
 #define UNTIL(x) while(!(x))
 
 
-#define CAIRO_PRINTF_FORMAT(a,b) 
+#define CAIRO_PRINTF_FORMAT(a,b)
 
-#define PREFIX(a) a 
+#define PREFIX(a) a
 
 
 #define JMETHOD(a, b, c) a b c
 
-#define _inline 
+#define _inline
 
-#define JS_EXTERN_API(x) x 
+#define JS_EXTERN_API(x) x
 
 #define FARDATA
 
 #define XMLCALL
-#define PTRCALL 
+#define PTRCALL
 #define PTRFASTCALL
 
 #define NSS_IMPLEMENT_DATA
@@ -164,14 +164,14 @@
 // firefox macros (for C++ code)
 // ****************************************************************************
 
-#define G_BEGIN_DECLS 
-#define G_END_DECLS 
+#define G_BEGIN_DECLS
+#define G_END_DECLS
 
 #define __BEGIN_DECLS
 #define __END_DECLS
 
 
-#define G_CONST_RETURN 
+#define G_CONST_RETURN
 
 
 //sure ?
@@ -193,7 +193,7 @@
 
 #define NS_METHOD void
 //bad: NS_METHOD_(void*)
-#define NS_METHOD_(a) a 
+#define NS_METHOD_(a) a
 
 // cast function syntax
 //#define PRUnichar(x) (char)(x)
@@ -207,7 +207,7 @@
 
 //BAD:!!!!!     NS_STDCALL_FUNCPROTO(nsresult,
 //bad:                          getter,
-//bad:                          nsIWindowsHooksSettings, GetShowDialog, 
+//bad:                          nsIWindowsHooksSettings, GetShowDialog,
 //bad:                          (PRBool*));
 #define NS_STDCALL_FUNCPROTO(a,b,c,d,e) a b
 
@@ -233,10 +233,10 @@
 #define STDMETHODIMP_(x) x
 #define STDMETHODIMP void
 
-#define __RPC_FAR 
+#define __RPC_FAR
 
 
-#define EXTERN_C 
+#define EXTERN_C
 
 #define CDECL
 
@@ -276,7 +276,7 @@
 #define NS_COM_GLUE
 
 
-#define PASCAL 
+#define PASCAL
 
 
 #define MOZILLA_NATIVE(a) a
@@ -286,7 +286,7 @@
 
 #define JX_EXPORT
 
-//pad: lots of xxx_EXPORT 
+//pad: lots of xxx_EXPORT
 
 #define PYXPCOM_EXPORT
 
@@ -296,7 +296,7 @@
 #define STDMETHODCALLTYPE
 #define __cdecl
 #define __stdcall
-#define __declspec(x) 
+#define __declspec(x)
 
 
 
@@ -347,7 +347,7 @@
 
 
 
-#define NS_HIDDEN 
+#define NS_HIDDEN
 #define NS_HIDDEN_(a) a
 
 // BAD:!!!!!   if NS_SUCCEEDED(rv)
@@ -359,7 +359,7 @@
 
 
 
-// in initializer, pb cos miss some ',' 
+// in initializer, pb cos miss some ','
 #define REFERENCE_METHOD_FAMILY(CallObjectMethod)
 
 #define TX_DOUBLE_COMPARE(a,b,c) (a b c)
@@ -368,7 +368,7 @@
 #define LL_UCMP(a,op,b) a op b
 
 
-#define GSS_MAKE_TYPEDEF 
+#define GSS_MAKE_TYPEDEF
 #define GSS_CALL_CONV
 #define GSS_FUNC(a) a
 
@@ -409,12 +409,12 @@
 
 #define NS_DEFINE_STATIC_IID_ACCESSOR(a)
 
-#define MOZ_DECL_CTOR_COUNTER(a) 
+#define MOZ_DECL_CTOR_COUNTER(a)
 
 //#define ipcMessageCast static_cast
 
 
-#define NS_DECL_ISUPPORTS 
+#define NS_DECL_ISUPPORTS
 // now in parsing_hack2.ml
 // grep "BAD:.*NS_IMPL" firefox_parse_h++_error2
 // grep "BAD:.*NS_INTERFACE" firefox_parse_h++_error2
@@ -423,7 +423,7 @@
 
 
 
-#define __gc 
+#define __gc
 
 
 #define __try try
@@ -448,7 +448,7 @@
 
 #define NS_STACK_CLASS
 
-#define NS_SPECIALIZE_TEMPLATE // template <> 
+#define NS_SPECIALIZE_TEMPLATE // template <>
 
 #define NS_DOM_INTERFACE_MAP_ENTRY_CLASSINFO(a)
 
@@ -459,7 +459,7 @@
 
 #define ATL_NO_VTABLE
 
-#define DECLARE_DYNCREATE(a) 
+#define DECLARE_DYNCREATE(a)
 
 #define GTKMOZEMBED_API(a,b,c) a b c
 #define DECLARE_EVENT_TABLE()
@@ -476,7 +476,7 @@
 #define JS_PUBLIC_API(a) a
 #define JS_FRIEND_API(a) a
 
-#define VFTDELTA_DECL(a) 
+#define VFTDELTA_DECL(a)
 
 
 #define MY_UNKNOWN_IMP
@@ -493,7 +493,7 @@
 
 #define JRI_PUBLIC_API(a) a
 
-#define NS_DEFINE_CONSTRUCTOR_DATA(a,b) 
+#define NS_DEFINE_CONSTRUCTOR_DATA(a,b)
 
 
 #define NS_STID_FOR_INDEX(a) while(a)
@@ -536,7 +536,7 @@
 
 // but mostly valid, should perhaps comment it, generates lots of passed:
 // NS_ENSURE_TRUE(window, /**/);
-#define NS_ENSURE_TRUE(a,b) 
+#define NS_ENSURE_TRUE(a,b)
 
 #define DECL_STYLE_RULE_INHERIT
 
@@ -546,7 +546,7 @@
 #define UP_IMPL_NSISUPPORTS
 
 
-#define MAKE_SAFE_VFT(a,b) a b = 
+#define MAKE_SAFE_VFT(a,b) a b =
 #define VFTFIRST_VAL()
 #define SAFE_VFT_ZEROS()
 
@@ -574,14 +574,14 @@
 //BAD:!!!!! CPluginManager::Alloc(PRUint32 size)
 
 //BAD:!!!!! DEFINE_API_C(int) main(NPNetscapeFuncs* nsTable, NPPluginFuncs* pluginFuncs, NPP_ShutdownUPP* unloadUpp)
-#define DEFINE_API_C(a) a 
+#define DEFINE_API_C(a) a
 
-//BAD:!!!!!     extern NS_IMPORT_(char **) environ; 
-#define NS_IMPORT_(a) a 
+//BAD:!!!!!     extern NS_IMPORT_(char **) environ;
+#define NS_IMPORT_(a) a
 
 
 //BAD:!!!!!   NS_ADDREF(*aResult = lf);
-#define NS_ADDREF(a) a 
+#define NS_ADDREF(a) a
 
 //bad: #ifdef NEVER_ENABLE_THIS_JAVASCRIPT
 //
@@ -590,14 +590,14 @@
 //bad: public:
 //bad: 	PyG_nsIComponentLoader(PyObject *instance) : PyG_Base(instance, NS_GET_IID(nsIComponentLoader)) {;}
 //BAD:!!!!! 	PYGATEWAY_BASE_SUPPORT(nsIComponentLoader, PyG_Base);
-//bad: 
+//bad:
 //bad: 	NS_DECL_NSICOMPONENTLOADER
 //bad: };
 
 
 //BAD:!!!!! 	PyObject_HEAD_INIT(&PyType_Type)
 //bad: 	0,
-#define PyObject_HEAD_INIT(a) a, 
+#define PyObject_HEAD_INIT(a) a,
 
 //bad: 			if ((val_use=PyNumber_Int(val))==NULL) BREAK_FALSE
 #define BREAK_FALSE
@@ -615,15 +615,15 @@
 #define TRACE_METHOD(a) a()
 
 //BAD:!!!!! lineto(nsFT_CONST FT_Vector *aEndPt, void *aClosure)
-#define nsFT_CONST const 
+#define nsFT_CONST const
 
 //BAD:!!!!! pascal void CursorSpinner::SpinCursor(EventLoopTimerRef inTimer, void *inUserData)
-#define pascal 
+#define pascal
 
 //BAD:!!!!! PRIVATE int binhex_encode_finishing(
 //bad: 	binhex_encode_object *p_bh_encode_obj)
 //bad: {
-#define PRIVATE 
+#define PRIVATE
 
 //BAD:!!!!! static int yy_flex_strlen YY_PROTO(( yyconst char * ));
 //and co
@@ -633,7 +633,7 @@
 
 
 //BAD:!!!!! extern "C" XULAPI int
-#define XULAPI 
+#define XULAPI
 
 //BAD:!!!!! extern "C" NS_EXPORT jboolean JNICALL
 //bad: JAVAPROXY_NATIVE(isSameXPCOMObject) (JNIEnv *env, jclass that, jobject aProxy1,

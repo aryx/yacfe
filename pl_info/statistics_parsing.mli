@@ -4,6 +4,6 @@ type parsing_stat = {
     mutable correct: int;
     mutable bad: int;
     mutable commentized: int;
-  } 
+  }
 
 val print_parsing_stat_list: ?verbose:bool -> parsing_stat list -> unit

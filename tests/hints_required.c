@@ -1,6 +1,6 @@
-#include <stdio.h> 
+#include <stdio.h>
 
-#define XXX_ICH(i, a,b) for (i = a; i < b; i++) 
+#define XXX_ICH(i, a,b) for (i = a; i < b; i++)
 
 void main()
 {

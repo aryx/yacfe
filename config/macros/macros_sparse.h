@@ -9,4 +9,4 @@
 #define END_FOR_EACH_PTR(a)
 
 #define IDENT_RESERVED(a)
-#define IDENT(a) 
+#define IDENT(a)

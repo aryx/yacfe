@@ -1,4 +1,4 @@
-// time 
+// time
 //  start  21h35: 78%
 //         22h08  87.21%
 
@@ -6,7 +6,7 @@
 // BAD:!!!!!    emit doc->progressChanged(doc, 0);
 //BAD:!!!!! public slots:
 //bad: 	void update();
-#define slots 
+#define slots
 #define signals public
 #define emit
 

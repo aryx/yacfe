@@ -1,13 +1,13 @@
-open Common 
+open Common
 
 
-type pl = 
+type pl =
   | C
   | Cplusplus
   | Java
 
 (* todo detect false C file, look for "Mode: Objective-C++" string in file ?*)
-let detect_pl_of_file file = 
+let detect_pl_of_file file =
   let (d,b,e) = Common2.dbe_of_filename file in
   match e with
   | "c" -> C

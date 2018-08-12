@@ -1,8 +1,8 @@
-// time: 
+// time:
 //  start 13h08: 86%
 //        13h28: 95.19%
 //        13h36: 95.23%
-/* main pbs: CARD16 
+/* main pbs: CARD16
  *    vector extension
  */
 
@@ -18,7 +18,7 @@
 #define SDLCALL
 
 //BAD:!!!!! __declspec(naked)
-#define __declspec(a) 
+#define __declspec(a)
 
 //BAD:!!!!!     static void *SDL_OSX_dlsym(void *dl_restrict handle,
 #define dl_restrict
@@ -48,7 +48,7 @@
 
 //bad: /* for quicksort */
 //BAD:!!!!! static int compare(_Xconst void *, _Xconst void *);
-#define _Xconst const 
+#define _Xconst const
 
 
 #define __BEGIN_DECLS
@@ -90,7 +90,7 @@
 
 
 //BAD:!!!!! GL_API void GL_APIENTRY glAlphaFunc (GLenum func, GLclampf ref);
-#define GL_API 
+#define GL_API
 #define GL_APIENTRY
 
 //bad: GLAPI void APIENTRY glBlendEquation (GLenum);
@@ -113,7 +113,7 @@
 /*
 bad: extern "C"
 bad: {
-bad: 
+bad:
 BAD:!!!!! #include "SDL_joystick.h"
 
 

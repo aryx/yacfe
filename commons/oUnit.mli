@@ -1,7 +1,7 @@
 (***********************************************************************)
 (* The OUnit library                                                   *)
 (*                                                                     *)
-(* Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008              *) 
+(* Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008              *)
 (* Maas-Maarten Zeeman.                                                *)
 
 (*
@@ -32,63 +32,63 @@ the use or other dealings in the software.
 
     To uses this library link with
       [ocamlc oUnit.cmo]
-    or 
+    or
       [ocamlopt oUnit.cmx]
- 
+
     @author Maas-Maarten Zeeman
 *)
 
-(** {5 Assertions} 
+(** {5 Assertions}
 
     Assertions are the basic building blocks of unittests. *)
 
 (** Signals a failure. This will raise an exception with the specified
-    string. 
+    string.
 
     @raise Failure to signal a failure *)
 val assert_failure : string -> 'a
 
-(** Signals a failure when bool is false. The string identifies the 
+(** Signals a failure when bool is false. The string identifies the
     failure.
-    
+
     @raise Failure to signal a failure *)
 val assert_bool : msg:string -> bool -> unit
 
-(** Shorthand for assert_bool 
+(** Shorthand for assert_bool
 
     @raise Failure to signal a failure *)
 val ( @? ) : string -> bool -> unit
 
 (** Signals a failure when the string is non-empty. The string identifies the
-    failure. 
-    
-    @raise Failure to signal a failure *) 
+    failure.
+
+    @raise Failure to signal a failure *)
 val assert_string : string -> unit
 
 
 (** Compares two values, when they are not equal a failure is signaled.
-    The cmp parameter can be used to pass a different compare function. 
-    This parameter defaults to ( = ). The optional printer can be used 
-    to convert the value to string, so a nice error message can be 
-    formatted. When msg is also set it can be used to identify the failure. 
+    The cmp parameter can be used to pass a different compare function.
+    This parameter defaults to ( = ). The optional printer can be used
+    to convert the value to string, so a nice error message can be
+    formatted. When msg is also set it can be used to identify the failure.
 
     @raise Failure description *)
-val assert_equal : ?cmp:('a -> 'a -> bool) ->  ?printer:('a -> string) -> 
+val assert_equal : ?cmp:('a -> 'a -> bool) ->  ?printer:('a -> string) ->
                    ?msg:string -> 'a -> 'a -> unit
 
-(** Asserts if the expected exception was raised. When msg is set it can 
+(** Asserts if the expected exception was raised. When msg is set it can
     be used to identify the failure
 
     @raise Failure description *)
 val assert_raises : ?msg:string -> exn -> (unit -> 'a) -> unit
 
-(** {5 Skipping tests } 
-  
+(** {5 Skipping tests }
+
    In certain condition test can be written but there is no point running it, because they
    are not significant (missing OS features for example). In this case this is not a failure
    nor a success. Following function allow you to escape test, just as assertion but without
    the same error status.
-  
+
    A test skipped is counted as success. A test todo is counted as failure.  *)
 
 (** [skip cond msg] If [cond] is true, skip the test for the reason explain in [msg].
@@ -139,9 +139,9 @@ val (>:::) : string -> test list -> test
 
    Examples:
 
-   - ["test1" >: TestCase((fun _ -> ()))] =>  
+   - ["test1" >: TestCase((fun _ -> ()))] =>
    [TestLabel("test2", TestCase((fun _ -> ())))]
-   - ["test2" >:: (fun _ -> ())] => 
+   - ["test2" >:: (fun _ -> ())] =>
    [TestLabel("test2", TestCase((fun _ -> ())))]
 
    - ["test-suite" >::: ["test2" >:: (fun _ -> ());]] =>
@@ -166,7 +166,7 @@ type path = node list (** The path to the test (in reverse order). *)
 (** Make a string from a node *)
 val string_of_node : node -> string
 
-(** Make a string from a path. The path will be reversed before it is 
+(** Make a string from a path. The path will be reversed before it is
     tranlated into a string *)
 val string_of_path : path -> string
 
@@ -183,9 +183,9 @@ type test_result =
   | RSkip of path * string
   | RTodo of path * string
 
-(** Events which occur during a test run *)   
+(** Events which occur during a test run *)
 type test_event =
-    EStart of path 
+    EStart of path
   | EEnd of path
   | EResult of test_result
 
@@ -196,7 +196,7 @@ val perform_test : (test_event -> 'a) -> test -> test_result list
     during the test. *)
 val run_test_tt : ?verbose:bool -> test -> test_result list
 
-(** Main version of the text based test runner. It reads the supplied command 
+(** Main version of the text based test runner. It reads the supplied command
     line arguments to set the verbose level and limit the number of test to run
   *)
 val run_test_tt_main : test -> test_result list

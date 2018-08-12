@@ -11,7 +11,7 @@ VERSION=$(shell cat globals/config.ml |grep version |perl -p -e 's/.*"(.*)".*/$$
 ##############################################################################
 TOP=$(shell pwd)
 
-SRC=test.ml main.ml 
+SRC=test.ml main.ml
 
 TARGET=yacfe
 PROGS=yacfe
@@ -72,37 +72,37 @@ BYTECODE_STATIC=-custom
 # Top rules
 ##############################################################################
 
-all: 
-	$(MAKE) rec 
-	$(MAKE) $(PROGS) 
-opt: 
-	$(MAKE) rec.opt 
-	$(MAKE) $(OPTPROGS) 
+all:
+	$(MAKE) rec
+	$(MAKE) $(PROGS)
+opt:
+	$(MAKE) rec.opt
+	$(MAKE) $(OPTPROGS)
 all.opt: opt
 top: $(EXEC).top
 
 #note: old: was before all: rec $(EXEC) ... but can not do that cos make -j20
 #could try to compile $(EXEC) before rec. So here force sequentiality.
 rec:
-	set -e; for i in $(MAKESUBDIRS); do $(MAKE) -C $$i all || exit 1; done 
+	set -e; for i in $(MAKESUBDIRS); do $(MAKE) -C $$i all || exit 1; done
 rec.opt:
-	set -e; for i in $(MAKESUBDIRS); do $(MAKE) -C $$i all.opt || exit 1; done 
+	set -e; for i in $(MAKESUBDIRS); do $(MAKE) -C $$i all.opt || exit 1; done
 
 $(EXEC): $(LIBS) $(OBJS)
 	$(OCAMLC) $(BYTECODE_STATIC) -o $@ $(SYSLIBS) $^
 
-$(EXEC).opt: $(LIBS:.cma=.cmxa) $(OPTOBJS) 
+$(EXEC).opt: $(LIBS:.cma=.cmxa) $(OPTOBJS)
 	$(OCAMLOPT) $(STATIC) -o $@ $(SYSLIBS:.cma=.cmxa) $^
 
 
-$(EXEC).top: $(LIBS) $(OBJS) 
+$(EXEC).top: $(LIBS) $(OBJS)
 	$(OCAMLMKTOP) -o $@ $(SYSLIBS) $^
 
 clean::
 	rm -f $(EXEC) $(EXEC).opt $(EXEC).top
 
 clean::
-	set -e; for i in $(MAKESUBDIRS); do $(MAKE) -C $$i clean; done 
+	set -e; for i in $(MAKESUBDIRS); do $(MAKE) -C $$i clean; done
 
 depend::
 	set -e; for i in $(MAKESUBDIRS); do $(MAKE) -C $$i depend; done
@@ -171,19 +171,19 @@ OCAMLVERSION=$(shell ocaml -version |perl -p -e 's/.*version (.*)/$$1/;')
 #  make package
 #  make website
 
-# To test you can try compile and run yacfe from different instances 
-# like my ~/c-yacfe, ~/release/yacfe, and the /tmp/yacfe-0.X 
-# downloaded from the website. 
+# To test you can try compile and run yacfe from different instances
+# like my ~/c-yacfe, ~/release/yacfe, and the /tmp/yacfe-0.X
+# downloaded from the website.
 
 # For 'make srctar' it must done from a clean
-# repo such as ~/release/yacfe. 
+# repo such as ~/release/yacfe.
 # For the 'make bintar' I can do it from my original repo.
 
 
-package: 
-	make srctar 
-#	make bintar 
-#	make staticbintar 
+package:
+	make srctar
+#	make bintar
+#	make staticbintar
 #	make bytecodetar
 
 srctar:
@@ -215,9 +215,9 @@ bytecodetar: all
 	rm -f $(TMP)/$(PACKAGE)
 
 clean::
-	rm -f $(PACKAGE) 
-	rm -f $(PACKAGE)-bin-x86.tgz 
-	rm -f $(PACKAGE)-bin-x86-static.tgz 
+	rm -f $(PACKAGE)
+	rm -f $(PACKAGE)-bin-x86.tgz
+	rm -f $(PACKAGE)-bin-x86-static.tgz
 	rm -f $(PACKAGE)-bin-bytecode-$(OCAMLVERSION).tgz
 
 ocamlversion:
@@ -247,7 +247,7 @@ website:
 #TXT=$(wildcard *.txt)
 syncwiki:
 #	unison ~/public_html/wiki/wiki-LFS/data/pages/ docs/wiki/
-#	set -e; for i in $(TXT); do unison $$i docs/wiki/$$i; done 
+#	set -e; for i in $(TXT); do unison $$i docs/wiki/$$i; done
 
 
 ##############################################################################
@@ -267,17 +267,17 @@ clean::
 
 test:
 # -parse_c big-files/
-# -parse_c pb_parsing/ 
+# -parse_c pb_parsing/
 # -parse_c pb_parsing_ecoop/
 
 PARSECMD=./spatch.opt -D standard.h -filter_define_error -filter_classic_passed \
 	  -dir
 
-testparsing2: 
-	$(PARSECMD) -parse_c ~/kernels/git/linux-2.6/sound/ > /tmp/parse_sound_filter 2>&1 
-	$(PARSECMD) -parse_c ~/kernels/git/linux-2.6/drivers/  > /tmp/parse_drivers_filter 2>&1 
-	$(PARSECMD) -parse_c ~/kernels/git/linux-2.6/  > /tmp/parse_c_filter 2>&1 
-	$(PARSECMD) -parse_h ~/kernels/git/linux-2.6/  > /tmp/parse_h_filter 2>&1 
+testparsing2:
+	$(PARSECMD) -parse_c ~/kernels/git/linux-2.6/sound/ > /tmp/parse_sound_filter 2>&1
+	$(PARSECMD) -parse_c ~/kernels/git/linux-2.6/drivers/  > /tmp/parse_drivers_filter 2>&1
+	$(PARSECMD) -parse_c ~/kernels/git/linux-2.6/  > /tmp/parse_c_filter 2>&1
+	$(PARSECMD) -parse_h ~/kernels/git/linux-2.6/  > /tmp/parse_h_filter 2>&1
 	$(PARSECMD) -parse_ch ~/kernels/git/linux-2.6/ > /tmp/parse_ch_filter 2>&1
 
 testparsing3:
@@ -294,7 +294,7 @@ testparsing4:
 cp_4mpi:
 	echo no copy needed yet
 
-test_mpi: opt yacfe.opt cp_4mpi 
+test_mpi: opt yacfe.opt cp_4mpi
 	time mpirun -p4pg env-machines-onlyme.pg ./yacfe.opt -parse_all /home/pad/software-src/devel/sparse-git
 
 ##############################################################################
@@ -310,7 +310,7 @@ test_mpi: opt yacfe.opt cp_4mpi
 .ml.cmx:
 	$(OCAMLOPT)  -c $<
 
-.ml.mldepend: 
+.ml.mldepend:
 	$(OCAMLC) -i $<
 
 clean::

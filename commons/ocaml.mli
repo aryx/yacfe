@@ -1,5 +1,5 @@
 
-(* 
+(*
  * OCaml hacks to support reflection (works with ocamltarzan).
  *
  * See also sexp.ml, json.ml, and xml.ml for other "reflective" techniques.
@@ -7,7 +7,7 @@
 
 (* OCaml core type definitions (no objects, no modules) *)
 type t =
-  | Unit 
+  | Unit
   | Bool | Float | Char | String | Int
 
   | Tuple of t list
@@ -20,9 +20,9 @@ type t =
 
   | Apply of string * t
 
-  (* special cases of Apply *) 
+  (* special cases of Apply *)
   | Option of t
-  | List of t 
+  | List of t
 
   | TTODO of string
 
@@ -30,8 +30,8 @@ val add_new_type: string -> t -> unit
 val get_type: string -> t
 
 (* OCaml values (a restricted form of expressions) *)
-type v = 
-  | VUnit 
+type v =
+  | VUnit
   | VBool of bool | VFloat of float | VInt of int
   | VChar of char | VString of string
 
@@ -42,7 +42,7 @@ type v =
   | VVar of (string * int64)
   | VArrow of string
 
-  (* special cases *) 
+  (* special cases *)
   | VNone | VSome of v
   | VList of v list
   | VRef of v
@@ -59,7 +59,7 @@ val vof_list   : ('a -> v) -> 'a list -> v
 val vof_option : ('a -> v) -> 'a option -> v
 val vof_ref    : ('a -> v) -> 'a ref -> v
 val vof_either    : ('a -> v) -> ('b -> v) -> ('a, 'b) Common.either -> v
-val vof_either3    : ('a -> v) -> ('b -> v) -> ('c -> v) -> 
+val vof_either3    : ('a -> v) -> ('b -> v) -> ('c -> v) ->
   ('a, 'b, 'c) Common.either3 -> v
 
 val int_ofv:    v -> int
@@ -93,9 +93,9 @@ val load_json: Common.filename -> Json_type.json_type
 *)
 
 (* mapper/visitor *)
-val map_v: 
-  f:( k:(v -> v) -> v -> v) -> 
-  v -> 
+val map_v:
+  f:( k:(v -> v) -> v -> v) ->
+  v ->
   v
 
 (* other building blocks, used by code generated using ocamltarzan *)
@@ -108,10 +108,10 @@ val map_of_string: string -> string
 val map_of_ref: 'a -> 'b -> 'b
 val map_of_option: ('a -> 'b) -> 'a option -> 'b option
 val map_of_list: ('a -> 'a) -> 'a list -> 'a list
-val map_of_either: 
+val map_of_either:
   ('a -> 'b) -> ('c -> 'd) -> ('a, 'c) Common.either -> ('b, 'd) Common.either
-val map_of_either3: 
-  ('a -> 'b) -> ('c -> 'd) -> ('e -> 'f) -> 
+val map_of_either3:
+  ('a -> 'b) -> ('c -> 'd) -> ('e -> 'f) ->
   ('a, 'c, 'e) Common.either3 -> ('b, 'd, 'f) Common.either3
 
 (* pure visitor building blocks, used by code generated using ocamltarzan *)
@@ -122,9 +122,9 @@ val v_string: string -> unit
 val v_option: ('a -> unit) -> 'a option -> unit
 val v_list: ('a -> unit) -> 'a list -> unit
 val v_ref: ('a -> unit) -> 'a ref -> unit
-val v_either: 
-  ('a -> unit) -> ('b -> unit) -> 
+val v_either:
+  ('a -> unit) -> ('b -> unit) ->
   ('a, 'b) Common.either -> unit
-val v_either3: 
+val v_either3:
   ('a -> unit) -> ('b -> unit) -> ('c -> unit) ->
   ('a, 'b, 'c) Common.either3 -> unit

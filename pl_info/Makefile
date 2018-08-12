@@ -4,12 +4,12 @@
 TARGET=code_info
 
 # ast_cocci.ml and unparse_cocci2.ml should be deleted in the futur
-# to make parsing_c really independent of coccinelle. 
+# to make parsing_c really independent of coccinelle.
 # control_flow_c have also coccinelle dependencies.
 SRC= programming_language.ml ast_generic.ml place_code.ml parse_info.ml \
      statistics_code.ml statistics_parsing.ml
 
-SYSLIBS= str.cma unix.cma 
+SYSLIBS= str.cma unix.cma
 LIBS=../commons/commons.cma
 INCLUDES= -I ../commons
 
@@ -17,9 +17,9 @@ INCLUDES= -I ../commons
 # Generic variables
 ##############################################################################
 
-#for warning:  -w A 
+#for warning:  -w A
 #for profiling:  -p -inline 0   with OCAMLOPT
-OCAMLC=ocamlc$(OPTBIN) -g -dtypes   $(INCLUDES) 
+OCAMLC=ocamlc$(OPTBIN) -g -dtypes   $(INCLUDES)
 OCAMLOPT=ocamlopt$(OPTBIN)   $(INCLUDES) $(OPTFLAGS)
 OCAMLLEX=ocamllex$(OPTBIN) #-ml
 OCAMLYACC=ocamlyacc -v
@@ -63,7 +63,7 @@ clean::
 .ml.cmx:
 	$(OCAMLOPT) -c $<
 
-.ml.mldepend: 
+.ml.mldepend:
 	$(OCAMLC) -i $<
 
 clean::

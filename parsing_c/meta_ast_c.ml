@@ -24,12 +24,12 @@ let vof_posl (v1, v2) =
   let v1 = Ocaml.vof_int v1
   and v2 = Ocaml.vof_int v2
   in Ocaml.VTuple [ v1; v2 ]
-  
+
 let vof_virtual_position (v1, v2) =
   let v1 = Parse_info.vof_t v1
   and v2 = Ocaml.vof_int v2
   in Ocaml.VTuple [ v1; v2 ]
-  
+
 let vof_parse_info =
   function
   | OriginTok v1 ->
@@ -46,12 +46,12 @@ let vof_parse_info =
       let v1 = Parse_info.vof_t v1
       in Ocaml.VSum (("AbstractLineTok", [ v1 ]))
 
-let rec vof_info x = 
+let rec vof_info x =
 (*
   if !_current_precision.M.full_info
   then Parse_info.vof_info x
   else if !_current_precision.M.token_info
-       then 
+       then
         Ocaml.VDict [
           "line", Ocaml.VInt (Parse_info.line_of_info x);
           "col", Ocaml.VInt (Parse_info.col_of_info x);
@@ -59,7 +59,7 @@ let rec vof_info x =
       else Ocaml.VUnit
 *)
   Ocaml.VUnit
-  
+
 let vof_il v = Ocaml.vof_list vof_info v
 
 let vof_wrap _of_a (v1, v2) =
@@ -891,4 +891,4 @@ and vof_comment_and_relative_pos { minfo = v_minfo; mpos = v_mpos } =
   let bnd = ("minfo", arg) in let bnds = bnd :: bnds in Ocaml.VDict bnds
 and vof_comment v = Parse_info.vof_t v
 and vof_com v = Ocaml.vof_ref (Ocaml.vof_list vof_comment) v
-  
+

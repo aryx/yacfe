@@ -1,7 +1,7 @@
 open Common
 
 (*****************************************************************************)
-(* mostly a copy paste of parsing_cocci/pretty_print_cocci.ml 
+(* mostly a copy paste of parsing_cocci/pretty_print_cocci.ml
  * todo?: try to factorize ?
  *)
 (*****************************************************************************)
@@ -10,8 +10,8 @@ module Ast = Ast_cocci
 
 let term s = Ast.unwrap_mcode s
 
-(* or perhaps can have in plus, for instance a Disj, but those Disj must be 
- *  handled by interactive tool (by proposing alternatives) 
+(* or perhaps can have in plus, for instance a Disj, but those Disj must be
+ *  handled by interactive tool (by proposing alternatives)
  *)
 exception CantBeInPlus
 
@@ -180,23 +180,23 @@ in
 let rec ident i =
   match Ast.unwrap i with
     Ast.Id(name) -> mcode print_string name
-  | Ast.MetaId(name,_,_,_) -> 
+  | Ast.MetaId(name,_,_,_) ->
       handle_metavar name (function
         | (Ast_c.MetaIdVal id) -> pr id
         | _ -> raise Impossible
-        ) 
-  | Ast.MetaFunc(name,_,_,_) -> 
+        )
+  | Ast.MetaFunc(name,_,_,_) ->
       handle_metavar name (function
         | (Ast_c.MetaFuncVal id) -> pr id
         | _ -> raise Impossible
-        ) 
-  | Ast.MetaLocalFunc(name,_,_,_) -> 
+        )
+  | Ast.MetaLocalFunc(name,_,_,_) ->
       handle_metavar name (function
         | (Ast_c.MetaLocalFuncVal id) -> pr id
         | _ -> raise Impossible
         )
 
-  | Ast.OptIdent(_) | Ast.UniqueIdent(_) -> 
+  | Ast.OptIdent(_) | Ast.UniqueIdent(_) ->
       raise CantBeInPlus
 
 in
@@ -256,19 +256,19 @@ let rec expression e =
       mcode print_string rp
   | Ast.TypeExp(ty) -> fullType ty
 
-  | Ast.MetaErr(name,_,_,_) -> 
+  | Ast.MetaErr(name,_,_,_) ->
       failwith "metaErr not handled"
 
   | Ast.MetaExpr (name,_,_,_typedontcare,_formdontcare,_) ->
       handle_metavar name  (function
-        | Ast_c.MetaExprVal exp -> 
+        | Ast_c.MetaExprVal exp ->
             pretty_print_c.Pretty_print_c.expression exp
         | _ -> raise Impossible
       )
 
-  | Ast.MetaExprList (name,_,_,_) -> 
+  | Ast.MetaExprList (name,_,_,_) ->
       handle_metavar name  (function
-        | Ast_c.MetaExprListVal args -> 
+        | Ast_c.MetaExprListVal args ->
             pretty_print_c.Pretty_print_c.arg_list args
         | _ -> raise Impossible
       )
@@ -302,7 +302,7 @@ let rec expression e =
       then mcode print_string dots
       else raise CantBeInPlus
 
-  | Ast.OptExp(exp) | Ast.UniqueExp(exp) -> 
+  | Ast.OptExp(exp) | Ast.UniqueExp(exp) ->
       raise CantBeInPlus
 
 and  unaryOp = function
@@ -401,9 +401,9 @@ and typeC ty =
       dots force_newline declaration decls;
       mcode print_string rb
   | Ast.TypeName(name)-> mcode print_string name
-  | Ast.MetaType(name,_,_) -> 
+  | Ast.MetaType(name,_,_) ->
       handle_metavar name  (function
-          Ast_c.MetaTypeVal exp -> 
+          Ast_c.MetaTypeVal exp ->
             pretty_print_c.Pretty_print_c.ty exp
         | _ -> raise Impossible)
 
@@ -512,7 +512,7 @@ and declaration d =
       mcode print_string sem
   | Ast.DisjDecl(_) | Ast.MetaDecl(_,_,_) -> raise CantBeInPlus
   | Ast.Ddots(_,_) -> raise CantBeInPlus
-  | Ast.OptDecl(decl)  | Ast.UniqueDecl(decl) -> 
+  | Ast.OptDecl(decl)  | Ast.UniqueDecl(decl) ->
       raise CantBeInPlus
 
 (* --------------------------------------------------------------------- *)
@@ -520,7 +520,7 @@ and declaration d =
 
 and initialiser nlcomma i =
   match Ast.unwrap i with
-    Ast.MetaInit(name,_,_) -> 
+    Ast.MetaInit(name,_,_) ->
       handle_metavar name  (function
           Ast_c.MetaInitVal ini ->
             pretty_print_c.Pretty_print_c.init ini
@@ -564,9 +564,9 @@ and parameterTypeDef p =
   | Ast.Param(ty,Some id) -> print_named_type ty id
   | Ast.Param(ty,None) -> fullType ty
 
-  | Ast.MetaParam(name,_,_) -> 
+  | Ast.MetaParam(name,_,_) ->
       failwith "not handling MetaParam"
-  | Ast.MetaParamList(name,_,_,_) -> 
+  | Ast.MetaParamList(name,_,_,_) ->
       failwith "not handling MetaParamList"
 
   | Ast.PComma(cm) -> mcode print_string cm; print_space()
@@ -660,7 +660,7 @@ and rule_elem arity re =
   | Ast.Goto(goto,l,sem) ->
       mcode print_string goto; ident l; mcode print_string sem
   | Ast.Return(ret,sem) ->
-      print_string arity; mcode print_string ret; 
+      print_string arity; mcode print_string ret;
       mcode print_string sem
   | Ast.ReturnExpr(ret,exp,sem) ->
       print_string arity; mcode print_string ret; print_string " ";
@@ -673,7 +673,7 @@ and rule_elem arity re =
   | Ast.Include(inc,s) ->
       mcode print_string inc; print_string " "; mcode inc_file s
   | Ast.DefineHeader(def,id,params) ->
-      mcode print_string def; print_string " "; ident id; 
+      mcode print_string def; print_string " "; ident id;
       print_define_parameters params
   | Ast.Default(def,colon) ->
       mcode print_string def; mcode print_string colon; print_string " "
@@ -818,7 +818,7 @@ let rec statement arity s =
 	 force_newline())
       else raise CantBeInPlus
 
-  | Ast.OptStm(s) | Ast.UniqueStm(s) -> 
+  | Ast.OptStm(s) | Ast.UniqueStm(s) ->
       raise CantBeInPlus
 
 and whencode notfn alwaysfn = function
@@ -853,7 +853,7 @@ let top_level t =
   | Ast.ERRORWORDS(exps) -> raise CantBeInPlus
 in
 
-(*    
+(*
 let rule =
   print_between (function _ -> force_newline(); force_newline()) top_level
 in
@@ -894,7 +894,7 @@ let rec pp_any = function
   | Ast.ConstVolTag(x) -> const_vol x; false
   | Ast.Pragma(xs) -> print_between force_newline print_string xs; false
   | Ast.Token(x,None) -> print_string x; if_open_brace x
-  | Ast.Token(x,Some info) -> 
+  | Ast.Token(x,Some info) ->
       mcode
 	(function x ->
 	  (match x with
@@ -911,7 +911,7 @@ let rec pp_any = function
 
   | Ast.Code(x) -> let _ = top_level x in false
 
-  (* this is not '...', but a list of expr/statement/params, and 
+  (* this is not '...', but a list of expr/statement/params, and
      normally there should be no '...' inside them *)
   | Ast.ExprDotsTag(x) -> dots (function _ -> ()) expression x; false
   | Ast.ParamDotsTag(x) -> parameter_list x; false
@@ -929,7 +929,7 @@ in
   (* todo? imitate what is in pretty_print_cocci ? *)
   match xxs with
     [] -> ()
-  | x::xs -> 
+  | x::xs ->
       (* for many tags, we must not do a newline before the first '+' *)
       let isfn s =
 	match Ast.unwrap s with Ast.FunDecl _ -> true | _ -> false in

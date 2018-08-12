@@ -27,7 +27,7 @@ val save_typedef_state : unit -> unit
 val restore_typedef_state : unit -> unit
 
 
-type context = 
+type context =
   | InTopLevel
   | InFunction
   | InStruct
@@ -37,7 +37,7 @@ type context =
 
 val is_top_or_struct : context -> bool
 
-type lexer_hint = { 
+type lexer_hint = {
   mutable context_stack: context Common.stack;
  }
 

@@ -4,7 +4,7 @@ open Common
 (* Purpose *)
 (*****************************************************************************)
 
-(* This module handle the IO, the special name of info files. 
+(* This module handle the IO, the special name of info files.
  * the pure algorithmic stuff is in parsing_c/
  *)
 
@@ -13,9 +13,9 @@ open Common
 (*****************************************************************************)
 
 (* In addition to flags that can be tweaked via -xxx options (cf the
- * full list of options in the "the options" section below), this 
- * program also depends on the external file 
- * - macro files in macros/standard.h, 
+ * full list of options in the "the options" section below), this
+ * program also depends on the external file
+ * - macro files in macros/standard.h,
  * - and typing environment in environment_unix.h
  * Then can be set via -macro_file, -envir_file.
  *)
@@ -33,26 +33,26 @@ let macro_file = ref ""
 (* Helpers *)
 (*****************************************************************************)
 
-let parse_and_comments_of_file file = 
-  let (program2, parsing_stat) = 
+let parse_and_comments_of_file file =
+  let (program2, parsing_stat) =
     Parse_c.parse_c_and_cpp file in
-  
+
   (* let program = Parse_c.program_of_program2 program2 in *)
 
       (* let _estat = Statistics_c.statistics_of_program program in *)
-  
-  program2 +> List.iter (fun (ast, (s, toks)) -> 
+
+  program2 +> List.iter (fun (ast, (s, toks)) ->
     Parse_c.print_commentized toks
   )
-       
+
 
 (*****************************************************************************)
 (* Main action *)
 (*****************************************************************************)
 
-let main_action xs = 
+let main_action xs =
   match xs with
-  | x::xs -> 
+  | x::xs ->
         (* CQL *)
 
         let ext = "[ch]" in
@@ -64,9 +64,9 @@ let main_action xs =
         (* let comment_stat_list = ref [] in *)
         (* let entities_stat_list = ref [] in *)
 
-        Common2.check_stack_nbfiles nbfiles; 
+        Common2.check_stack_nbfiles nbfiles;
 
-        files +> Common.index_list +> List.iter (fun (file, i) -> 
+        files +> Common.index_list +> List.iter (fun (file, i) ->
 
           pr2 (spf "PARSING: %s (%d/%d)" file i nbfiles);
 
@@ -76,10 +76,10 @@ let main_action xs =
            * - comments_extraction check
            *)
 
-          let (program, parsing_stat) = 
+          let (program, parsing_stat) =
             Parse_c.parse_c_and_cpp file in
 
-          let (_comments_packed, _allx, _pinfo_mapping, _entities_stat) = 
+          let (_comments_packed, _allx, _pinfo_mapping, _entities_stat) =
             (* TOREPUT Comment_annotater.comments_of_program program *)
             (), (), (), ()
           in
@@ -116,10 +116,10 @@ let main_action xs =
 
 let score_path = "/home/pad/c-yacfe/tmp"
 
-let parse_one_file (file, i, nbfiles) = 
+let parse_one_file (file, i, nbfiles) =
   pr2 (spf "PARSING: %s (%d/%d)" file i nbfiles);
 
-  let (stat) = 
+  let (stat) =
     parse_and_comments_of_file file
   in
   file, stat
@@ -128,10 +128,10 @@ let parse_one_file (file, i, nbfiles) =
 let parse_all xs =
 
 (*
-  let dirname_opt = 
+  let dirname_opt =
     match xs with
     | [x] when Common2.is_directory x -> Some x
-    | xs -> 
+    | xs ->
         Some (xs +> Common.join "" +> Common2.md5sum_of_string)
   in
 *)
@@ -154,15 +154,15 @@ let parse_all xs =
   let newscore  = Common2.empty_score () in
   let parsing_stat_list = ref [] in
 
-  let biglist = (fun () -> 
+  let biglist = (fun () ->
 
-    let files = 
+    let files =
       if (xs +> List.for_all Common2.is_directory)
       then
         let ext = "[ch]" in
         let ext2 = "java" in
         let ext3 = ".*\\.\\(cpp\\|cc\\|C\\|cxx\\|hpp\\|hxx\\)$" in
-        
+
         let files1 = Common2.files_of_dir_or_files ext (xs) in
         let files2 = Common2.files_of_dir_or_files ext2 (xs) in
         let files3 = Common2.files_of_dir_or_files_no_vcs_post_filter ext3 xs in
@@ -171,47 +171,47 @@ let parse_all xs =
       else xs
     in
     let nbfiles = List.length files in
-    Common2.check_stack_nbfiles nbfiles; 
+    Common2.check_stack_nbfiles nbfiles;
 
     files +> Common.index_list +> List.map (fun (i,j) -> (i,j,nbfiles))
   )
   in
   let map_ex = parse_one_file in
 
-  let reduce_ex = (fun xxs -> 
+  let reduce_ex = (fun xxs ->
     let stats_parse = xxs in
 
-    stats_parse +> List.iter (fun (file, stat) -> 
-      let s = 
-        spf "bad = %d, timeout = %B" 
+    stats_parse +> List.iter (fun (file, stat) ->
+      let s =
+        spf "bad = %d, timeout = %B"
           stat.Statistics_parsing.bad stat.Statistics_parsing.have_timeout
       in
-      
+
       Common.push stat  parsing_stat_list;
 
-      if stat.Statistics_parsing.bad = 0 && 
+      if stat.Statistics_parsing.bad = 0 &&
         not stat.Statistics_parsing.have_timeout
       then Hashtbl.add newscore file (Common2.Ok)
       else Hashtbl.add newscore file (Common2.Pb s)
     );
 
- 
-    dirname_opt +> Common.do_option (fun dirname -> 
+
+    dirname_opt +> Common.do_option (fun dirname ->
       pr2 "--------------------------------";
       pr2 "regression testing  information";
       pr2 "--------------------------------";
       let str = Str.global_replace (Str.regexp "/") "__" dirname in
       let def = if !Flag_parsing_c.filter_define_error then "_def_" else "" in
       let ext = "_all_" in
-      Common2.regression_testing newscore 
+      Common2.regression_testing newscore
         (Filename.concat score_path
             ("score_parsing__" ^str ^ def ^ ext ^ ".marshalled"))
     );
-    
+
     Common2.pr2_xxxxxxxxxxxxxxxxx();
     Parsing_stat.print_stat_numbers ();
     Statistics_parsing.print_parsing_stat_list !parsing_stat_list;
-    
+
 
     !parsing_stat_list, newscore
   ) in
@@ -232,14 +232,14 @@ let yacfe_extra_actions () = [
 (*****************************************************************************)
 let (++) = (@)
 
-let all_actions () = 
+let all_actions () =
    yacfe_extra_actions() ++
    Test.actions() ++
    Test_parsing_c.actions() ++
 
    []
 
-let options () = 
+let options () =
   Flag_parsing_c.cmdline_flags_macrofile () ++
   Flag_parsing_c.cmdline_flags_envfile () ++
   Flag_parsing_c.cmdline_flags_cpp () ++
@@ -250,7 +250,7 @@ let options () =
   Flag_parsing_c.cmdline_flags_checks () ++
 
   [
-    "-macro_file", Arg.Set_string macro_file, 
+    "-macro_file", Arg.Set_string macro_file,
     " <file>";
   ] ++
   Common.options_of_actions action (all_actions()) ++
@@ -258,33 +258,33 @@ let options () =
   Common2.cmdline_flags_verbose () ++
   Common2.cmdline_flags_other () ++
   [
-  "-version",   Arg.Unit (fun () -> 
+  "-version",   Arg.Unit (fun () ->
     pr2 (spf "yacfe version: %s" Config.version);
     exit 0;
-  ), 
+  ),
     "  guess what";
 
   (* this can not be factorized in Common *)
-  "-date",   Arg.Unit (fun () -> 
+  "-date",   Arg.Unit (fun () ->
     pr2 "version: $Date: 2008/10/26 00:44:57 $";
     raise (Common.UnixExit 0)
-    ), 
+    ),
   "   guess what";
   ]
 
- 
+
 (*****************************************************************************)
 (* Main entry point *)
 (*****************************************************************************)
 
-let main () = 
+let main () =
   (*Common_extra.set_link(); *)
   (*let argv = Features.Distribution.mpi_adjust_argv Sys.argv in *)
   let argv = Sys.argv in
 
 
-  let usage_msg = 
-    "Usage: " ^ Filename.basename Sys.argv.(0) ^ 
+  let usage_msg =
+    "Usage: " ^ Filename.basename Sys.argv.(0) ^
       " [options] <file or dir> " ^ "\n" ^ "Options are:"
   in
   (* does side effect on many global flags *)
@@ -293,46 +293,46 @@ let main () =
   (* must be done after Arg.parse, because -macro_file can set it *)
   Parse_c.init_defs_builtins !Flag_parsing_c.std_h;
 
-  if !macro_file <> "" 
+  if !macro_file <> ""
   then Parse_c.init_defs !macro_file;
 
   Type_annoter_c.init_env !Flag_parsing_c.std_envir;
 
   Cpp_ast_c.show_cpp_i_opts !Flag_parsing_c.cpp_i_opts;
   Cpp_ast_c.show_cpp_d_opts !Flag_parsing_c.cpp_d_opts;
-    
+
   (* must be done after Arg.parse, because Common.profile is set by it *)
-  Common.profile_code "Main total" (fun () -> 
+  Common.profile_code "Main total" (fun () ->
 
     (match args with
-    
+
     (* --------------------------------------------------------- *)
     (* actions, useful to debug subpart *)
     (* --------------------------------------------------------- *)
-    | xs when List.mem !action (Common.action_list (all_actions())) -> 
+    | xs when List.mem !action (Common.action_list (all_actions())) ->
         Common.do_action !action xs (all_actions())
 
-    | _ when not (Common.null_string !action) -> 
+    | _ when not (Common.null_string !action) ->
         failwith ("unrecognized action or wrong params: " ^ !action)
 
     (* --------------------------------------------------------- *)
     (* main entry *)
     (* --------------------------------------------------------- *)
-    | x::xs -> 
+    | x::xs ->
         main_action (x::xs)
 
     (* --------------------------------------------------------- *)
     (* empty entry *)
     (* --------------------------------------------------------- *)
-    | [] -> 
-        Common.usage usage_msg (options()); 
+    | [] ->
+        Common.usage usage_msg (options());
         failwith "too few arguments"
-          
+
     )
   )
 
 (*****************************************************************************)
 let _ =
-  Common.main_boilerplate (fun () -> 
+  Common.main_boilerplate (fun () ->
     main ();
   )

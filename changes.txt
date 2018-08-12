@@ -18,13 +18,13 @@ and will enable the -dump_c
 
 * 0.3
 
-** Documentation: 
-- extended readme.txt to explain how to quickly evaluate how much yacfe 
+** Documentation:
+- extended readme.txt to explain how to quickly evaluate how much yacfe
   can parse your C source code
 - improve yacfe-internal.pdf (based on CC'09 anonymous reviewers feedback).
 
 ** Language:
-- reorganize the way we parse C identifiers, especially concatenated cpp 
+- reorganize the way we parse C identifiers, especially concatenated cpp
   identifiers as in a##b. This may lead to some regressions as we may
   not parse as much code as before.
 - allow for with a declartion in the first header element, as in C++
@@ -40,7 +40,7 @@ and will enable the -dump_c
   such a problematic identifier. Helps to build a macro configuration file.
   (suggested by a CC'09 anonymous reviewer).
 - better handling of cpp "constructed" identifiers as in a##b, that in
-  the futur will make it easier to match over those idents. 
+  the futur will make it easier to match over those idents.
   cf tests/pb_parsing_macro.c. Thanks to Ali-Erdem Ozcan for pointing
   out the problem. A new "parsing hack hint" is also available:
   YACFE_IDENT_BUILDER, cf standard.h.
@@ -51,12 +51,12 @@ and will enable the -dump_c
 - new semantics for the -macro_file option, by default now expand macros
   only when necessary. To force use the -macro_file_builtins option instead.
 - a new -extract_macros command line action to help the parser. Works with
-  the -macro_file option. e.g. 
+  the -macro_file option. e.g.
     $ ./spatch -extract_macros ~/linux > /tmp/alldefs.h
     $ ./spatch -macro_file /tmp/alldefs.h -sp_file foo.cocci -dir ~/linux
-- better parsing of declare macro at toplevel and in structure. 
+- better parsing of declare macro at toplevel and in structure.
   cf -text xfield
-- handling of special coccinelle comments 
+- handling of special coccinelle comments
   /* {{coccinelle:skip_start}} */ and
   /* {{coccinelle:skip_end}} */
   allowing to give more hints to the C parser.
@@ -64,7 +64,7 @@ and will enable the -dump_c
 
 ** Applications:
 - GUI a la lxr and kscope that internally also uses glimpse and SmPL queries.
-- advanced code visualizer using semantic information to give visual 
+- advanced code visualizer using semantic information to give visual
   feedbacks (function pointer expression, globals in bigger size, multi_def
   functions underlines, etc)
 - caller/callee protocol checker
@@ -97,11 +97,11 @@ and will enable the -dump_c
   and handling of union and anonymous nested structure
   => on sparse now get 95% of typing coverage (vs 30% in yacfe 0.2)
 - allowing back typedef names for fieldname
-- better parsing of declare macro at toplevel and in structure. 
+- better parsing of declare macro at toplevel and in structure.
   cf -text xfield
 - for type inference for an assignment, take the type of the right-hand
   side expression, not the type of the assigned variable
-- consider the ident tokens also in the 2 lines before the error line for the 
+- consider the ident tokens also in the 2 lines before the error line for the
   10-most-problematic-parsing-errors diagnostic.
 - bugfix in parser, better error message.
   Thanks to Ali-Erdem OZCAN <ali-erdem.ozcan@st.com> for the bug report.
@@ -111,7 +111,7 @@ and will enable the -dump_c
 
 ** Language:
 - more ifdef in the ast
-- some support for attributes. 
+- some support for attributes.
 
 ** Bugfix:
 - complete missing cases in pretty_print_c.ml
@@ -119,7 +119,7 @@ and will enable the -dump_c
 ** Misc:
 - packagize a little (a readme.txt, configure, etc)
 
-** Documentation: 
+** Documentation:
 - readme.txt
 - demos/zero_to_null.ml
 
@@ -128,12 +128,12 @@ and will enable the -dump_c
 ** first public release of the source code (September 2008)
 (wait public release of coccinelle, from which yacfe is extracted)
 
-** Documentation: 
+** Documentation:
 - yacfe-internal.pdf (draft of paper submitted to CC'09).
 
-* beta 
+* beta
 
-** 2008: 
+** 2008:
 
 - first parsing_c++/ tentative.
 
@@ -148,7 +148,7 @@ and will enable the -dump_c
 - cpp directives and ifdef in ast (less passing) for CC'09 paper.
 
 
-** 2007: 
+** 2007:
 
 
 *** Features:
@@ -158,16 +158,16 @@ and will enable the -dump_c
 *** Parsing:
 - Parsing_hacks views and fresh tokens support.
 
-*** Language: 
+*** Language:
 - Support for define macro body, especially useful to improve stat
   when parsing header files.
 - Many cpp extensions.
 
 
-** 2006: 
+** 2006:
 
 *** Features:
-- matcher_c/ (using monad trick) with cocci_vs_c.ml, 
+- matcher_c/ (using monad trick) with cocci_vs_c.ml,
   pattern.ml, transformation.ml
 - unparsing, unparse_c.ml, pretty_print_c.ml
 - control_flow_c.ml, ast_to_flow.ml, flow_to_ast.ml (deprecated now)
@@ -177,29 +177,29 @@ and will enable the -dump_c
 - Parsing_hacks lookahead() and basic typedef inference handling
   in parsing_hacks.ml and token_helpers.ml
 
-*** Language: 
-- Many gcc extensions. 
+*** Language:
+- Many gcc extensions.
 - A few cpp extensions.
 
 
 * alpha
 
-** 2005: 
+** 2005:
 
 *** Parsing:
 - parse_c.ml, parsing driver with error recovery (for Eurosys'06)
   but that still pass over most cpp directives and macros.
 
 *** Features:
-- Statistics on Linux 
+- Statistics on Linux
 
-** 2002: 
+** 2002:
 
 *** Features:
 - First tentative of C type checker.
 
 *** Language:
-- Basic AST, lexer, grammar, inspired by 
+- Basic AST, lexer, grammar, inspired by
    http://www.lysator.liu.se/c/ANSI-C-grammar-l.html
    http://www.lysator.liu.se/c/ANSI-C-grammar-y.html
   in ast_c.ml, lexer_c.mll, parser_c.mly, and initial

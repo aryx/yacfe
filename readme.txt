@@ -1,7 +1,7 @@
                                     Yacfe
 
 -------------------
-Summary 
+Summary
 -------------------
 
 Yacfe (Yet Another C Front-End) is mainly an OCaml API to write
@@ -14,7 +14,7 @@ as much information as possible so that one can transform this AST and
 unparse it in a new file while preserving the coding style of the
 original file. Yacfe preserves the whitespaces, newlines, indentation,
 and comments from the original file, as well as the C preprocessor
-(cpp) macros and cpp directives. 
+(cpp) macros and cpp directives.
 
 Other source-to-source transformation tools such as CIL
 (http://manju.cs.berkeley.edu/cil/) do not preserve this coding style
@@ -50,7 +50,7 @@ Example
 You can then test Yacfe with:
 
    $ cd demos/
-   $ ocamlc -I ../commons/ -I ../parsing_c/ unix.cma str.cma bigarray.cma ../commons/commons.cma ../parsing_c/parsing_c.cma simple_zero_to_null.ml -o zero_to_null 
+   $ ocamlc -I ../commons/ -I ../parsing_c/ unix.cma str.cma bigarray.cma ../commons/commons.cma ../parsing_c/parsing_c.cma simple_zero_to_null.ml -o zero_to_null
    $ ./zero_to_null foo.c
    $ cat /tmp/modified.c
 
@@ -64,12 +64,12 @@ indentation, comments, cpp directives) has been maintained in
 
 The compilation process, in addition to building the parsing_c.cma library,
 also builds a binary program called 'yacfe' that can let you evaluate
-how good the Yacfe parser is. To test the parser for instance on the 
+how good the Yacfe parser is. To test the parser for instance on the
 source code of the git version control system, just do:
 
   $ cd /tmp
   $ wget http://kernel.org/pub/software/scm/git/git-1.6.2.4.tar.bz2
-  $ tar xvfj git-1.6.2.4.tar.bz2 
+  $ tar xvfj git-1.6.2.4.tar.bz2
   $ cd <yacfe_installation_dir>
   $ ./yacfe -parse /tmp/git-1.6.2.4/
 
@@ -103,9 +103,9 @@ where he can manually specify the class of specific but recurring
 macros that cause the above heuristics to originally fail. We have
 reused the syntax of cpp for the format of this file but Yacfe
 recognizes special keywords used in the body of macros as hints.
-Here is an excerpt of the configuration file for the Linux kernel: 
+Here is an excerpt of the configuration file for the Linux kernel:
 
-   #define change_hops YACFE__MACRO__ITERATOR 
+   #define change_hops YACFE__MACRO__ITERATOR
    #define DBG         YACFE__MACRO__STATEMENT
    #define KERN_EMERG  YACFE__MACRO__STRING
    #define DESC_ALIGN  YACFE__MACRO__DECL
@@ -113,11 +113,11 @@ Here is an excerpt of the configuration file for the Linux kernel:
 This file can also be used as a last resort as a way
 to partially call cpp for difficult macros, such as
 
-   __P(int, foo, (int x, int y)) 
+   __P(int, foo, (int x, int y))
    {
      printf("%d,%d", x y);
    }
-   
+
 by adding for instance this definition in the configuration file:
 
    #define __P(returnt, name, params) returnt name params
@@ -130,7 +130,7 @@ tool will be warned if it wants to transform those expansions.
 
 
 For more information on Yacfe see the files in the docs/ directory.
-The config/macros/ directory also contains examples of configuration files for 
+The config/macros/ directory also contains examples of configuration files for
 different popular open-source software.
 
 ----------------
@@ -139,7 +139,7 @@ Organization
 
 Here are roughly the services provided by Yacfe and their corresponding
 source files:
- - C parser which is also cpp-aware and program-transformation-friendly: 
+ - C parser which is also cpp-aware and program-transformation-friendly:
      - AST    (ast_c.ml)
      - lexer  (lexer_c.mll)
      - grammar (parser_c.mly)

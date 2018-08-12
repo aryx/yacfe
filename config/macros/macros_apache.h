@@ -1,5 +1,5 @@
 // ****************************************************************************
-// Httpd (apache) macros 
+// Httpd (apache) macros
 // ****************************************************************************
 
 #define AP_DECLARE(x) x
@@ -30,7 +30,7 @@
 #define EXPORT static
 #define REGISTER register
 
-#define MODSSL_D2I_SSL_SESSION_CONST const 
+#define MODSSL_D2I_SSL_SESSION_CONST const
 #define MODSSL_D2I_X509_CONST const
 #define MODSSL_D2I_PrivateKey_CONST const
 #define MODSSL_D2I_SSL_SESSION_CONST const

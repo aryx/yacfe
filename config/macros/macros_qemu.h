@@ -1,5 +1,5 @@
-// time: 
-//  start 11h32: 89% 
+// time:
+//  start 11h32: 89%
 //        11h41: 95%
 //        12h10: 96.60%
 
@@ -19,7 +19,7 @@
 
 //BAD:!!!!! static always_inline int vaxf_is_valid (float ff)
 //bad: {
-#define always_inline 
+#define always_inline
 
 //bad: DISAS_INSN(move_to_ccr)
 //BAD:!!!!! {
@@ -31,11 +31,11 @@
 
 //bad: GEN_HANDLER(fmr, 0x3F, 0x08, 0x02, 0x001F0000, PPC_FLOAT)
 //BAD:!!!!! {
-#define GEN_HANDLER(a, b, c, d, e, f) void a(void) 
+#define GEN_HANDLER(a, b, c, d, e, f) void a(void)
 
 //bad: GEN_HANDLER2(addic_, "addic.", 0x0D, 0xFF, 0xFF, 0x00000000, PPC_INTEGER)
 //BAD:!!!!! {
-#define GEN_HANDLER2(a, b, c, d, e, f, g, h) void a(void) 
+#define GEN_HANDLER2(a, b, c, d, e, f, g, h) void a(void)
 
 //bad: void HELPER(cpsr_write)(uint32_t val, uint32_t mask)
 //bad: {
@@ -47,7 +47,7 @@
 #define GCC_ATTR YACFE_ATTRIBUTE
 
 //BAD:!!!!! static void GCC_FMT_ATTR (2, 3) oss_logerr (int err, const char *fmt, ...)
-#define GCC_FMT_ATTR(a,b) 
+#define GCC_FMT_ATTR(a,b)
 
 
 
@@ -121,14 +121,14 @@
 
 
 //bad:     target_ulong tls_value; /* For usermode emulation */
-//bad: 
+//bad:
 //BAD:!!!!!     CPU_COMMON
-//bad: 
+//bad:
 #define CPU_COMMON
 
 //bad: typedef struct CirrusVGAState {
 //BAD:!!!!!     VGA_STATE_COMMON
-//bad: 
+//bad:
 //bad:     int cirrus_linear_io_addr;
 #define VGA_STATE_COMMON
 

@@ -1,9 +1,9 @@
-// time: 
+// time:
 //  start 18h07 62%
 //        18h35 84.42%
 //               95% (fix old C decl typedef pb)
-//        + 30min 96.1 
-/* remaining main pbs: 
+//        + 30min 96.1
+/* remaining main pbs:
  *  'xxx' unicode character
  *  foo(void) { },    function with no return type and often old C decl style
  */
@@ -114,7 +114,7 @@
 //bad: {
 
 //BAD:!!!!! extern int regcomp _RE_ARGS ((regex_t *__restrict __preg,
-//#define __restrict 
+//#define __restrict
 
 //BAD:!!!!! extern int getopt_long (int ___argc, char *__getopt_argv_const *___argv,
 //bad: 			const char *__shortopts,

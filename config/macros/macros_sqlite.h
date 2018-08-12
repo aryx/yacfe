@@ -1,4 +1,4 @@
-// used in firefox 
+// used in firefox
 
 
 

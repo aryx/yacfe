@@ -2130,10 +2130,10 @@ let dbe_of_filename_nodot file =
  * let dbe_of_filename_noext_ok file =
  *   ...
  *   if Str.string_match re_be base 0
- *   then 
+ *   then
  *     let (b, e) = matched2 base in
  *     (dir, b, e)
- * 
+ *
  *  That way files like foo.md5sum.c would not be considered .c
  *  but .md5sum.c, but then it has too many disadvantages because
  *  then regular files like qemu.root.c would not be considered
@@ -5917,7 +5917,7 @@ module Infix = struct
   let (=~) = (=~)
 end
 
-(* based on code found in cameleon from maxence guesdon 
+(* based on code found in cameleon from maxence guesdon
  * alt: use Digest.string! far faster!
  *)
 let md5sum_of_string s =

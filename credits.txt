@@ -1,5 +1,5 @@
-Thanks to 
- - Richard Jones for his Dumper module, 
+Thanks to
+ - Richard Jones for his Dumper module,
 
 Thanks of course also to Stallman, Linus, Leroy, Knuth and their
 acolytes for respectively Emacs, Linux, OCaml, and (La)Tex.

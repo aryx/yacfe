@@ -1,10 +1,10 @@
-// time: ? 
+// time: ?
 //   10min + 20min + 10min: 96.72%
 
 // ****************************************************************************
-// Gcc (as in the source of gcc code) macros 
+// Gcc (as in the source of gcc code) macros
 // ****************************************************************************
-//BAD:!!!!! java_gimplify_self_mod_expr (tree *expr_p, gimple_seq *pre_p ATTRIBUTE_UNUSED, 
+//BAD:!!!!! java_gimplify_self_mod_expr (tree *expr_p, gimple_seq *pre_p ATTRIBUTE_UNUSED,
 #define ATTRIBUTE_UNUSED
 
 //BAD:!!!!! static void help (void) ATTRIBUTE_NORETURN;
@@ -43,13 +43,13 @@
 //BAD:!!!!!   void (*p_msg) (const char *, ...) ATTRIBUTE_GCC_CXXDIAG(1,2);
 //BAD:!!!!! typedef void (*diagnostic_fn_t) (const char *, ...) ATTRIBUTE_GCC_CXXDIAG(1,2);
 //BAD:!!!!!   void (*p_msg) (const char *, ...) ATTRIBUTE_GCC_CXXDIAG(1,2);
-#define ATTRIBUTE_GCC_CXXDIAG(a,b) 
+#define ATTRIBUTE_GCC_CXXDIAG(a,b)
 
 //BAD:!!!!!      ATTRIBUTE_GCC_PPDIAG(2,3);
-#define ATTRIBUTE_GCC_PPDIAG(a,b) 
+#define ATTRIBUTE_GCC_PPDIAG(a,b)
 
 //BAD:!!!!! extern void error (const char *, ...) ATTRIBUTE_GCC_DIAG(1,2);
-#define ATTRIBUTE_GCC_DIAG(a,b) 
+#define ATTRIBUTE_GCC_DIAG(a,b)
 
 //BAD:!!!!! extern void pedwarn_c99 (int opt, const char *, ...) ATTRIBUTE_GCC_CDIAG(2,3);
 #define ATTRIBUTE_GCC_CDIAG(a,b)
@@ -57,7 +57,7 @@
 //bad: typedef struct gfc_symtree
 //bad: {
 //BAD:!!!!!   BBT_HEADER (gfc_symtree);
-#define BBT_HEADER(a) 
+#define BBT_HEADER(a)
 
 
 //BAD:!!!!! HAIFA_INLINE static rtx
@@ -74,7 +74,7 @@
 
 //BAD:!!!!! void gfc_warning (const char *, ...) ATTRIBUTE_GCC_GFC(1,2);
 //BAD:!!!!! void gfc_error (const char *, ...) ATTRIBUTE_GCC_GFC(1,2);
-#define ATTRIBUTE_GCC_GFC(a,b) 
+#define ATTRIBUTE_GCC_GFC(a,b)
 
 //bad: 	  EXECUTE_IF_SET_IN_BITMAP (gimple_call_clobbered_vars (cfun), 0, i, bi)
 //bad:     {
@@ -145,7 +145,7 @@
 
 
 //BAD:!!!!! typedef unsigned _Fract UDAtype __attribute__ ((mode (UDA)));
-#define _Fract 
+#define _Fract
 
 //BAD:!!!!! typedef _Complex float XCtype	__attribute__ ((mode (XC)));
 #define _Complex
@@ -165,7 +165,7 @@
 //BAD:!!!!! STATIC void
 #define STATIC static
 
-//PB false positif: 
+//PB false positif:
 //BAD:!!!!! char __gnat_shared_libgnat_default = STATIC;
 //ERROR-RECOV: found sync col 0 at line 108
 
@@ -197,11 +197,11 @@ BAD:!!!!! extern CONST_MODE_IBIT unsigned char mode_ibit[NUM_MACHINE_MODES];
 
 pad: why pb ?
  = File "/home/pad/software-src/devel/gcc-svn/gcc/hard-reg-set.h", line 432, column 0,  charpos = 14162
-    around = '', whole content = 
+    around = '', whole content =
 ERROR-RECOV: found sync end of #define 431
 badcount: 6
 bad:        *scan_tp_++ |= *scan_fp_++; } while (0)
-bad: 
+bad:
 bad: #define IOR_COMPL_HARD_REG_SET(TO, FROM)  \
 bad: do { HARD_REG_ELT_TYPE *scan_tp_ = (TO), *scan_fp_ = (FROM); 	\
 bad:      int i;							\

@@ -1,7 +1,7 @@
 //time: 1h I think
 
 //bad: G_BEGIN_DECLS
-//bad: 
+//bad:
 //bad: /**
 //bad:  * @return The GType for GntWS.
 //bad:  *
@@ -15,7 +15,7 @@
 
 
 //bad: STATIC_PROTO_INIT
-//bad: 
+//bad:
 //bad: gboolean
 //BAD:!!!!! purple_core_init(const char *ui)
 #define STATIC_PROTO_INIT
@@ -26,8 +26,8 @@
 
 //bad: struct gg_session {
 //BAD:!!!!! 	gg_common_head(struct gg_session)
-//bad: 
-#define gg_common_head(a) 
+//bad:
+#define gg_common_head(a)
 
 //BAD:!!!!! static void (DNSSD_API* _DNSServiceRefDeallocate)(DNSServiceRef sdRef);
 #define DNSSD_API
@@ -42,7 +42,7 @@
 //bad: }
 //bad: }
 //bad: END_TEST
-#define START_TEST(a) void a(void) 
+#define START_TEST(a) void a(void)
 
 #define END_TEST
 
