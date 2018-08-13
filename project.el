@@ -1,11 +1,11 @@
 (defun pad-ocaml-project-Yacfe ()
   (interactive)
 
-  (setq 
+  (setq
    pad-ocaml-project-path "/home/pad/mobile/project-yacfe/code"
-   pad-ocaml-project-subdirs 
-   (split-string 
-    "commons globals extra 
+   pad-ocaml-project-subdirs
+   (split-string
+    "commons globals extra
      parsing_c parsing_cplusplus parsing_java
      analyze_c
      matcher_c
@@ -20,9 +20,9 @@
   ; --------------------------------------------------------------------------
   (setq
    pad-ocaml-project-prog     "yacfe"
-   pad-ocaml-project-args 
-   (join-string 
-    (list 
+   pad-ocaml-project-args
+   (join-string
+    (list
      "-debugger"
      (case 9
        (0 "")
@@ -62,14 +62,14 @@
        (96 "-parse_c++ /home/pad/c-yacfe/tests2/qualified_typedef.cpp")
        (97 "-parse_c++ /home/pad/c-yacfe/tests2/error_recov_test1.cpp")
        (98 "-parse_c++ /home/pad/c-yacfe/tests2/define_initializer_optvirg.cpp")
-       ;operator_eq.cpp 
-       ;constructor_multi.cpp 
+       ;operator_eq.cpp
+       ;constructor_multi.cpp
        ;constructed_template2.cpp
        ;false_positif_cast_is_constructor.cpp
        ;(100 "-parse_c++ /home/pad/c-yacfe/tests_c++/attribute_passing.cpp")
        (100 "-parse_c++ /home/pad/c-yacfe/tests_c++/ex_tara.cpp")
        ;constructed_bool1
-       
+
        (201 "-parse_java /home/pad/c-yacfe/tests-ex/java/objet-4eme-annee/tp7/Reference.java")
        (202 "-parse_java /home/pad/c-yacfe/tests_java/simple.java")
 
@@ -120,9 +120,9 @@
   ; --------------------------------------------------------------------------
   (setq
    pad-ocaml-project-prog     "yacfe_browser"
-   pad-ocaml-project-args 
-   (join-string 
-    (list 
+   pad-ocaml-project-args
+   (join-string
+    (list
      "-debugger"
      (case 1
        (0 "/home/pad/c-yacfe/tests-components/database/YACFEDB/")
@@ -137,7 +137,7 @@
 
 
   ; for the help system, for C-c C-h to find where to look for
-  (mapcar (lambda (p) 
+  (mapcar (lambda (p)
             (ocaml-add-path (concat pad-ocaml-project-path "/" p))
             (ocaml-add-path "/home/pad/packages/lib/ocaml/std-lib")
             (ocaml-add-path "/usr/lib/ocaml/3.09.2/lablgtk2")
@@ -149,7 +149,7 @@
           pad-ocaml-project-subdirs)
   )
 
-; specific emacs macros: 
+; specific emacs macros:
 (fset 'yacfe-goto-place
    [?\C-  ?\C-s ?: left ?\M-w ?\C-x ?\C-f ?/ S-insert return ?\C-\M-l right ?\C-  C-right ?\M-w ?\C-\M-l ?\M-g S-insert return])
 

@@ -8,13 +8,13 @@
  * times.
  *
  * todo? make difference between macroVar that expand to constant and
- * the one that expands to complex code ? 
- * 
+ * the one that expands to complex code ?
+ *
  * history: was in of ccomment/comments/comments_extraction.ml
  *
  * From ocamldoc manual, the ocaml entities:
  *  "In this chapter, we use the word element to refer to any of the
- *  following parts of an OCaml source file": 
+ *  following parts of an OCaml source file":
  *  - SEMI a module
  *  - DONE a class
  *  - DONE a type
@@ -25,11 +25,11 @@
  *  - a module type
  *  - a class type
  *  - DONE a class method
- *  - DONE a class value or 
+ *  - DONE a class value or
  *  - a class inheritance clause
  *)
 
-type place = 
+type place =
 
   | Header (* file/module/package comment *)
 
@@ -51,8 +51,8 @@ type place =
   | Constructor of string
   | Destructor of string
 
-  | ThrowErrorSpec 
-  | InheritanceSpec 
+  | ThrowErrorSpec
+  | InheritanceSpec
 
   (* ------------------- *)
   (* cppext: *)
@@ -62,7 +62,7 @@ type place =
   | MacroVariable of string
 
   (* #ifdef, make difference between the different kind ? cst, version, etc*)
-  | IfDef 
+  | IfDef
 
   (* #include, import *)
   | Include of string
@@ -78,7 +78,7 @@ type place =
   | Field of string
 
   (* add type ? maybe can detect that put lots of comments on int *)
-  | Struct of string 
+  | Struct of string
   | StructIdent (* as in struct /* xxx */ { }, often seen in sparse code *)
 
   | Enum of string
@@ -102,14 +102,14 @@ type place =
   (* end of stuff *)
 
   | EndCompound
-  | Else 
+  | Else
 
 
   | EndOfFile
 
   (* ------------------- *)
   (* fallthrough *)
-  | InInitializerUnknown 
+  | InInitializerUnknown
   | InStructUnknown
   | InEnumUnknown
   | InFuncUnknown
@@ -128,7 +128,7 @@ type place =
           * than comments in the LFS database
           *)
 
- and statement_place = 
+ and statement_place =
    | If
    | Loop (* for, while, iterator *)
 
@@ -158,14 +158,14 @@ type place =
 
    | StatementUnknown
 
- and expression_place = 
+ and expression_place =
    | Binary of Ast_generic.binaryOp
 
    | ExpressionUnknown
 
 
 (*****************************************************************************)
-let s_of_arithop op = 
+let s_of_arithop op =
   match op with
   | Ast_generic.Plus | Ast_generic.Minus -> "plusminus"
   | Ast_generic.Mul | Ast_generic.Div | Ast_generic.Mod -> "muldiv"
@@ -216,7 +216,7 @@ let (s_of_place : place -> string * string option) = function
   | EndOfFile -> "end_eof", None
   | Else -> "end_else", None
 
-  | Statement st -> 
+  | Statement st ->
       (match st with
       | If -> "if", None
       | Loop -> "loop", None
@@ -247,7 +247,7 @@ let (s_of_place : place -> string * string option) = function
       | StatementUnknown -> "statement_misc", None
       )
 
-  | Expression e -> 
+  | Expression e ->
       (match e with
       | Binary op -> "op", None
       | ExpressionUnknown -> "exp_misc", None
@@ -269,5 +269,5 @@ let (s_of_place : place -> string * string option) = function
 
 
 (* unify back some difference place like struct/class, function/method *)
-let simplify_and_group_place place = 
+let simplify_and_group_place place =
   raise Common.Todo

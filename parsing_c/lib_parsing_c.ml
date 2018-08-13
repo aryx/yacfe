@@ -1,11 +1,11 @@
 (* Yoann Padioleau
- * 
+ *
  * Copyright (C) 2007, 2008, 2009 Ecole des Mines de Nantes
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License (GPL)
  * version 2 as published by the Free Software Foundation.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -18,35 +18,35 @@ open Common
 (*****************************************************************************)
 
 (* todo?: al_expr doit enlever les infos de type ? et doit remettre en
- *  emptyAnnot ? 
+ *  emptyAnnot ?
  *)
 
 (* drop all info information *)
 
-let strip_info_visitor _ = 
+let strip_info_visitor _ =
   { Visitor_c.default_visitor_c_s with
     Visitor_c.kinfo_s =
     (* traversal should be deterministic... *)
-    (let ctr = ref 0 in 
+    (let ctr = ref 0 in
     (function (k,_) ->
     function i -> ctr := !ctr + 1; Ast_c.al_info_cpp !ctr i));
 
-    Visitor_c.kexpr_s = (fun (k,_) e -> 
+    Visitor_c.kexpr_s = (fun (k,_) e ->
       let (e', ty),ii' = k e in
       (e', Ast_c.noType()(*ref !ty*)), ii' (* keep type - jll *)
     );
 
 (*
-    Visitor_c.ktype_s = (fun (k,_) ft -> 
+    Visitor_c.ktype_s = (fun (k,_) ft ->
       let ft' = k ft in
       match Ast_c.unwrap_typeC ft' with
-      | Ast_c.TypeName (s,_typ) -> 
+      | Ast_c.TypeName (s,_typ) ->
           Ast_c.TypeName (s, Ast_c.noTypedefDef()) +> Ast_c.rewrap_typeC ft'
       | _ -> ft'
 
     );
 *)
-    
+
   }
 
 let al_expr      x = Visitor_c.vk_expr_s      (strip_info_visitor()) x
@@ -72,14 +72,14 @@ let semi_strip_info_visitor = (* keep position information *)
   { Visitor_c.default_visitor_c_s with
     Visitor_c.kinfo_s = (fun (k,_) i -> Ast_c.semi_al_info_cpp i);
 
-    Visitor_c.kexpr_s = (fun (k,_) e -> 
+    Visitor_c.kexpr_s = (fun (k,_) e ->
       let (e', ty),ii' = k e in
       (e', Ast_c.noType()(*ref !ty*)), ii' (* keep type - jll *)
     );
-    
+
   }
 
-let semi_al_expr      = Visitor_c.vk_expr_s      semi_strip_info_visitor 
+let semi_al_expr      = Visitor_c.vk_expr_s      semi_strip_info_visitor
 let semi_al_statement = Visitor_c.vk_statement_s semi_strip_info_visitor
 let semi_al_type      = Visitor_c.vk_type_s      semi_strip_info_visitor
 let semi_al_init      = Visitor_c.vk_ini_s       semi_strip_info_visitor
@@ -95,28 +95,28 @@ let semi_al_program =
 
 (* really strip, do not keep position nor anything specificities, true
  * abstracted form. *)
-let real_strip_info_visitor _ = 
+let real_strip_info_visitor _ =
   { Visitor_c.default_visitor_c_s with
     Visitor_c.kinfo_s = (fun (k,_) i ->
       Ast_c.real_al_info_cpp i
     );
 
-    Visitor_c.kexpr_s = (fun (k,_) e -> 
+    Visitor_c.kexpr_s = (fun (k,_) e ->
       let (e', ty),ii' = k e in
       (e', Ast_c.noType()), ii'
     );
 
 (*
-    Visitor_c.ktype_s = (fun (k,_) ft -> 
+    Visitor_c.ktype_s = (fun (k,_) ft ->
       let ft' = k ft in
       match Ast_c.unwrap_typeC ft' with
-      | Ast_c.TypeName (s,_typ) -> 
+      | Ast_c.TypeName (s,_typ) ->
           Ast_c.TypeName (s, Ast_c.noTypedefDef()) +> Ast_c.rewrap_typeC ft'
       | _ -> ft'
 
     );
 *)
-    
+
   }
 
 let real_al_expr      x = Visitor_c.vk_expr_s   (real_strip_info_visitor()) x
@@ -128,9 +128,9 @@ let real_al_type      x = Visitor_c.vk_type_s   (real_strip_info_visitor()) x
 (* Extract infos *)
 (*****************************************************************************)
 
-let extract_info_visitor recursor x = 
+let extract_info_visitor recursor x =
   let globals = ref [] in
-  let visitor = 
+  let visitor =
     {
       Visitor_c.default_visitor_c with
         Visitor_c.kinfo = (fun (k, _) i -> Common.push i globals)
@@ -153,20 +153,20 @@ let ii_of_struct_fields = extract_info_visitor Visitor_c.vk_struct_fields
 (*let ii_of_struct_field = extract_info_visitor Visitor_c.vk_struct_field*)
 let ii_of_struct_fieldkinds = extract_info_visitor Visitor_c.vk_struct_fieldkinds
 let ii_of_cst = extract_info_visitor Visitor_c.vk_cst
-let ii_of_define_params = 
+let ii_of_define_params =
   extract_info_visitor Visitor_c.vk_define_params_splitted
 let ii_of_toplevel = extract_info_visitor Visitor_c.vk_toplevel
 
 (*****************************************************************************)
 (* Max min, range *)
 (*****************************************************************************)
-let max_min_ii_by_pos xs = 
+let max_min_ii_by_pos xs =
   match xs with
   | [] -> failwith "empty list, max_min_ii_by_pos"
   | [x] -> (x, x)
-  | x::xs -> 
+  | x::xs ->
       let pos_leq p1 p2 = (Ast_c.compare_pos p1 p2) =|= (-1) in
-      xs +> List.fold_left (fun (maxii,minii) e -> 
+      xs +> List.fold_left (fun (maxii,minii) e ->
         let maxii' = if pos_leq maxii e then e else maxii in
         let minii' = if pos_leq e minii then e else minii in
         maxii', minii'
@@ -180,15 +180,15 @@ let info_to_fixpos ii =
   | Ast_c.FakeTok (_,(pi,offset)) ->
       Ast_cocci.Virt (pi.Parse_info.charpos,offset)
   | Ast_c.AbstractLineTok pi -> failwith "unexpected abstract"
-  
-let max_min_by_pos xs = 
+
+let max_min_by_pos xs =
   let (i1, i2) = max_min_ii_by_pos xs in
   (info_to_fixpos i1, info_to_fixpos i2)
 
 (* yacfe addon, is in flag.ml in cocci: *)
 let current_element = ref ""
 
-let lin_col_by_pos xs = 
+let lin_col_by_pos xs =
   (* put min before max; no idea why they are backwards above *)
   let (i2, i1) = max_min_ii_by_pos xs in
   let posf x = Ast_c.col_of_info x in
@@ -200,23 +200,23 @@ let lin_col_by_pos xs =
 
 
 
-let min_pinfo_of_node node = 
+let min_pinfo_of_node node =
   let ii = ii_of_node node in
   let (maxii, minii) = max_min_ii_by_pos ii in
   Ast_c.parse_info_of_info minii
 
 
-let (range_of_origin_ii: Ast_c.info list -> (int * int) option) = 
- fun ii -> 
+let (range_of_origin_ii: Ast_c.info list -> (int * int) option) =
+ fun ii ->
   let ii = List.filter Ast_c.is_origintok ii in
-  try 
+  try
     let (max, min) = max_min_ii_by_pos ii in
     assert(Ast_c.is_origintok max);
     assert(Ast_c.is_origintok min);
     let strmax = Ast_c.str_of_info max in
-    Some 
+    Some
       (Ast_c.pos_of_info min, Ast_c.pos_of_info max + String.length strmax)
-  with _ -> 
+  with _ ->
     None
 
 
@@ -224,20 +224,20 @@ let (range_of_origin_ii: Ast_c.info list -> (int * int) option) =
 (* Ast getters *)
 (*****************************************************************************)
 
-let names_of_parameters_in_def def = 
+let names_of_parameters_in_def def =
   match def.Ast_c.f_old_c_style with
-  | Some _ -> 
+  | Some _ ->
       pr2_once "names_of_parameters_in_def: f_old_c_style not handled";
       []
-  | None -> 
+  | None ->
       let ftyp = def.Ast_c.f_type in
       let (ret, (params, bwrap)) = ftyp in
-      params +> Common.map_filter (fun (param,ii) -> 
+      params +> Common.map_filter (fun (param,ii) ->
         Ast_c.name_of_parameter param
       )
 
-let names_of_parameters_in_macro xs = 
-  xs +> List.map (fun (xx, ii) -> 
+let names_of_parameters_in_macro xs =
+  xs +> List.map (fun (xx, ii) ->
     let (s, ii2) = xx in
     s
   )

@@ -1,5 +1,5 @@
 // time
-//  start 11h27: 
+//  start 11h27:
 //        11h44: 52% :((
 
 //BAD:!!!!! _GLIBCXX_BEGIN_NAMESPACE_TR1
@@ -9,7 +9,7 @@
 //
 //
 //bad: _GLIBCXX_BEGIN_NAMESPACE(std)
-#define _GLIBCXX_BEGIN_NAMESPACE(a) 
+#define _GLIBCXX_BEGIN_NAMESPACE(a)
 //bad: _GLIBCXX_END_NAMESPACE
 #define _GLIBCXX_END_NAMESPACE
 //

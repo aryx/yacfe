@@ -4,21 +4,21 @@ open Common
 (*****************************************************************************)
 (* Entities stat *)
 (*****************************************************************************)
-(* 
- * This module can be used to store stat on code entities or commented 
- * code entities, be it C, C++, or Java entities. 
- * 
+(*
+ * This module can be used to store stat on code entities or commented
+ * code entities, be it C, C++, or Java entities.
+ *
  * The numbers can represent anything.
- * 
+ *
  * todo?: a little bit of overlap with Comments.place ? and quite tedious
  * all those fields to manipulate. OCaml not very good with fields to
- * factorize code. So change ? use a hash ? use Comments.place ? 
+ * factorize code. So change ? use a hash ? use Comments.place ?
  * But Comments.place type quite suited to the fact that all comments
  * does not have multiple place but are a choice.
- * 
- * note: no need for mutable nb_header: int; :) 
+ *
+ * note: no need for mutable nb_header: int; :)
  *)
-type entities_stat = { 
+type entities_stat = {
   mutable nb_define_var: int;
   mutable nb_define_func: int;
   mutable nb_include: int;
@@ -127,24 +127,24 @@ let op_entities_stat (+) st1 st2 = {
   nb_initializer = st1.nb_initializer + st2.nb_initializer;
 }
 
-let add_entities_stat st1 st2 = 
+let add_entities_stat st1 st2 =
   op_entities_stat (+) st1 st2
 
 
 
-let sum_entities_stat_list xs = 
+let sum_entities_stat_list xs =
   xs +> List.fold_left add_entities_stat (default_entities_stat())
 
-let div_pourcent_entities_stat st1 st2 = 
-  let (+++) n1 n2 = 
-    if n2 = 0 
-    then -1 
+let div_pourcent_entities_stat st1 st2 =
+  let (+++) n1 n2 =
+    if n2 = 0
+    then -1
     else (n1 * 100) / n2
   in
   op_entities_stat (+++) st1 st2
-      
 
-let print_entities_stat_list = fun xs -> 
+
+let print_entities_stat_list = fun xs ->
   let _files_total = (List.length xs) in
   let sum = sum_entities_stat_list xs in
   begin
@@ -183,8 +183,8 @@ let print_entities_stat_list = fun xs ->
     pr2 (spf "NB initializer = %d" sum.nb_initializer);
   end
 
-let hash_of_entities_stat sum = 
-  let h = Hashtbl.create 101 in 
+let hash_of_entities_stat sum =
+  let h = Hashtbl.create 101 in
   begin
     Hashtbl.add h "define_var" sum.nb_define_var;
     Hashtbl.add h "define_func" sum.nb_define_func;
@@ -223,7 +223,7 @@ let hash_of_entities_stat sum =
     h
   end
 
-let assoc_of_entities_stat x = 
+let assoc_of_entities_stat x =
   x +> hash_of_entities_stat +> Common.hash_to_list
 
 

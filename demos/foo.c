@@ -1,10 +1,10 @@
-#include <stdlib.h> 
+#include <stdlib.h>
 
-#define FOO 1 
+#define FOO 1
 #define BAR 1 \
  + 1
 
-#define CSTNULL 0 
+#define CSTNULL 0
 
 
 int main()
@@ -20,7 +20,7 @@ int main()
 #endif
 
 	if(x == CSTNULL) { // dont
-	} 
+	}
 
 	if(x == 0) { // do
 	}

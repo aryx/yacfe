@@ -54,9 +54,9 @@ val cat :      filename -> string list
 val write_file : file:filename -> string -> unit
 val read_file : filename -> string
 
-val with_open_outfile : 
+val with_open_outfile :
   filename -> ((string -> unit) * out_channel -> 'a) -> 'a
-val with_open_infile : 
+val with_open_infile :
   filename -> (in_channel -> 'a) -> 'a
 
 exception CmdError of Unix.process_status * string
@@ -103,7 +103,7 @@ val push : 'a -> 'a stack ref -> unit
 val hash_of_list : ('a * 'b) list -> ('a, 'b) Hashtbl.t
 val hash_to_list : ('a, 'b) Hashtbl.t -> ('a * 'b) list
 
-type 'a hashset = ('a, bool) Hashtbl.t 
+type 'a hashset = ('a, bool) Hashtbl.t
 val hashset_of_list : 'a list -> 'a hashset
 val hashset_to_list : 'a hashset -> 'a list
 
@@ -129,10 +129,10 @@ type cmdline_options = arg_spec_full list
 type options_with_title = string * string * arg_spec_full list
 type cmdline_sections = options_with_title list
 
-(* A wrapper around Arg modules that have more logical argument order, 
+(* A wrapper around Arg modules that have more logical argument order,
  * and returns the remaining args.
  *)
-val parse_options : 
+val parse_options :
   cmdline_options -> Arg.usage_msg -> string array -> string list
 (* Another wrapper that does Arg.align automatically *)
 val usage : Arg.usage_msg -> cmdline_options -> unit
@@ -140,24 +140,24 @@ val usage : Arg.usage_msg -> cmdline_options -> unit
 (* Work with the options_with_title type way to organize a long
  * list of command line switches.
  *)
-val short_usage : 
+val short_usage :
   Arg.usage_msg -> short_opt:cmdline_options -> unit
-val long_usage : 
-  Arg.usage_msg -> short_opt:cmdline_options -> long_opt:cmdline_sections -> 
+val long_usage :
+  Arg.usage_msg -> short_opt:cmdline_options -> long_opt:cmdline_sections ->
   unit
 
 (* With the options_with_title way, we don't want the default -help and --help
  * so need adapter of Arg module, not just wrapper.
  *)
 val arg_align2 : cmdline_options -> cmdline_options
-val arg_parse2 : 
-  cmdline_options -> Arg.usage_msg -> (unit -> unit) (* short_usage func *) -> 
+val arg_parse2 :
+  cmdline_options -> Arg.usage_msg -> (unit -> unit) (* short_usage func *) ->
   string list
 
 (* The action lib. Useful to debug supart of your system. cf some of
  * my main.ml for example of use. *)
 type flag_spec   = Arg.key * Arg.spec * Arg.doc
-type action_spec = Arg.key * Arg.doc * action_func 
+type action_spec = Arg.key * Arg.doc * action_func
    and action_func = (string list -> unit)
 
 type cmdline_actions = action_spec list
@@ -167,16 +167,16 @@ val mk_action_0_arg : (unit -> unit)                       -> action_func
 val mk_action_1_arg : (string -> unit)                     -> action_func
 val mk_action_2_arg : (string -> string -> unit)           -> action_func
 val mk_action_3_arg : (string -> string -> string -> unit) -> action_func
-val mk_action_4_arg : (string -> string -> string -> string -> unit) -> 
+val mk_action_4_arg : (string -> string -> string -> string -> unit) ->
   action_func
 
 val mk_action_n_arg : (string list -> unit) -> action_func
 
-val options_of_actions: 
+val options_of_actions:
   string ref (* the action ref *) -> cmdline_actions -> cmdline_options
-val do_action: 
+val do_action:
   Arg.key -> string list (* args *) -> cmdline_actions -> unit
-val action_list: 
+val action_list:
   cmdline_actions -> Arg.key list
 
 
@@ -190,10 +190,10 @@ val finalize :       (unit -> 'a) -> (unit -> 'b) -> 'a
 
 val save_excursion : 'a ref -> 'a -> (unit -> 'b) -> 'b
 
-val memoized : 
+val memoized :
   ?use_cache:bool -> ('a, 'b) Hashtbl.t -> 'a -> (unit -> 'b) -> 'b
 
-exception UnixExit of int 
+exception UnixExit of int
 
 exception Timeout
 val timeout_function :
@@ -213,8 +213,8 @@ val report_if_take_time : int -> string -> (unit -> 'a) -> 'a
 (* similar to profile_code but print some information during execution too *)
 val profile_code2 : string -> (unit -> 'a) -> 'a
 
-(* creation of /tmp files, a la gcc 
- * ex: new_temp_file "cocci" ".c" will give "/tmp/cocci-3252-434465.c" 
+(* creation of /tmp files, a la gcc
+ * ex: new_temp_file "cocci" ".c" will give "/tmp/cocci-3252-434465.c"
  *)
 val _temp_files_created : string list ref
 val save_tmp_files : bool ref
@@ -225,8 +225,8 @@ val erase_this_temp_file : filename -> unit
 (* val realpath: filename -> filename *)
 val fullpath: filename -> filename
 
-val cache_computation : 
-  ?verbose:bool -> ?use_cache:bool -> filename  -> string (* extension *) -> 
+val cache_computation :
+  ?verbose:bool -> ?use_cache:bool -> filename  -> string (* extension *) ->
   (unit -> 'a) -> 'a
 
 val filename_without_leading_path : string -> filename -> filename

@@ -36,7 +36,7 @@ OCAMLMKTOP=ocamlmktop -g -custom $(INCLUDES) -thread
 ##############################################################################
 
 PROGS=simple_zero_to_null.byte
-#c_transducer.byte 
+#c_transducer.byte
 
 all: $(PROGS)
 opt: $(PROGS:.byte=.opt)
@@ -45,7 +45,7 @@ all.opt: opt
 
 .SUFFIXES: .byte .opt
 
-%.byte: %.cmo 
+%.byte: %.cmo
 	$(OCAMLC) -o $@ $(SYSLIBS) $(LIBS)  $^
 
 %.opt: %.cmx
@@ -78,7 +78,7 @@ clean::
 .ml.cmx:
 	$(OCAMLOPT)  -c $<
 
-.ml.mldepend: 
+.ml.mldepend:
 	$(OCAMLC) -i $<
 
 clean::

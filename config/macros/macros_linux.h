@@ -1,8 +1,8 @@
-// time: hard to say, quite a lot as linux was my test case and 
+// time: hard to say, quite a lot as linux was my test case and
 //  so add extensions gradually, which allow me in turn sometimes to
 //  remove entries in this file.
 
-// 
+//
 // ----------------------------------------------------------------------------
 // Last
 // ----------------------------------------------------------------------------
@@ -12,12 +12,12 @@
 
 #define __P(a) a
 
-#define yyconst const 
+#define yyconst const
 
-#define Q_OBJECT 
+#define Q_OBJECT
 
 
-#define notrace 
+#define notrace
 
 // ----------------------------------------------------------------------------
 // Attributes
@@ -55,7 +55,7 @@
 
 #define  __pmac
 #define  __nocast
-#define  __force 
+#define  __force
 
 #define  __must_check YACFE_ATTRIBUTE
 // pb
@@ -74,7 +74,7 @@
 
 #define __initdata_refok YACFE_ATTRIBUTE
 
-// in the other part of the kernel, in arch/, mm/, etc 
+// in the other part of the kernel, in arch/, mm/, etc
 #define  __sched YACFE_ATTRIBUTE
 #define  __initmv YACFE_ATTRIBUTE
 #define  __exception YACFE_ATTRIBUTE
@@ -144,7 +144,7 @@
 // ----------------------------------------------------------------------------
 // String macros
 // ----------------------------------------------------------------------------
- 
+
 #define  KERN_EMERG		YACFE_STRING
 #define  KERN_ALERT		YACFE_STRING
 #define  KERN_CRIT		YACFE_STRING
@@ -191,7 +191,7 @@
 
 #define  PNMI_STATIC static
 #define  RLMT_STATIC static
-#define  SISINITSTATIC static 
+#define  SISINITSTATIC static
 #define  SCTP_STATIC static
 
 #define  BUGLVL if
@@ -256,23 +256,23 @@
 #define  EARLY_INIT_SECTION_ATTR
 
 // pb
-//#define  INIT 
+//#define  INIT
 
 #define  IDI_CALL_ENTITY_T
 #define  IDI_CALL_LINK_T
 
 #define uninitialized_var(x) x = x
-// as in u16 uninitialized_var(ioboard_type);	/* GCC be quiet */ 
+// as in u16 uninitialized_var(ioboard_type);	/* GCC be quiet */
 
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 
 // YACFE_ATTRIBUTE_PARAMS, but maybe can reuse YACFE_ATTRIBUTE
-#define __releases(x) 
-#define __acquires(x) 
-#define __declspec(x) 
-#define __page_aligned(x) 
-#define __vsyscall(x) 
+#define __releases(x)
+#define __acquires(x)
+#define __declspec(x)
+#define __page_aligned(x)
+#define __vsyscall(x)
 
 // ----------------------------------------------------------------------------
 // Prototype and params compatibility
@@ -328,7 +328,7 @@ static const struct machine_desc __mach_desc_##_type	\
 
 
 // include/asm-i386/percpu.h
-// interesting macro where we see the need of __typeof__(type) with 
+// interesting macro where we see the need of __typeof__(type) with
 // for example DECLARE_PER_CPU(char[256], iucv_dbf_txt_buf);
 #define DEFINE_PER_CPU(type, name) \
     __attribute__((__section__(".data.percpu"))) __typeof__(type) per_cpu__##name
@@ -357,7 +357,7 @@ struct subsystem _name##_subsys = { \
 // ----------------------------------------------------------------------------
 
 // pb: if use this macro then we will not transform the argument of CS_CHECK
-// in some rules. 
+// in some rules.
 //#define CS_CHECK(fn, ret) \
 //  do { last_fn = (fn); if ((last_ret = (ret)) != 0) goto cs_failed; } while (0)
 
@@ -411,8 +411,8 @@ struct subsystem _name##_subsys = { \
 
 
 // net/ipv4/netfilter/ip_conntrack_helper_h323_asn1.c
-// also used in other.c that don't do any include :( 
-// but locally redefined in drivers/net/bnx2.c :( with a 
+// also used in other.c that don't do any include :(
+// but locally redefined in drivers/net/bnx2.c :( with a
 // #define FNAME	0x8
 //pb cos also used as:
 //BAD:  static unsigned FNAME(gpte_access)(struct kvm_vcpu *vcpu, pt_element_t gpte)
@@ -480,7 +480,7 @@ struct subsystem _name##_subsys = { \
 
 // drivers/net/wireless/arlan-proc.c
 // incomplete macro, the real macro is quite complex and use other macros
-#define ARLAN_SYSCTL_TABLE_TOTAL(x) 
+#define ARLAN_SYSCTL_TABLE_TOTAL(x)
 
 
 // ----------------------------------------------------------------------------
@@ -574,7 +574,7 @@ do {									\
 
 
 // Cooperation with parsing_hack.ml: MACROSTATEMENT is a magic string.
-// I can't just expand those macros into some 'whatever();' because I need 
+// I can't just expand those macros into some 'whatever();' because I need
 // to generate a TMacroStmt for solving some ambiguities in the grammar
 // for the toplevel stuff I think.
 #define ASSERT(x) MACROSTATEMENT
@@ -679,8 +679,8 @@ do {									\
 	struct meta_obj *dst, int *err)
 
 
-#define GDTH_INITFUNC(x,y) x y 
-#define ASC_INITFUNC(x,y) x y 
+#define GDTH_INITFUNC(x,y) x y
+#define ASC_INITFUNC(x,y) x y
 
 
 // ----------------------------------------------------------------------------
@@ -700,7 +700,7 @@ do {									\
 //#define __PROM_O32
 
 // ----------------------------------------------------------------------------
-// for tests-big/ macros, may be obsolete now cos fixed in latest kernel 
+// for tests-big/ macros, may be obsolete now cos fixed in latest kernel
 // ----------------------------------------------------------------------------
 
 // rule10

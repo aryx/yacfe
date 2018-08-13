@@ -1,6 +1,6 @@
 #!!!!You need to source me with "source env.sh" from the _RIGHT_ directory!!!!
 if [ ! -r config/macros/standard.h ]
-    then echo "There is no standard.h in config/macros/. 
+    then echo "There is no standard.h in config/macros/.
 Are you sure you run this script from the source directory ?
 ";
 fi

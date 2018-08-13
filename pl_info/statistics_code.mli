@@ -6,7 +6,7 @@
  * everything in the same visitor, so the entities_stat computation
  * are still actually in comments_extraction.ml.
  *)
-type entities_stat = { 
+type entities_stat = {
   mutable nb_define_var: int;
   mutable nb_define_func: int;
   mutable nb_include: int;
@@ -40,14 +40,14 @@ type entities_stat = {
   mutable nb_simple_assign: int;
   mutable nb_simple_field_assign: int;
   mutable nb_initializer: int;
-  
+
 }
 val default_entities_stat : unit -> entities_stat
 val print_entities_stat_list : entities_stat list -> unit
 
-val add_entities_stat : 
+val add_entities_stat :
   entities_stat -> entities_stat -> entities_stat
-val div_pourcent_entities_stat : 
+val div_pourcent_entities_stat :
   entities_stat -> entities_stat -> entities_stat
 
 val sum_entities_stat_list : entities_stat list -> entities_stat

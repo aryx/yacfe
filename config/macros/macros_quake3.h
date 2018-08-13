@@ -122,9 +122,9 @@
 //bad: typedef enum {
 //bad:   /* This is the socket callback function pointer */
 //BAD:!!!!!   CINIT(SOCKETFUNCTION, FUNCTIONPOINT, 1),
-//bad: 
+//bad:
 //bad:   /* This is the argument passed to the socket callback */
 //bad:   CINIT(SOCKETDATA, OBJECTPOINT, 2),
-//bad: 
+//bad:
 //bad:   CURLMOPT_LASTENTRY /* the last unused */
 //bad: } CURLMoption;

@@ -1,5 +1,5 @@
-// time: start 
-//   22h03  95%? 
+// time: start
+//   22h03  95%?
 //   22h17  98%
 //   -
 //   22h28
@@ -11,7 +11,7 @@
 //BAD:!!!!! G_CONST_RETURN gchar*
 //bad: gtk_progress_bar_get_text (GtkProgressBar *pbar)
 //bad: {
-#define G_CONST_RETURN const 
+#define G_CONST_RETURN const
 //
 //bad: G_BEGIN_DECLS
 #define G_BEGIN_DECLS
@@ -23,7 +23,7 @@
 //BAD:!!!!! GType              _gtk_file_chooser_entry_get_type (void) G_GNUC_CONST;
 //#define G_GNUC_CONST const
 //pad: only c++ extension
-#define G_GNUC_CONST 
+#define G_GNUC_CONST
 
 //bad: static HRESULT STDMETHODCALLTYPE
 //BAD:!!!!! iprintdialogcallback_queryinterface (IPrintDialogCallback *This,
@@ -40,7 +40,7 @@
 //bad: {
 //bad:   return g_object_new (MSW_TYPE_RC_STYLE, NULL);
 //bad: }
-#define G_MODULE_EXPORT 
+#define G_MODULE_EXPORT
 
 //
 //BAD:!!!!! G_GNUC_INTERNAL ThemePixbuf *theme_pixbuf_new          (void);
@@ -69,7 +69,7 @@
 //BAD:!!!!! WINUSERAPI HWND WINAPI GetAncestor(HWND,UINT);
 //bad: BOOL WINAPI
 //BAD:!!!!! DllMain (HINSTANCE hinstDLL,
-#define WINUSERAPI 
+#define WINUSERAPI
 #define WINAPI
 
 
@@ -89,12 +89,12 @@
 
 
 //BAD:!!!!! GTKMAIN_C_VAR const guint gtk_major_version;
-#define GTKMAIN_C_VAR 
+#define GTKMAIN_C_VAR
 
 //
 //bad:   gint             GSEAL (num_children);
 //BAD:!!!!!   GList           *GSEAL (children);
-#define GSEAL(a) a 
+#define GSEAL(a) a
 
 //BAD:!!!!! uncompress (unsigned size, INOUT guchar ** source, OUT guchar * target, INOUT gsize * _remaining)
 #define IN

@@ -4,14 +4,14 @@ type parsing_stat = {
   mutable correct : int;
   mutable bad : int;
   mutable commentized : int;
-  mutable problematic_lines : 
+  mutable problematic_lines :
       (string list (* ident in error line *) * int (* line_error *)) list;
 }
 val default_stat : Common.filename -> parsing_stat
 
-val print_parsing_stat_list : ?verbose:bool -> 
+val print_parsing_stat_list : ?verbose:bool ->
   parsing_stat list -> unit
-val print_recurring_problematic_tokens: 
+val print_recurring_problematic_tokens:
   parsing_stat list -> unit
 
 

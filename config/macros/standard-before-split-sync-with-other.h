@@ -1,4 +1,4 @@
-// clone: yacfe(master), coccinelle, acomment, 
+// clone: yacfe(master), coccinelle, acomment,
 
 // ****************************************************************************
 // Prelude, this file is to be used with the -macro_file option of the C parser
@@ -9,14 +9,14 @@
  *   - macros found in .c; macros that cannot be parsed.
  *     In the future should be autodetected
  *     (not so easy to do same for macros in .h cos require to access .h file)
- *   - macros found in ".h" 
+ *   - macros found in ".h"
  *     but where we cant detect that it will be a "bad macro"
  *   - macros found in .c; macros correctly parsed
  *     but where we cant detect that it will be a "bad macro"
  *
  * Some of those macros could be deleted and the C code rewritten because
  * they are "bad" macros.
- * 
+ *
  * todo? perhaps better if could enable/disable some of those expansions
  * as different software may use conflicting macros.
  *
@@ -38,27 +38,27 @@
 // ****************************************************************************
 
 // ****************************************************************************
-// Yacc macros 
+// Yacc macros
 // ****************************************************************************
 
-#define YY_PROTO(x) x 
-#define yyconst const 
+#define YY_PROTO(x) x
+#define yyconst const
 
 
 // ****************************************************************************
-// GNU Hello macros 
+// GNU Hello macros
 // ****************************************************************************
 
 #define __getopt_argv_const const
 
 
 // ****************************************************************************
-// Gcc (as in the source of gcc code) macros 
+// Gcc (as in the source of gcc code) macros
 // ****************************************************************************
 
 
 // ****************************************************************************
-// Linux macros 
+// Linux macros
 // ****************************************************************************
 
 // ----------------------------------------------------------------------------
@@ -96,7 +96,7 @@
 
 #define  __must_check
 // pb
-#define  __unused 
+#define  __unused
 #define  __maybe_unused
 
 
@@ -109,7 +109,7 @@
 
 #define  __xipram
 
-// in the other part of the kernel, in arch/, mm/, etc 
+// in the other part of the kernel, in arch/, mm/, etc
 #define  __sched
 #define  __initmv
 #define  __exception
@@ -155,7 +155,7 @@
 
 #define __thread
 #define __used
-#define __pure 
+#define __pure
 
 #define __ref
 #define __refdata
@@ -171,21 +171,21 @@
  * be considered as a declaration with XX being a typedef, so would
  * Have ambiguity. So at least by adding this special case, we can
  * catch more correct string-macro, no more a XX YY but now a good
- * "XX" YY 
- * 
+ * "XX" YY
+ *
  * cf include/linux/kernel.h
  *
- * For stringification I need to have at least a witness, a string, 
+ * For stringification I need to have at least a witness, a string,
  * and sometimes have just printk(KERN_WARNING MYSTR) and it could
  * be transformed in a typedef later, so better to at least
  * transform in string already the string-macro we know.
- * 
- * Perhaps better to apply also as soon as possible the 
+ *
+ * Perhaps better to apply also as soon as possible the
  * correct macro-annotation tagging (__init & co) to be able to
  * filter them as soon as possible so that they will not polluate
  * our pattern-matching that come later.
  */
-  
+
 #define  KERN_EMERG "KERN_EMERG"
 #define  KERN_ALERT "KERN_ALERT"
 #define  KERN_CRIT "KERN_CRIT"
@@ -196,15 +196,15 @@
 #define  KERN_DEBUG "KERN_DEBUG"
 
 
-/* EX_TABLE & co. 
+/* EX_TABLE & co.
  *
  * Replaced by a string. We can't put everything as comment
  * because it can be part of an expression where we wait for
- * something, where we wait for a string. So at least we 
+ * something, where we wait for a string. So at least we
  * must keep the EX_TABLE token and transform it as a string.
  *
- * normally not needed if have good stringification of macro 
- * but those macros are sometimes used multiple times 
+ * normally not needed if have good stringification of macro
+ * but those macros are sometimes used multiple times
  * as in EX_TABLE(0b) EX_TABLE(1b)  and we don't detect
  * it well yet.
  */
@@ -241,7 +241,7 @@
 
 #define  PNMI_STATIC static
 #define  RLMT_STATIC static
-#define  SISINITSTATIC static 
+#define  SISINITSTATIC static
 #define  SCTP_STATIC static
 
 #define  BUGLVL if
@@ -306,7 +306,7 @@
 #define  EARLY_INIT_SECTION_ATTR
 
 // pb
-//#define  INIT 
+//#define  INIT
 
 #define  IDI_CALL_ENTITY_T
 #define  IDI_CALL_LINK_T
@@ -316,16 +316,16 @@
  * code
  */
 #define uninitialized_var(x) x = x
-// as in u16 uninitialized_var(ioboard_type);	/* GCC be quiet */ 
+// as in u16 uninitialized_var(ioboard_type);	/* GCC be quiet */
 
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 
-#define __releases(x) 
-#define __acquires(x) 
-#define __declspec(x) 
-#define __page_aligned(x) 
-#define __vsyscall(x) 
+#define __releases(x)
+#define __acquires(x)
+#define __declspec(x)
+#define __page_aligned(x)
+#define __vsyscall(x)
 
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
@@ -380,7 +380,7 @@ static const struct machine_desc __mach_desc_##_type	\
 
 
 // include/asm-i386/percpu.h
-// interesting macro where we see the need of __typeof__(type) with 
+// interesting macro where we see the need of __typeof__(type) with
 // for example DECLARE_PER_CPU(char[256], iucv_dbf_txt_buf);
 #define DEFINE_PER_CPU(type, name) \
     __attribute__((__section__(".data.percpu"))) __typeof__(type) per_cpu__##name
@@ -402,7 +402,7 @@ struct subsystem _name##_subsys = { \
 // ----------------------------------------------------------------------------
 
 // pb: if use this macro then we will not transform the argument of CS_CHECK
-// in some rules. 
+// in some rules.
 //#define CS_CHECK(fn, ret) \
 //  do { last_fn = (fn); if ((last_ret = (ret)) != 0) goto cs_failed; } while (0)
 
@@ -455,8 +455,8 @@ struct subsystem _name##_subsys = { \
 
 
 // net/ipv4/netfilter/ip_conntrack_helper_h323_asn1.c
-// also used in other.c that don't do any include :( 
-// but locally redefined in drivers/net/bnx2.c :( with a 
+// also used in other.c that don't do any include :(
+// but locally redefined in drivers/net/bnx2.c :( with a
 // #define FNAME	0x8
 #define FNAME(name) name,
 
@@ -497,7 +497,7 @@ struct subsystem _name##_subsys = { \
 
 // drivers/net/wireless/arlan-proc.c
 // incomplete macro, the real macro is quite complex and use other macros
-#define ARLAN_SYSCTL_TABLE_TOTAL(x) 
+#define ARLAN_SYSCTL_TABLE_TOTAL(x)
 
 
 // ----------------------------------------------------------------------------
@@ -588,7 +588,7 @@ do {									\
 
 
 // Cooperation with parsing_hack.ml: MACROSTATEMENT is a magic string.
-// I can't just expand those macros into some 'whatever();' because I need 
+// I can't just expand those macros into some 'whatever();' because I need
 // to generate a TMacroStmt for solving some ambiguities in the grammar
 // for the toplevel stuff I think.
 #define ASSERT(x) MACROSTATEMENT
@@ -689,8 +689,8 @@ do {									\
 	struct meta_obj *dst, int *err)
 
 
-#define GDTH_INITFUNC(x,y) x y 
-#define ASC_INITFUNC(x,y) x y 
+#define GDTH_INITFUNC(x,y) x y
+#define ASC_INITFUNC(x,y) x y
 
 
 // ----------------------------------------------------------------------------
@@ -710,7 +710,7 @@ do {									\
 //#define __PROM_O32
 
 // ----------------------------------------------------------------------------
-// for tests-big/ macros, may be obsolete now cos fixed in latest kernel 
+// for tests-big/ macros, may be obsolete now cos fixed in latest kernel
 // ----------------------------------------------------------------------------
 
 // rule10
@@ -720,7 +720,7 @@ do {									\
 
 
 // ****************************************************************************
-// Httpd (apache) macros 
+// Httpd (apache) macros
 // ****************************************************************************
 
 #define AP_DECLARE(x) x
@@ -751,7 +751,7 @@ do {									\
 #define EXPORT static
 #define REGISTER register
 
-#define MODSSL_D2I_SSL_SESSION_CONST const 
+#define MODSSL_D2I_SSL_SESSION_CONST const
 #define MODSSL_D2I_X509_CONST const
 #define MODSSL_D2I_PrivateKey_CONST const
 #define MODSSL_D2I_SSL_SESSION_CONST const
@@ -762,9 +762,9 @@ do {									\
 
 #define WINAPI
 //#define CALLBACK
-// generate false positive in Linux 
+// generate false positive in Linux
 #define APIENTRY
-#define __declspec(x) 
+#define __declspec(x)
 #define __stdcall
 
 
@@ -775,10 +775,10 @@ do {									\
 #define ADD_SUITE(suite) suite;
 
 // ****************************************************************************
-// CISCO vpn client macros 
+// CISCO vpn client macros
 // ****************************************************************************
 
-// #define NOREGPARM 
+// #define NOREGPARM
 // #define IN
 // #define OUT
 // #define OPTIONAL
@@ -786,18 +786,18 @@ do {									\
 
 
 // ****************************************************************************
-// minix3 macros 
+// minix3 macros
 // ****************************************************************************
 
-//#define PUBLIC  
-//#define PRIVATE 
-//#define EXTERN 
-//#define FORWARD 
+//#define PUBLIC
+//#define PRIVATE
+//#define EXTERN
+//#define FORWARD
 //#define _PROTOTYPE(a,b) a b
-//#define _CONST 
+//#define _CONST
 
 // ****************************************************************************
-// Sparse macros 
+// Sparse macros
 // ****************************************************************************
 
 #define FORMAT_ATTR(pos)
@@ -808,10 +808,10 @@ do {									\
 #define END_FOR_EACH_PTR_REVERSE(dom)
 
 #define IDENT_RESERVED(a)
-#define IDENT(a) 
+#define IDENT(a)
 
 // ****************************************************************************
-// git macros 
+// git macros
 // ****************************************************************************
 
 // #define NORETURN __attribute__((noreturn))
@@ -824,7 +824,7 @@ do {									\
 
 
 // ****************************************************************************
-// Qemu macros 
+// Qemu macros
 // ****************************************************************************
 
 // OPPROTO
@@ -835,7 +835,7 @@ do {									\
 // QEMU_LIST_ENTRY
 
 // ****************************************************************************
-// Xen macros 
+// Xen macros
 // ****************************************************************************
 
 // STATUS_PARAM
@@ -874,7 +874,7 @@ do {									\
 // sqlite
 // ****************************************************************************
 
-// used in firefox 
+// used in firefox
 
 
 
@@ -890,11 +890,11 @@ do {									\
 // jpeg
 // ****************************************************************************
 
-// used in firefox 
+// used in firefox
 
 #define jpeg_common_fields
 
-// conflict with minix 
+// conflict with minix
 #define EXTERN(a) a
 #define JPP(x) x
 
@@ -917,7 +917,7 @@ do {									\
 #define __P(a) a
 
 #define cairo_private static
-#define cairo_public 
+#define cairo_public
 #define cairo_private_no_warn
 
 #define CG_EXTERN extern
@@ -926,7 +926,7 @@ do {									\
 
 #define _Xconst const
 
-/* linux also use FASTCALL but as a DefineFunc, not DefineVar, todo my 
+/* linux also use FASTCALL but as a DefineFunc, not DefineVar, todo my
  * hash allow this ? */
 
 #define FASTCALL
@@ -997,26 +997,26 @@ do {									\
 #define PR_STATIC_CALLBACK static
 
 
-#define LL_CMP(a,op,b) a op b 
+#define LL_CMP(a,op,b) a op b
 
 #define UNTIL(x) while(!(x))
 
 
-#define CAIRO_PRINTF_FORMAT(a,b) 
+#define CAIRO_PRINTF_FORMAT(a,b)
 
-#define PREFIX(a) a 
+#define PREFIX(a) a
 
 
 #define JMETHOD(a, b, c) a b c
 
-#define _inline 
+#define _inline
 
-#define JS_EXTERN_API(x) x 
+#define JS_EXTERN_API(x) x
 
 #define FARDATA
 
 #define XMLCALL
-#define PTRCALL 
+#define PTRCALL
 #define PTRFASTCALL
 
 #define NSS_IMPLEMENT_DATA
@@ -1025,15 +1025,15 @@ do {									\
 // firefox macros (for C++ code)
 // ****************************************************************************
 
-#define G_BEGIN_DECLS 
-#define G_END_DECLS 
+#define G_BEGIN_DECLS
+#define G_END_DECLS
 
 #define __BEGIN_DECLS
 #define __END_DECLS
 
 #define CALLBACK
 
-#define G_CONST_RETURN 
+#define G_CONST_RETURN
 
 
 //sure ?
@@ -1087,10 +1087,10 @@ do {									\
 #define STDMETHODIMP_(x) x
 #define STDMETHODIMP void
 
-#define __RPC_FAR 
+#define __RPC_FAR
 
 
-#define EXTERN_C 
+#define EXTERN_C
 
 #define CDECL
 
@@ -1130,7 +1130,7 @@ do {									\
 #define NS_COM_GLUE
 
 
-#define PASCAL 
+#define PASCAL
 
 
 #define MOZILLA_NATIVE(a) a
@@ -1140,7 +1140,7 @@ do {									\
 
 #define JX_EXPORT
 
-//pad: lots of xxx_EXPORT 
+//pad: lots of xxx_EXPORT
 
 #define PYXPCOM_EXPORT
 
@@ -1197,7 +1197,7 @@ do {									\
 
 
 
-#define NS_HIDDEN 
+#define NS_HIDDEN
 #define NS_HIDDEN_(a) a
 
 // BAD:!!!!!   if NS_SUCCEEDED(rv)
@@ -1209,7 +1209,7 @@ do {									\
 
 
 
-// in initializer, pb cos miss some ',' 
+// in initializer, pb cos miss some ','
 #define REFERENCE_METHOD_FAMILY(CallObjectMethod)
 
 #define TX_DOUBLE_COMPARE(a,b,c) (a b c)
@@ -1218,7 +1218,7 @@ do {									\
 #define LL_UCMP(a,op,b) a op b
 
 
-#define GSS_MAKE_TYPEDEF 
+#define GSS_MAKE_TYPEDEF
 #define GSS_CALL_CONV
 #define GSS_FUNC(a) a
 
@@ -1262,12 +1262,12 @@ do {									\
 
 #define NS_DEFINE_STATIC_IID_ACCESSOR(a)
 
-#define MOZ_DECL_CTOR_COUNTER(a) 
+#define MOZ_DECL_CTOR_COUNTER(a)
 
 //#define ipcMessageCast static_cast
 
 
-#define NS_DECL_ISUPPORTS 
+#define NS_DECL_ISUPPORTS
 // now in parsing_hack2.ml
 // grep "BAD:.*NS_IMPL" firefox_parse_h++_error2
 // grep "BAD:.*NS_INTERFACE" firefox_parse_h++_error2
@@ -1276,7 +1276,7 @@ do {									\
 
 
 
-#define __gc 
+#define __gc
 
 
 #define __try try
@@ -1301,7 +1301,7 @@ do {									\
 
 #define NS_STACK_CLASS
 
-#define NS_SPECIALIZE_TEMPLATE // template <> 
+#define NS_SPECIALIZE_TEMPLATE // template <>
 
 #define NS_DOM_INTERFACE_MAP_ENTRY_CLASSINFO(a)
 
@@ -1312,7 +1312,7 @@ do {									\
 
 #define ATL_NO_VTABLE
 
-#define DECLARE_DYNCREATE(a) 
+#define DECLARE_DYNCREATE(a)
 
 #define GTKMOZEMBED_API(a,b,c) a b c
 #define DECLARE_EVENT_TABLE()
@@ -1329,7 +1329,7 @@ do {									\
 #define JS_PUBLIC_API(a) a
 #define JS_FRIEND_API(a) a
 
-#define VFTDELTA_DECL(a) 
+#define VFTDELTA_DECL(a)
 
 
 #define MY_UNKNOWN_IMP
@@ -1346,7 +1346,7 @@ do {									\
 
 #define JRI_PUBLIC_API(a) a
 
-#define NS_DEFINE_CONSTRUCTOR_DATA(a,b) 
+#define NS_DEFINE_CONSTRUCTOR_DATA(a,b)
 
 
 #define NS_STID_FOR_INDEX(a) while(a)
@@ -1389,7 +1389,7 @@ do {									\
 
 // but mostly valid, should perhaps comment it, generates lots of passed:
 // NS_ENSURE_TRUE(window, /**/);
-#define NS_ENSURE_TRUE(a,b) 
+#define NS_ENSURE_TRUE(a,b)
 
 #define DECL_STYLE_RULE_INHERIT
 
@@ -1399,7 +1399,7 @@ do {									\
 #define UP_IMPL_NSISUPPORTS
 
 
-#define MAKE_SAFE_VFT(a,b) a b = 
+#define MAKE_SAFE_VFT(a,b) a b =
 #define VFTFIRST_VAL()
 #define SAFE_VFT_ZEROS()
 

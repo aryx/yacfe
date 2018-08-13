@@ -1,5 +1,5 @@
-// time start 
-//      01h10  77.3% 
+// time start
+//      01h10  77.3%
 //      01h40  84%
 //      - +10 min
 //      17h02 86%
@@ -8,10 +8,10 @@
 //      19h13 90% (also added restrict C99 in lexer and grammar)
 //      20h23 92% (also added ifdef cplusplus handling in lexer)
 
-/* main pbs: 
-*    done: restrict typedef inference 
+/* main pbs:
+*    done: restrict typedef inference
 *    complex extension
-*/   
+*/
 
 //bad: char *
 //BAD:!!!!! internal_function
@@ -165,7 +165,7 @@
 //BAD:!!!!! __libc_lock_define_initialized_recursive (static, lock);
 #define __libc_lock_define_initialized_recursive(a,b) int foo;
 
-//BAD:!!!!!     __libc_lock_define (, lock) 
+//BAD:!!!!!     __libc_lock_define (, lock)
 #define __libc_lock_define (a,b) int foo;
 
 
@@ -179,7 +179,7 @@
 //bad: {
 //bad: static bool __libc_freeres_fn_section
 //BAD:!!!!! free_slotinfo (struct dtv_slotinfo_list **elemp)
-#define __libc_freeres_fn_section 
+#define __libc_freeres_fn_section
 
 //BAD:!!!!!   static __thread void *data attribute_tls_model_ie;
 //bad: void ** __attribute__ ((const))
@@ -191,7 +191,7 @@
 
 
 //BAD:!!!!!   char name __flexarr;
-#define __flexarr 
+#define __flexarr
 //
 //BAD:!!!!!   void *__unbounded result;
 #define __unbounded
@@ -223,7 +223,7 @@
 #define libc_hidden_proto(a)
 
 //bad: libc_hidden_def (__libc_dlclose)
-#define libc_hidden_def(a) 
+#define libc_hidden_def(a)
 
 
 //BAD:!!!!! LINKAGE int
@@ -268,7 +268,7 @@
 
 //BAD:!!!!! __MATH_INLINE float __NTH (fdimf (float __x, float __y));
 //BAD:!!!!! __MATH_INLINE int
-#define __MATH_INLINE 
+#define __MATH_INLINE
 
 //
 //BAD:!!!!! symbol_version (__novmx_longjmp,_longjmp,GLIBC_2.3);
@@ -312,15 +312,15 @@
 
 //BAD:!!!!! _HURD_THREADVAR_H_EXTERN_INLINE unsigned long int *
 //bad: __hurd_threadvar_location (enum __hurd_threadvar_index __index)
-#define _HURD_THREADVAR_H_EXTERN_INLINE 
+#define _HURD_THREADVAR_H_EXTERN_INLINE
 
 //BAD:!!!!! _HURD_SIGNAL_H_EXTERN_INLINE void
 //bad: _hurd_critical_section_unlock (void *our_lock)
-#define _HURD_SIGNAL_H_EXTERN_INLINE 
+#define _HURD_SIGNAL_H_EXTERN_INLINE
 
 //BAD:!!!!! _HURD_FD_H_EXTERN_INLINE int
 //bad: _hurd_fd_error_signal (error_t err)
-#define _HURD_FD_H_EXTERN_INLINE 
+#define _HURD_FD_H_EXTERN_INLINE
 //
 //BAD:!!!!! _HURD_H_EXTERN_INLINE int
 //bad: __hurd_fail (error_t err)
@@ -328,7 +328,7 @@
 
 //BAD:!!!!!   __malloc_ptr_t (*hook) __MALLOC_PMT ((size_t, size_t,
 //bad: 					__const __malloc_ptr_t)) =
-#define __MALLOC_PMT(a) a 
+#define __MALLOC_PMT(a) a
 
 //BAD:!!!!! static Void_t* memalign_hook_ini __MALLOC_P ((size_t alignment, size_t sz,
 //bad: 					      const __malloc_ptr_t caller));
@@ -336,13 +336,13 @@
 
 //BAD:!!!!! void weak_variable (*__free_hook) (__malloc_ptr_t __ptr,
 //bad: 				   const __malloc_ptr_t) = NULL;
-#define weak_variable 
+#define weak_variable
 
 
 //
 //BAD:!!!!! __complex__ double
 //bad: __clog10 (__complex__ double x)
-#define __complex__ 
+#define __complex__
 
 //bad: int
 //bad: __strcasecmp (s1, s2 LOCALE_PARAM)
@@ -374,15 +374,15 @@ bad: }
 
 //BAD:!!!!! _HURD_THREADVAR_H_EXTERN_INLINE unsigned long int *
 //bad: __hurd_threadvar_location (enum __hurd_threadvar_index __index)
-#define _HURD_THREADVAR_H_EXTERN_INLINE 
+#define _HURD_THREADVAR_H_EXTERN_INLINE
 
 //BAD:!!!!! _HURD_SIGNAL_H_EXTERN_INLINE void
 //bad: _hurd_critical_section_unlock (void *our_lock)
-#define _HURD_SIGNAL_H_EXTERN_INLINE 
+#define _HURD_SIGNAL_H_EXTERN_INLINE
 
 //BAD:!!!!! _HURD_FD_H_EXTERN_INLINE int
 //bad: _hurd_fd_error_signal (error_t err)
-#define _HURD_FD_H_EXTERN_INLINE 
+#define _HURD_FD_H_EXTERN_INLINE
 //
 //BAD:!!!!! _HURD_H_EXTERN_INLINE int
 //bad: __hurd_fail (error_t err)
@@ -390,7 +390,7 @@ bad: }
 
 //BAD:!!!!!   __malloc_ptr_t (*hook) __MALLOC_PMT ((size_t, size_t,
 //bad: 					__const __malloc_ptr_t)) =
-#define __MALLOC_PMT(a) a 
+#define __MALLOC_PMT(a) a
 
 //BAD:!!!!! static Void_t* memalign_hook_ini __MALLOC_P ((size_t alignment, size_t sz,
 //bad: 					      const __malloc_ptr_t caller));
@@ -398,13 +398,13 @@ bad: }
 
 //BAD:!!!!! void weak_variable (*__free_hook) (__malloc_ptr_t __ptr,
 //bad: 				   const __malloc_ptr_t) = NULL;
-#define weak_variable 
+#define weak_variable
 
 
 //
 //BAD:!!!!! __complex__ double
 //bad: __clog10 (__complex__ double x)
-#define __complex__ 
+#define __complex__
 
 //bad: int
 //bad: __strcasecmp (s1, s2 LOCALE_PARAM)
@@ -422,7 +422,7 @@ bad: }
 //bad: {
 //bad:   return &errno;
 //bad: }
-#define weak_const_function 
+#define weak_const_function
 
 
 //BAD:!!!!!   float two23 = copysignf (0x1.0p23, x);
@@ -435,15 +435,15 @@ bad: }
 #define timercmp(a,b,op) a op b
 
 //BAD:!!!!! _HURD_PORT_H_EXTERN_INLINE void
-#define _HURD_PORT_H_EXTERN_INLINE 
+#define _HURD_PORT_H_EXTERN_INLINE
 
 //BAD:!!!!! _HURD_USERLINK_H_EXTERN_INLINE int
 #define _HURD_USERLINK_H_EXTERN_INLINE
 
 //bad: weak_alias (__posix_memalign, posix_memalign)
-//bad: 
+//bad:
 //BAD:!!!!! strong_alias (__libc_calloc, __calloc) weak_alias (__libc_calloc, calloc)
-#define weak_alias(a,b) 
+#define weak_alias(a,b)
 #define strong_alias(a,b)
 //
 //BAD:!!!!!        __attribute_warn_unused_result__;
@@ -452,7 +452,7 @@ bad: }
 //
 //bad:       __real__ res = INFINITY;
 //bad:       __imag__ res = __copysign (0.0, __imag__ x);
-#define __real__ 
+#define __real__
 #define __imag__
 
 
@@ -463,7 +463,7 @@ bad: }
 //bad:   P ();
 //bad:   return x;
 //bad: }
-#define F(a) a 
+#define F(a) a
 #define TYPE double
 
 //BAD:!!!!! complex float fz;
@@ -496,20 +496,20 @@ bad: }
 //bad:      size_t len;
 //bad: {
 #define a1const const
-#define a2const const 
+#define a2const const
 
 //
 //BAD:!!!!!      __nonnull ((1)) __wur __warnattr ("getdomainname called with bigger "
 //bad: 				       "buflen than size of destination "
 //bad: 				       "buffer");
-#define __warnattr(a) 
+#define __warnattr(a)
 //
 //BAD:!!!!!       status = DL_CALL_FCT (setgrent_fct, ());
 #define DL_CALL_FCT(a,b) a
 //
 //bad:   TST_DECL_VARS (wctype_t);
 //bad:   char *class;
-//bad: 
+//bad:
 //bad:   TST_DO_TEST (wctype)
 //BAD:!!!!!   {
 //bad:     TST_HEAD_LOCALE (wctype, S_WCTYPE);
@@ -519,16 +519,16 @@ bad: }
 #define TST_DO_TEST(a) if(a)
 //
 //BAD:!!!!! TST_ISW_LOC (CNTRL, cntrl) = {
-#define TST_ISW_LOC(a,b) int b 
+#define TST_ISW_LOC(a,b) int b
 
 //bad:       TST_DO_SEQ (MBSRTOWCS_SEQNUM)
 #define TST_DO_SEQ(a) if(a)
 
 //bad:     TST_DO_REC (wcsncpy)
 //BAD:!!!!!     {
-#define TST_DO_REC(a) if(a) 
+#define TST_DO_REC(a) if(a)
 //BAD:!!!!! TST_TOW_LOC (UPPER, upper) = {
-#define TST_TOW_LOC(a,b) int b 
+#define TST_TOW_LOC(a,b) int b
 
 
 //bad:       TST_IF_RETURN (S_WCTRANS)
@@ -551,7 +551,7 @@ bad: }
 
 //BAD:!!!!! extern INT __strtol_l PARAMS ((const STRING_TYPE *nptr, STRING_TYPE **endptr,
 //bad: 			       int base));
-#define PARAMS(a) a 
+#define PARAMS(a) a
 
 
 //bad: __BEGIN_NAMESPACE_C99
@@ -563,17 +563,17 @@ bad: }
 
 
 //BAD:!!!!! libc_locked_map_ptr (extern, __gr_map_handle) attribute_hidden;
-#define libc_locked_map_ptr(a,b) int b 
+#define libc_locked_map_ptr(a,b) int b
 
 //BAD:!!!!! static const char compilation[21] = __DATE__ " " __TIME__;
 #define __DATE__ "foo"
-#define __TIME__ "bar" 
+#define __TIME__ "bar"
 
 //pad: ???
 //BAD:!!!!! static const struct timeval tottimeout = {KEY_TIMEOUT *KEY_NRETRY, 0};
 
 //pad: false positif
-//BAD:!!!!! int inlineflag = INLINE;	
+//BAD:!!!!! int inlineflag = INLINE;
 
 
 //BAD:!!!!! 	void *buffer, size_t buflen, int *errnop H_ERRNO_PROTO EXTRA_ARGS_DECL)
@@ -583,7 +583,7 @@ bad: }
 #define EXTRA_ARGS_DECL
 //
 //BAD:!!!!! 			       size_t buflen, int *errnop H_ERRNO_PROTO)
-#define H_ERRNO_PROTO 
+#define H_ERRNO_PROTO
 
 //
 //bad: int
@@ -613,7 +613,7 @@ bad: }
 
 //BAD:!!!!! extern int	getopt P((int argc, char * const argv[],
 //bad: 			const char * options));
-//but conflict :( 
+//but conflict :(
 #define P(a) a
 
 //BAD:!!!!! __STDIO_INLINE int
@@ -637,7 +637,7 @@ bad: }
 
 //bad: ARGP_FS_EI size_t
 //BAD:!!!!! __argp_fmtstream_write (argp_fmtstream_t __fs,
-#define ARGP_FS_EI 
+#define ARGP_FS_EI
 
 //BAD:!!!!! ARGP_EI int
 //bad: __NTH (__option_is_short (__const struct argp_option *__opt))
@@ -645,13 +645,13 @@ bad: }
 
 //
 //BAD:!!!!! const STRUCT_CTYPE_CLASS(1, 0) _nl_C_LC_CTYPE_class_space attribute_hidden =
-#define STRUCT_CTYPE_CLASS(a,b) 
+#define STRUCT_CTYPE_CLASS(a,b)
 //
 //BAD:!!!!!   __libc_rwlock_define (, conversions_lock);
 #define __libc_rwlock_define(a,b) int foo;
 //
 //BAD:!!!!!   __libc_rwlock_define_initialized (static, lock);
-#define __libc_rwlock_define_initialized(a,b) int foo; 
+#define __libc_rwlock_define_initialized(a,b) int foo;
 //bad:   __libc_rwlock_rdlock (tree_lock);
 
 //BAD:!!!!! 			       size_t len LOCALE_PARAM_PROTO) __THROW;
@@ -673,7 +673,7 @@ bad: }
 //BAD:!!!!!       mp_limb_t base PACK;
 //bad: #if UDIV_TIME > 2 * UMUL_TIME
 //bad:       mp_limb_t base_ninv PACK;
-#define PACK 
+#define PACK
 
 //
 //BAD:!!!!!   TEST (creal (1.0 + 1.0i), sizeof (double));
@@ -693,10 +693,10 @@ bad: }
 //bad: AB(handle_file) (const char *fname, int fd)
 //bad: {
 //BAD:!!!!!   E(Ehdr) ehdr;
-//bad: 
+//bad:
 //
-//bad: 
-//bad: 
+//bad:
+//bad:
 //bad: libc_freeres_fn (free_mem)
 //BAD:!!!!! {
 //bad:   struct link_map *l;

@@ -1,18 +1,18 @@
 // Cooperation with parsing_hack.ml: YACFE_XXX are magic strings.
-// In the case of YACFE_STATEMENT, I could not just expand those macros 
-// into some 'whatever();' because I needed 
+// In the case of YACFE_STATEMENT, I could not just expand those macros
+// into some 'whatever();' because I needed
 // to generate a TMacroStmt for solving some ambiguities in the grammar
 // for the toplevel stuff I think.
 
 // todo? add parameters ?
 
-// ex: 
+// ex:
 #define XXX_ICH(a,b,c) YACFE_ITERATOR
 
-// ex: 
+// ex:
 #define XXX_STR YACFE_STRING
 
-// ex: 
+// ex:
 #define XXX_DEC YACFE_DECLARATOR
 
 // ex:

@@ -9,7 +9,7 @@ type file_type =
   | Archive of string
   | Other of string
 
- and pl_type = 
+ and pl_type =
   | ML of string | Haskell of string | Lisp of lisp_type
   | Prolog of string
   | Makefile
@@ -28,7 +28,7 @@ type file_type =
 
    and lisp_type = CommonLisp | Elisp | Scheme
 
-   and webpl_type = 
+   and webpl_type =
      | Php of string
      | Js | Coffee
      | Css
@@ -41,10 +41,10 @@ type file_type =
    | Video of string
 
 
-val file_type_of_file: 
+val file_type_of_file:
   Common.filename -> file_type
 
-val is_textual_file: 
+val is_textual_file:
   Common.filename -> bool
 val is_syncweb_obj_file:
   Common.filename -> bool
@@ -52,7 +52,7 @@ val is_json_filename:
   Common.filename -> bool
 
 (* specialisations *)
-val webpl_type_of_file: 
+val webpl_type_of_file:
   Common.filename -> webpl_type option
 
 (* val string_of_pl: pl_kind -> string *)

@@ -1,6 +1,6 @@
-open Common 
+open Common
 
-(* clone with parsing_c/parsing_stat.ml *) 
+(* clone with parsing_c/parsing_stat.ml *)
 
 (*****************************************************************************)
 (* Stat *)
@@ -9,69 +9,69 @@ type parsing_stat = {
     filename: filename;
     mutable have_timeout: bool;
 
-    mutable correct: int;  
+    mutable correct: int;
     mutable bad: int;
 
     mutable commentized: int; (* by our cpp commentizer *)
 
     (* if want to know exactly what was passed through, uncomment:
-     *  
+     *
      * mutable passing_through_lines: int;
-     * 
+     *
      * it differs from bad by starting from the error to
      * the synchro point instead of starting from start of
      * function to end of function.
      *)
 
-  } 
+  }
 
-let default_stat file =  { 
+let default_stat file =  {
     filename = file;
     have_timeout = false;
     correct = 0; bad = 0;
     commentized = 0;
   }
 
-(* todo: stat per dir ?  give in terms of func_or_decl numbers:   
- * nbfunc_or_decl pbs / nbfunc_or_decl total ?/ 
+(* todo: stat per dir ?  give in terms of func_or_decl numbers:
+ * nbfunc_or_decl pbs / nbfunc_or_decl total ?/
  *
- * note: cela dit si y'a des fichiers avec des #ifdef dont on connait pas les 
- * valeurs alors on parsera correctement tout le fichier et pourtant y'aura 
- * aucune def  et donc aucune couverture en fait.   
- * ==> TODO evaluer les parties non parsé ? 
+ * note: cela dit si y'a des fichiers avec des #ifdef dont on connait pas les
+ * valeurs alors on parsera correctement tout le fichier et pourtant y'aura
+ * aucune def  et donc aucune couverture en fait.
+ * ==> TODO evaluer les parties non parsé ?
  *)
 
-let print_parsing_stat_list ?(verbose=false) = fun statxs -> 
+let print_parsing_stat_list ?(verbose=false) = fun statxs ->
   let total = (List.length statxs) in
-  let perfect = 
-    statxs 
-      +> List.filter (function 
+  let perfect =
+    statxs
+      +> List.filter (function
           {have_timeout = false; bad = 0} -> true | _ -> false)
-      +> List.length 
+      +> List.length
   in
 
-  if verbose then begin 
+  if verbose then begin
   pr "\n\n\n---------------------------------------------------------------";
   pr "pbs with files:";
-  statxs 
-    +> List.filter (function 
-      | {have_timeout = true} -> true 
-      | {bad = n} when n > 0 -> true 
+  statxs
+    +> List.filter (function
+      | {have_timeout = true} -> true
+      | {bad = n} when n > 0 -> true
       | _ -> false)
-    +> List.iter (function 
-        {filename = file; have_timeout = timeout; bad = n} -> 
+    +> List.iter (function
+        {filename = file; have_timeout = timeout; bad = n} ->
           pr (file ^ "  " ^ (if timeout then "TIMEOUT" else i_to_s n));
         );
 
   pr "\n\n\n";
   pr "files with lots of tokens passed/commentized:";
   let threshold_passed = 100 in
-  statxs 
-    +> List.filter (function 
+  statxs
+    +> List.filter (function
       | {commentized = n} when n > threshold_passed -> true
       | _ -> false)
-    +> List.iter (function 
-        {filename = file; commentized = n} -> 
+    +> List.iter (function
+        {filename = file; commentized = n} ->
           pr (file ^ "  " ^ (i_to_s n));
         );
 
@@ -89,14 +89,14 @@ let print_parsing_stat_list ?(verbose=false) = fun statxs ->
   (spf "NB total files = %d; " total) ^
   (spf "NB total lines = %d; " total_lines) ^
   (spf "perfect = %d; " perfect) ^
-  (spf "pbs = %d; "     (statxs +> List.filter (function 
-      {have_timeout = b; bad = n} when n > 0 -> true | _ -> false) 
+  (spf "pbs = %d; "     (statxs +> List.filter (function
+      {have_timeout = b; bad = n} when n > 0 -> true | _ -> false)
                                +> List.length)) ^
-  (spf "timeout = %d; " (statxs +> List.filter (function 
-      {have_timeout = true; bad = n} -> true | _ -> false) 
+  (spf "timeout = %d; " (statxs +> List.filter (function
+      {have_timeout = true; bad = n} -> true | _ -> false)
                                +> List.length)) ^
   (spf "=========> %d" ((100 * perfect) / total)) ^ "%"
-                                                          
+
  );
   let gf, badf = float_of_int good, float_of_int bad in
   let passedf = float_of_int passed in

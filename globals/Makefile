@@ -53,7 +53,7 @@ $(TARGET).cmxa: $(OPTOBJS) $(LIBS:.cma=.cmxa)
 .ml.cmx:
 	$(OCAMLOPT) -c $<
 
-.ml.mldepend: 
+.ml.mldepend:
 	$(OCAMLC) -i $<
 
 clean::

@@ -27,7 +27,7 @@
 
 # ifdef STRICT
 /*@checkedstrict@*/ int errno;
-# else 
+# else
 ///*@unchecked@*/ int errno;
 # endif
 
@@ -43,10 +43,10 @@
 /*@constant int __bool_true_false_are_defined = 1@*/
 
 /*
-** types 
+** types
 */
 
-//typedef /*@integraltype@*/ ptrdiff_t;    
+//typedef /*@integraltype@*/ ptrdiff_t;
 //typedef /*@unsignedintegraltype@*/ size_t;
 //typedef /*@signedintegraltype@*/ ssize_t;
 //typedef /*@integraltype@*/ wchar_t;
@@ -67,10 +67,10 @@
 /*@constant _Bool NDEBUG;@*/
 
 # ifdef STRICT
-/*@falseexit@*/ void assert (/*@sef@*/ /*pad:_Bool*/ int e) 
+/*@falseexit@*/ void assert (/*@sef@*/ /*pad:_Bool*/ int e)
   /*@*/ ;
 # else
-///*@falseexit@*/ void assert (/*@sef@*/ _Bool /*@alt int@*/ e) 
+///*@falseexit@*/ void assert (/*@sef@*/ _Bool /*@alt int@*/ e)
   /*@*/ ;
 # endif
 
@@ -146,7 +146,7 @@ struct lconv
 /*@constant int LC_NUMERIC;@*/
 /*@constant int LC_TIME;@*/
 
-/*@observer@*/ /*@null@*/ char *setlocale (int category, /*@null@*/ char *locale) 
+/*@observer@*/ /*@null@*/ char *setlocale (int category, /*@null@*/ char *locale)
    /*@modifies internalState, errno@*/ ;
 
 struct lconv *localeconv (void) /*@*/ ;
@@ -342,7 +342,7 @@ float floorf (float x) /*@*/ ;
 long double floorl (long double x) /*@*/ ;
 
 double nearbyint (double x) /*@*/ ;
-float nearbyintf (float x) /*@*/ ; 
+float nearbyintf (float x) /*@*/ ;
 long double nearbyintl (long double x) /*@*/ ;
 
 double rint (double x) /*@*/;
@@ -359,7 +359,7 @@ double round (double x) /*@*/ ;
 long int lround (double x) /*@modifies errno@*/ ;
 long long llround (double x) /*@modifies errno@*/ ;
 
-double trunc (double x) /*@*/ ; 
+double trunc (double x) /*@*/ ;
 double fmod (double x, double y) /*@*/ ;
 double remainder (double x, double y) /*@*/ ;
 double remquo (double x, double y, /*@out@*/ int *quo) /*@modifies *quo@*/ ;
@@ -466,7 +466,7 @@ int setjmp (/*@out@*/ jmp_buf env) /*@modifies env;@*/ ;
 ** returns the function (or NULL if unsuccessful).
 */
 
-/*@null@*/ void (*signal (int sig, /*@null@*/ void (*func)(int))) (int) 
+/*@null@*/ void (*signal (int sig, /*@null@*/ void (*func)(int))) (int)
    /*@modifies internalState, errno;@*/ ;
 
 /*@mayexit@*/ int raise (int sig) ;
@@ -532,53 +532,53 @@ int rename (char *old, char *new) /*@modifies fileSystem, errno@*/ ;
    /*@modifies fileSystem, errno@*/ ;
 
 /*@observer@*/ char *
-  tmpnam (/*@out@*/ /*@null@*/ /*@returned@*/ char *s) 
+  tmpnam (/*@out@*/ /*@null@*/ /*@returned@*/ char *s)
   /*@modifies *s, internalState@*/ ;
 
-int fclose (FILE *stream) 
+int fclose (FILE *stream)
    /*@modifies *stream, errno, fileSystem;@*/ ;
 
-int fflush (/*@null@*/ FILE *stream) 
+int fflush (/*@null@*/ FILE *stream)
    /*@modifies *stream, errno, fileSystem;@*/ ;
 
-/*@null@*/ /*@dependent@*/ FILE *fopen (char *filename, char *mode) 
-   /*@modifies fileSystem@*/ ;         
+/*@null@*/ /*@dependent@*/ FILE *fopen (char *filename, char *mode)
+   /*@modifies fileSystem@*/ ;
 
-/*@dependent@*/ /*@null@*/ FILE *freopen (char *filename, char *mode, FILE *stream) 
+/*@dependent@*/ /*@null@*/ FILE *freopen (char *filename, char *mode, FILE *stream)
   /*@modifies *stream, fileSystem, errno@*/ ;
 
-void setbuf (FILE *stream, /*@null@*/ /*@exposed@*/ /*@out@*/ char *buf) 
-     /*@modifies fileSystem, *stream, *buf@*/ 
+void setbuf (FILE *stream, /*@null@*/ /*@exposed@*/ /*@out@*/ char *buf)
+     /*@modifies fileSystem, *stream, *buf@*/
      /*:errorcode != 0*/ ;
      /*:requires maxSet(buf) >= (BUFSIZ - 1):*/ ;
 
-int setvbuf (FILE *stream, /*@null@*/ /*@exposed@*/ /*@out@*/ char *buf, 
+int setvbuf (FILE *stream, /*@null@*/ /*@exposed@*/ /*@out@*/ char *buf,
 	     int mode, size_t size)
       /*@modifies fileSystem, *stream, *buf@*/
      /*@requires maxSet(buf) >= (size - 1) @*/ ;
 
 # ifdef STRICT
-/*@printflike@*/ 
+/*@printflike@*/
 int fprintf (FILE *stream, char *format, ...)
    /*@modifies fileSystem, *stream@*/ ;
 # else
-///*@printflike@*/ 
+///*@printflike@*/
 //int /*@alt void@*/ fprintf (FILE *stream, char *format, ...)
 //   /*@modifies fileSystem, *stream@*/ ;
 # endif
 
-/*@scanflike@*/ 
+/*@scanflike@*/
 int fscanf (FILE *stream, char *format, ...)
    /*@modifies fileSystem, *stream, errno@*/ ;
 
 # ifdef STRICT
-/*@printflike@*/ 
-int printf (char *format, ...) 
+/*@printflike@*/
+int printf (char *format, ...)
    /*@globals stdout@*/
    /*@modifies fileSystem, *stdout@*/ ;
 # else
-///*@printflike@*/ 
-//int /*@alt void@*/ printf (char *format, ...) 
+///*@printflike@*/
+//int /*@alt void@*/ printf (char *format, ...)
 //   /*@globals stdout@*/
 //   /*@modifies fileSystem, *stdout@*/ ;
 # endif
@@ -590,13 +590,13 @@ int scanf(char *format, ...)
    /*drl added errno 09-19-2001 */ ;
 
 # ifdef STRICT
-/*@printflike@*/ 
-int sprintf (/*@out@*/ char *s, char *format, ...) 
+/*@printflike@*/
+int sprintf (/*@out@*/ char *s, char *format, ...)
    /*@warn bufferoverflowhigh "Buffer overflow possible with sprintf.  Recommend using snprintf instead"@*/
    /*@modifies *s@*/ ;
 # else
-///*@printflike@*/ 
-//int /*@alt void@*/ sprintf (/*@out@*/ char *s, char *format, ...) 
+///*@printflike@*/
+//int /*@alt void@*/ sprintf (/*@out@*/ char *s, char *format, ...)
 //   /*@warn bufferoverflowhigh "Buffer overflow possible with sprintf.  Recommend using snprintf instead"@*/
 //   /*@modifies *s@*/ ;
 # endif
@@ -607,7 +607,7 @@ int snprintf (/*@out@*/ char * /*pad:restrict*/ s, size_t n, const char * /*pad:
    /*@modifies s@*/
    /*@requires maxSet(s) >= (n - 1)@*/ ;
 
-/*@scanflike@*/ 
+/*@scanflike@*/
 int sscanf (/*@out@*/ char *s, char *format, ...) /*@modifies errno@*/ ;
    /* modifies extra arguments */
 
@@ -626,7 +626,7 @@ int vsnprintf (/*@out@*/ char *str, size_t size, const char *format, va_list ap)
      /*@requires maxSet(str) >= (size - 1)@*/ /* drl - this was size, size-1 in stdio.h */
      /*@modifies str@*/ ;
 
-int fgetc (FILE *stream) 
+int fgetc (FILE *stream)
    /*@modifies fileSystem, *stream, errno@*/ ;
 
 /*@null@*/ char *
@@ -649,7 +649,7 @@ int getc (/*@sef@*/ FILE *stream)
 
 int getchar (void) /*@globals stdin@*/ /*@modifies fileSystem, *stdin, errno@*/ ;
 
-/*@null@*/ char *gets (/*@out@*/ char *s) 
+/*@null@*/ char *gets (/*@out@*/ char *s)
    /*@warn bufferoverflowhigh
            "Use of gets leads to a buffer overflow vulnerability.  Use fgets instead"@*/
    /*@globals stdin@*/ /*@modifies fileSystem, *s, *stdin, errno@*/ ;
@@ -660,26 +660,26 @@ int putc (int /*@alt char@*/ c, /*@sef@*/ FILE *stream)
 
 int putchar (int /*@alt char@*/ c)
    /*:errorcode EOF:*/
-   /*@globals stdout@*/ 
-   /*@modifies fileSystem, *stdout, errno@*/ ; 
+   /*@globals stdout@*/
+   /*@modifies fileSystem, *stdout, errno@*/ ;
 
 int puts (const char *s)
    /*:errorcode EOF:*/
    /*@globals stdout@*/
-   /*@modifies fileSystem, *stdout, errno@*/ ; 
+   /*@modifies fileSystem, *stdout, errno@*/ ;
 
 int ungetc (int /*@alt char@*/ c, FILE *stream)
   /*@modifies fileSystem, *stream@*/ ;
       /*drl REMOVED errno 09-19-2001*/
 
-size_t 
+size_t
   fread (/*@out@*/ void *ptr, size_t size, size_t nobj, FILE *stream)
-  /*@modifies fileSystem, *ptr, *stream, errno@*/ 
+  /*@modifies fileSystem, *ptr, *stream, errno@*/
   /*requires maxSet(ptr) >= (size - 1) @*/
   /*@ensures maxRead(ptr) == (size - 1) @*/ ;
 
 size_t fwrite (void *ptr, size_t size, size_t nobj, FILE *stream)
-  /*@modifies fileSystem, *stream, errno@*/ 
+  /*@modifies fileSystem, *stream, errno@*/
   /*@requires maxRead(ptr) >= size @*/ ;
 
 int fgetpos (FILE *stream, /*@out@*/ fpos_t *pos)
@@ -694,7 +694,7 @@ int fseek (FILE *stream, long int offset, int whence)
 int fsetpos (FILE *stream, fpos_t *pos)
    /*@modifies fileSystem, *stream, errno@*/ ;
 
-long int ftell(FILE *stream) 
+long int ftell(FILE *stream)
    /*:errorcode -1:*/ /*@modifies errno*/ ;
 
 void rewind (FILE *stream) /*@modifies *stream@*/ ;
@@ -704,8 +704,8 @@ int feof (FILE *stream) /*@modifies errno@*/ ;
 
 int ferror (FILE *stream) /*@modifies errno@*/ ;
 
-void perror (/*@null@*/ char *s) 
-   /*@globals errno, stderr@*/ /*@modifies fileSystem, *stderr@*/ ; 
+void perror (/*@null@*/ char *s)
+   /*@globals errno, stderr@*/ /*@modifies fileSystem, *stderr@*/ ;
 
 /*
 ** stdlib.h
@@ -721,7 +721,7 @@ double strtod (char *s, /*@null@*/ /*@out@*/ char **endp)
 long strtol (char *s, /*@null@*/ /*@out@*/ char **endp, int base)
   /*@modifies *endp, errno@*/ ;
 
-unsigned long 
+unsigned long
   strtoul (char *s, /*@null@*/ /*@out@*/ char **endp, int base)
   /*@modifies *endp, errno@*/ ;
 
@@ -740,7 +740,7 @@ void srand (unsigned int seed) /*@modifies internalState@*/ ;
      /*@ensures maxSet(result) == (size - 1); @*/ ;
 
 /*end drl changed */
-     
+
 /* 11 June 1997: removed out on return value */
 
 /*
@@ -753,13 +753,13 @@ void srand (unsigned int seed) /*@modifies internalState@*/ ;
 */
 
 /*@null@*/ /*@only@*/ void *
-   realloc (/*@null@*/ /*@only@*/ /*@out@*/ /*@returned@*/ void *p, size_t size) 
+   realloc (/*@null@*/ /*@only@*/ /*@out@*/ /*@returned@*/ void *p, size_t size)
      /*@modifies *p@*/ /*@ensures maxSet(result) >= (size - 1) @*/;
 
 void free (/*@null@*/ /*@out@*/ /*@only@*/ void *p) /*@modifies p@*/ ;
 
-/*@constant int EXIT_FAILURE; @*/ 
-/*@constant int EXIT_SUCCESS; @*/ 
+/*@constant int EXIT_FAILURE; @*/
+/*@constant int EXIT_SUCCESS; @*/
 
 /*@exits@*/ void abort (void) /*@*/ ;
 /*@exits@*/ void exit (int status) /*@*/ ;
@@ -770,17 +770,17 @@ int atexit (void (*func)(void)) /*@modifies internalState@*/ ;
 int system (/*@null@*/ char *s) /*@modifies fileSystem@*/ ;
 
 /*@null@*/ /*@dependent@*/ void *
-  bsearch (void *key, void *base, 
-	   size_t n, size_t size, 
+  bsearch (void *key, void *base,
+	   size_t n, size_t size,
 	   int (*compar)(void *, void *)) /*@*/ ;
 
-void qsort (void *base, size_t n, size_t size, 
+void qsort (void *base, size_t n, size_t size,
 		   int (*compar)(void *, void *))
    /*@modifies *base, errno@*/ ;
 
 int abs (int n) /*@*/ ;
 
-typedef /*@concrete@*/ struct 
+typedef /*@concrete@*/ struct
 {
   int quot;
   int rem;
@@ -788,9 +788,9 @@ typedef /*@concrete@*/ struct
 
 div_t div (int num, int denom) /*@*/ ;
 
-long int labs (long int n) /*@*/ ; 
+long int labs (long int n) /*@*/ ;
 
-typedef /*@concrete@*/ struct 
+typedef /*@concrete@*/ struct
 {
   long int quot;
   long int rem;
@@ -821,7 +821,7 @@ wint_t fputwc (wchar_t c, FILE *stream)
 int fputws (const wchar_t *s, FILE *stream)
    /*@modifies fileSystem, *stream@*/ ;
 
-int fwide (FILE *stream, int mode) /*@*/ ; 
+int fwide (FILE *stream, int mode) /*@*/ ;
    /* does not modify the stream */
 
 /*@printflike@*/ int fwprintf (FILE *stream, const wchar_t *format, ...)
@@ -838,13 +838,13 @@ wint_t getwchar (void) /*@modifies fileSystem, *stdin@*/;
 size_t mbrlen (const char *s, size_t n, /*@null@*/ mbstate_t *ps) /*@*/ ;
 
 size_t mbrtowc (/*@null@*/ wchar_t *pwc, const char *s, size_t n,
-		       /*@null@*/ mbstate_t *ps) 
+		       /*@null@*/ mbstate_t *ps)
    /*@modifies *pwc@*/ ;
 
 int mbsinit (/*@null@*/ const mbstate_t *ps) /*@*/ ;
 
 size_t mbsrtowcs (/*@null@*/ wchar_t *dst, const char **src, size_t len,
-			 /*@null@*/ mbstate_t *ps) 
+			 /*@null@*/ mbstate_t *ps)
    /*@modifies *dst@*/ ;
 
 /* note use of sef --- stream may be evaluated more than once */
@@ -884,28 +884,28 @@ int wcscmp (const wchar_t *s1, const wchar_t *s2) /*@*/ ;
 
 int wcscoll (const wchar_t *s1, const wchar_t *s2) /*@*/ ;
 
-void /*@alt wchar_t *@*/ 
+void /*@alt wchar_t *@*/
   wcscpy (/*@unique@*/ /*@out@*/ /*@returned@*/ wchar_t *s1, const wchar_t *s2)
   /*@modifies *s1@*/ ;
 
 size_t wcscspn (const wchar_t *s1, const wchar_t *s2) /*@*/ ;
 
 size_t wcsftime (/*@out@*/ wchar_t *s, size_t maxsize, const wchar_t *format,
-			const struct tm *timeptr) 
+			const struct tm *timeptr)
    /*@modifies *s@*/ ;
 
 size_t wcslen (const wchar_t *s) /*@*/ ;
 
 void /*@alt wchar_t *@*/
   wcsncat (/*@unique@*/ /*@returned@*/ /*@out@*/ wchar_t *s1, const wchar_t *s2,
-	   size_t n) 
+	   size_t n)
   /*@modifies *s1@*/ ;
 
 int wcsncmp (const wchar_t *s1, const wchar_t *s2, size_t n) /*@*/ ;
 
 void /*@alt wchar_t *@*/
   wcsncpy (/*@unique@*/ /*@returned@*/ /*@out@*/ wchar_t *s1, const wchar_t *s2,
-	   size_t n) 
+	   size_t n)
    /*@modifies *s1@*/ ;
 
 /*@null@*/ wchar_t *
@@ -918,7 +918,7 @@ void /*@alt wchar_t *@*/
 
 size_t
   wcsrtombs (/*@null@*/ char *dst, const wchar_t **src, size_t len,
-	     /*@null@*/ mbstate_t *ps) 
+	     /*@null@*/ mbstate_t *ps)
   /*@modifies *src@*/ ;
 
 size_t wcsspn (const wchar_t *s1, const wchar_t *s2) /*@*/ ;
@@ -1013,9 +1013,9 @@ wctrans_t wctrans (const char *property)	/*@*/ ;
 wctype_t wctype (const char *property) /*@*/ ;
 
 int mblen (char *s, size_t n) /*@*/ ;
-int mbtowc (/*@null@*/ wchar_t *pwc, /*@null@*/ char *s, size_t n) 
+int mbtowc (/*@null@*/ wchar_t *pwc, /*@null@*/ char *s, size_t n)
    /*@modifies *pwc@*/ ;
-int wctomb (/*@out@*/ /*@null@*/ char *s, wchar_t wchar) 
+int wctomb (/*@out@*/ /*@null@*/ char *s, wchar_t wchar)
    /*@modifies *s@*/ ;
 size_t mbstowcs (/*@out@*/ wchar_t *pwcs, char *s, size_t n)
   /*@modifies *pwcs@*/ ;
@@ -1025,9 +1025,9 @@ size_t wcstombs (/*@out@*/ char *s, wchar_t *pwcs, size_t n)
 /*
 ** string.h
 */
-     
+
 void /*@alt void * @*/
-  memcpy (/*@unique@*/ /*@returned@*/ /*@out@*/ void *s1, void *s2, size_t n) 
+  memcpy (/*@unique@*/ /*@returned@*/ /*@out@*/ void *s1, void *s2, size_t n)
   /*@modifies *s1@*/
      /*@requires maxRead(s2) >= (n - 1) /\ maxSet(s1) >= (n - 1); @*/
      ;
@@ -1038,42 +1038,42 @@ void /*@alt void * @*/
   /*@requires maxRead(s2) >= (n - 1) /\ maxSet(s1) >= (n - 1); @*/
    ;
 
-  
+
   /* drl
      modifed  12/29/2000
   */
 
-void /*@alt char * @*/ 
-  strcpy (/*@unique@*/ /*@out@*/ /*@returned@*/ char *s1, char *s2) 
-     /*@modifies *s1@*/ 
+void /*@alt char * @*/
+  strcpy (/*@unique@*/ /*@out@*/ /*@returned@*/ char *s1, char *s2)
+     /*@modifies *s1@*/
      /*@requires maxSet(s1) >= maxRead(s2) @*/
      /*@ensures maxRead(s1) == maxRead (s2) /\ maxRead(result) == maxRead(s2) /\ maxSet(result) == maxSet(s1); @*/;
 
 void /*@alt char * @*/
-  strncpy (/*@unique@*/ /*@out@*/ /*@returned@*/ char *s1, char *s2, size_t n) 
-     /*@modifies *s1@*/ 
+  strncpy (/*@unique@*/ /*@out@*/ /*@returned@*/ char *s1, char *s2, size_t n)
+     /*@modifies *s1@*/
      /*@requires maxSet(s1) >= ( n - 1 ); @*/
-     /*@ensures maxRead (s2) >= maxRead(s1) /\ maxRead (s1) <= n; @*/ ; 
+     /*@ensures maxRead (s2) >= maxRead(s1) /\ maxRead (s1) <= n; @*/ ;
 
 void /*@alt char * @*/
-  strcat (/*@unique@*/ /*@returned@*/ char *s1, char *s2) 
+  strcat (/*@unique@*/ /*@returned@*/ char *s1, char *s2)
      /*@modifies *s1@*/ /*@requires maxSet(s1) >= (maxRead(s1) + maxRead(s2) );@*/
      /*@ensures maxRead(result) == (maxRead(s1) + maxRead(s2) );@*/;
 
 void /*@alt char * @*/
   strncat (/*@unique@*/ /*@returned@*/ char *s1, char *s2, size_t n)
-     /*@modifies *s1@*/ 
+     /*@modifies *s1@*/
      /*@requires maxSet(s1) >= ( maxRead(s1) + n); @*/
       /*@ensures maxRead(s1) >= (maxRead(s1) + n); @*/;
 
      /*drl end*/
-     
+
 int memcmp (void *s1, void *s2, size_t n) /*@*/ ;
 int strcmp (char *s1, char *s2) /*@*/ ;
 int strcoll (char *s1, char *s2) /*@*/ ;
 int strncmp (char *s1, char *s2, size_t n) /*@*/ ;
-size_t strxfrm (/*@out@*/ /*@null@*/ char *s1, char *s2, size_t n) 
-  /*@modifies *s1@*/ ;  /* s1 may be null only if n == 0 */ 
+size_t strxfrm (/*@out@*/ /*@null@*/ char *s1, char *s2, size_t n)
+  /*@modifies *s1@*/ ;  /* s1 may be null only if n == 0 */
 
 /*@null@*/ void *memchr (void *s, int c, size_t n) /*@*/ ;
 
@@ -1107,14 +1107,14 @@ size_t strspn (char *s, char *t) /*@*/ ;
   strtok (/*@returned@*/ /*@null@*/ char *s, char *t)
   /*@modifies *s, internalState, errno@*/ ;
 
-void /*@alt void *@*/ memset (/*@out@*/ /*@returned@*/ void *s, 
+void /*@alt void *@*/ memset (/*@out@*/ /*@returned@*/ void *s,
 				     int c, size_t n)
      /*@modifies *s@*/ /*@requires maxSet(s) >= (n - 1) @*/ /*@ensures maxRead(s) >= (n - 1) @*/ ;
 
 /*@observer@*/ char *strerror (int errnum) /*@*/ ;
 
 /*drl */
-size_t strlen (char *s) /*@*/ /*@ensures result == maxRead(s); @*/; 
+size_t strlen (char *s) /*@*/ /*@ensures result == maxRead(s); @*/;
 
 /*
 ** time.h
@@ -1145,7 +1145,7 @@ time_t mktime (struct tm *timeptr) /*@*/ ;
 time_t time (/*@null@*/ /*@out@*/ time_t *tp)
   /*@modifies *tp@*/ ;
 
-/*@observer@*/ char *asctime (struct tm *timeptr) 
+/*@observer@*/ char *asctime (struct tm *timeptr)
   /*@modifies errno*/ /*@ensures maxSet(result) == 25 /\  maxRead(result) == 25; @*/ ;
 
 /*@observer@*/ char *ctime (time_t *tp) /*@*/
@@ -1154,7 +1154,7 @@ time_t time (/*@null@*/ /*@out@*/ time_t *tp)
 /* 2003-11-01: remove null annotation: gmtima and localtime cannot return null */
 /*@observer@*/ struct tm *gmtime (time_t *tp) /*@*/ ;
 
-/*@observer@*/ struct tm *localtime (time_t *tp) 
+/*@observer@*/ struct tm *localtime (time_t *tp)
   /*@modifies errno@*/ ;
 
 size_t strftime (/*@out@*/ char *s, size_t smax,
@@ -1225,7 +1225,7 @@ size_t strftime (/*@out@*/ char *s, size_t smax,
 //typedef /*@unsignedintegraltype@*/ uintmax_t;
 
 /*
-** What should the types be here? 
+** What should the types be here?
 */ /*#*/
 
 /*@constant int INT8_MIN@*/
@@ -1377,7 +1377,7 @@ extern int closedir (DIR *dirp)
 
    /*drl 1/4/2001 added the dependent annotation as suggested by
      Ralf Wildenhues */
-   
+
 extern /*@null@*/ /*@dependent@*/ DIR *opendir (const char *dirname)
    /*@modifies errno, fileSystem@*/;
 
@@ -1488,7 +1488,7 @@ extern void rewinddir (DIR *dirp)
 /*@constant int O_NONBLOCK@*/
 
 /*@constant int O_RDONLY@*/
-#define O_RDONLY 2 
+#define O_RDONLY 2
 /*@constant int O_RDWR@*/
 #define O_RDWR 2
 /*@constant int O_TRUNC@*/
@@ -1729,7 +1729,7 @@ typedef struct {
 
 typedef union {
   int    sival_int;
-  void  *sival_ptr;    
+  void  *sival_ptr;
 } sigval;
 
 struct sigaction {
@@ -1738,7 +1738,7 @@ struct sigaction {
   int sa_flags;
   void (*sa_sigaction)(int, siginfo_t *, void *); /* Added 2003-06-13: Noticed by Jerry James */
 } ;
- 
+
 	extern /*@mayexit@*/ int
 kill (pid_t pid, int sig)
 	/*@modifies errno@*/;
@@ -1810,12 +1810,12 @@ struct stat {
 } ;
 /*
 ** evans 2004-05-19: dependent annotations atted for time_t fields.  Could not find
-** any clear documetation on this, but it seems to be correct. 
+** any clear documetation on this, but it seems to be correct.
 */
 
 /*
 ** POSIX does not require that the S_I* be functions. They're
-** macros virtually everywhere. 
+** macros virtually everywhere.
 */
 
 # ifdef STRICT
@@ -1823,7 +1823,7 @@ struct stat {
 //# define SBOOLINT _Bool /*@alt int@*/
 # else
 /*@notfunction@*/
-//# define SBOOLINT _Bool           
+//# define SBOOLINT _Bool
 # endif
 
 //extern SBOOLINT S_ISBLK (/*@sef@*/ mode_t m) /*@*/ ;
@@ -1838,13 +1838,13 @@ struct stat {
 
 int chmod (const char *path, mode_t mode)
      /*@modifies fileSystem, errno@*/ ;
-     
+
 int fstat (int fd, /*@out@*/ struct stat *buf)
      /*@modifies errno, *buf@*/ ;
-     
+
 int mkdir (const char *path, mode_t mode)
      /*@modifies fileSystem, errno@*/;
-     
+
 int mkfifo (const char *path, mode_t mode)
      /*@modifies fileSystem, errno@*/;
 
@@ -2289,11 +2289,11 @@ typedef struct
 } regmatch_t;
 
 int regcomp (/*@out@*/ regex_t *preg, /*@nullterminated@*/ const char *regex, int cflags)
-   /*:statusreturn@*/ 
+   /*:statusreturn@*/
    /*@modifies preg@*/ ;
 
 int regexec (const regex_t *preg, /*@nullterminated@*/ const char *string, size_t nmatch, /*@out@*/ regmatch_t pmatch[], int eflags)
-   /*@requires maxSet(pmatch) >= nmatch@*/ 
+   /*@requires maxSet(pmatch) >= nmatch@*/
    /*@modifies pmatch@*/ ;
 
 size_t regerror (int errcode, const regex_t *preg, /*@out@*/ char *errbuf, size_t errbuf_size)
@@ -2407,7 +2407,7 @@ extern /*@unchecked@*/ int signgam;
 //typedef /*@integraltype@*/ clockid_t;
 /*@=redef@*/
 
-extern void bcopy (char *b1, /*@out@*/ char *b2, int length) 
+extern void bcopy (char *b1, /*@out@*/ char *b2, int length)
    /*@modifies *b2@*/ ;  /* Yes, the second parameter is the out param! */
 
 extern int /*@alt _Bool@*/ bcmp (char *b1, char *b2, int length) /*@*/ ;
@@ -2417,12 +2417,12 @@ extern void bzero (/*@out@*/ char *b1, int length) /*@modifies *b1@*/ ;
 extern int ffs (int i) /*@*/ ;
 extern int symlink (char *name1, char *name2) /*@modifies fileSystem@*/ ;
 
-extern int 
-  setvbuf_unlocked (FILE *stream, /*@null@*/ /*@exposed@*/ char *buf, 
+extern int
+  setvbuf_unlocked (FILE *stream, /*@null@*/ /*@exposed@*/ char *buf,
 		    int mode, size_t size)
   /*@modifies internalState@*/ ;
 
-extern void 
+extern void
   setbuffer (FILE *stream, /*@null@*/ /*@exposed@*/ char *buf, int size)
   /*@modifies internalState@*/ ;
 
@@ -2431,18 +2431,18 @@ extern void setlinebuf (FILE *stream) /*@modifies internalState@*/ ;
 extern int strerror_r (int errnum, /*@out@*/ char *strerrbuf, int buflen)
   /*@modifies strerrbuf@*/ ;
 
-extern size_t 
-  fread_unlocked (/*@out@*/ void *ptr, size_t size, size_t nitems, 
-		  FILE *stream) 
+extern size_t
+  fread_unlocked (/*@out@*/ void *ptr, size_t size, size_t nitems,
+		  FILE *stream)
   /*@modifies *stream, *ptr;@*/ ;
 
-extern size_t 
+extern size_t
   fwrite_unlocked (void *pointer, size_t size, size_t num_items, FILE *stream)
   /*@modifies *stream;@*/ ;
 
-extern void /*@alt void * @*/ 
-  memccpy (/*@returned@*/ /*@out@*/ void *s1, 
-	   /*@unique@*/ void *s2, int c, size_t n) 
+extern void /*@alt void * @*/
+  memccpy (/*@returned@*/ /*@out@*/ void *s1,
+	   /*@unique@*/ void *s2, int c, size_t n)
   /*@modifies *s1@*/ ;
 
 extern int strcasecmp (char *s1, char *s2) /*@*/ ;
@@ -2459,7 +2459,7 @@ extern /*@null@*/ /*@dependent@*/ char *
 //These are in ISO C99.  Moved to standard.h:
 //   extern double cbrt (double x) /*@modifies errno@*/ ;
 //   extern double rint (double x) /*@*/ ;
-//   extern double trunc (double x) /*@*/ ; 
+//   extern double trunc (double x) /*@*/ ;
 //# endif
 
 
@@ -2572,11 +2572,11 @@ extern /*@null@*/ /*@dependent@*/ char *
 /*@constant double M_2_PI@*/
 /*@constant double M_2_SQRTPI@*/
 /*@constant double M_SQRT2@*/
-/*@constant double M_SQRT1_2@*/ 
+/*@constant double M_SQRT1_2@*/
 
 /*@constant double MAXFLOAT@*/
 /*@constant double HUGE@*/
- 
+
 /*@constant int DOMAIN@*/
 /*@constant int SING@*/
 /*@constant int OVERFLOW@*/
@@ -2608,17 +2608,17 @@ typedef volatile unsigned long vulong_t;
 typedef long label_t;
 typedef int level_t;
 //typedef	/*@integraltype@*/ daddr_t;
-typedef	char *caddr_t;	
-typedef long *qaddr_t; 
+typedef	char *caddr_t;
+typedef long *qaddr_t;
 typedef char *addr_t;
 typedef long physadr_t;
 typedef short cnt_t;
-typedef	int chan_t;	
+typedef	int chan_t;
 typedef	int paddr_t;
 typedef	void *mid_t;
-typedef char slab_t[12];	
-typedef ulong_t	shmatt_t;	
-typedef ulong_t	msgqnum_t;	
+typedef char slab_t[12];
+typedef ulong_t	shmatt_t;
+typedef ulong_t	msgqnum_t;
 typedef ulong_t	msglen_t;
 typedef	uchar_t uchar;
 typedef	ushort_t ushort;
@@ -2637,7 +2637,7 @@ typedef u_long fixpt_t;
 typedef long segsz_t;
 //typedef /*@abstract@*/ fd_set;
 
-int ioctl (int d, int /*@alt long@*/ request, /*@out@*/ void *arg) 
+int ioctl (int d, int /*@alt long@*/ request, /*@out@*/ void *arg)
    /*@modifies *arg, errno@*/ ;  /* depends on request! */
 
 pid_t vfork (void) /*@modifies fileSystem@*/ ;
@@ -2820,7 +2820,7 @@ struct sockaddr_storage {
 } ;
 
 struct msghdr {
-  /*@dependent@*/ void *msg_name;		
+  /*@dependent@*/ void *msg_name;
   socklen_t msg_namelen;	/*: maxSet (msg_name) >= msg_namelen */
   /*@dependent@*/ struct iovec *msg_iov;	/* scatter/gather array */
   int msg_iovlen;		/* # elements in msg_iov */ /*: maxSet (msg_iov) >= msg_iovlen */
@@ -2842,8 +2842,8 @@ struct cmsghdr {
 /*@null@*/ /*@exposed@*/ struct cmsghdr *CMSG_FIRSTHDR (struct msghdr *) /*@*/ ;
 
 struct linger {
-  int l_onoff;	
-  int l_linger;	
+  int l_onoff;
+  int l_linger;
 };
 
 /*@constant int SOCK_DGRAM@*/
@@ -2916,20 +2916,20 @@ int connect (int s, const struct sockaddr *name, int namelen)
 int getpeername (int s, /*@out@*/ struct sockaddr */*restrict*/ name, socklen_t */*restrict*/ namelen)
   /*drl splint doesn't handle restrict yet*/
    /*@modifies *name, *namelen, errno@*/;
-	
+
 #ifdef STRICT
 
 int getsockname (int s, /*@out@*/ struct sockaddr *address, socklen_t *address_len)
-     /*@i556@*/  /*: can't do this? requires maxSet(address) >= (*address_len) @*/ 
+     /*@i556@*/  /*: can't do this? requires maxSet(address) >= (*address_len) @*/
   /*@modifies *address, *address_len, errno@*/;
 
-#else  
+#else
 //int getsockname (int s, /*@out@*/ struct sockaddr *address, socklen_t  /*@alt size_t@*/ *address_len)
-  /*@i556@*/  /*: can't do this? requires maxSet(address) >= (*address_len) @*/ 
+  /*@i556@*/  /*: can't do this? requires maxSet(address) >= (*address_len) @*/
   /*@modifies *address, *address_len, errno@*/;
 
 #endif
-  
+
 int getsockopt (int s, int level, int optname, /*@out@*/ void *optval, size_t *optlen)
 	/*@modifies *optval, *optlen, errno@*/;
 
@@ -3157,7 +3157,7 @@ mprotect (caddr_t addr, int len, int prot)
 	extern int
 	munmap (/*@only@*/ caddr_t addr, size_t len)
      /*@modifies fileSystem, *addr, errno @*/;
-    
+
 	extern int
 msync (caddr_t addr, int len, int flags)
 	/*@*/;
@@ -3262,7 +3262,7 @@ extern int fsync (int fd) /*@modifies errno, fileSystem@*/;
 
 extern int ftruncate (int fd, off_t length) /*@modifies errno, fileSystem@*/;
 
-int gethostname (/*@out@*/ char *address, size_t address_len) 
+int gethostname (/*@out@*/ char *address, size_t address_len)
    /*:errorstatus@*/
    /*@modifies address@*/ ;
 
@@ -3271,8 +3271,8 @@ int initgroups (const char *name, int basegid)
 
 int lchown (const char *path, uid_t owner, gid_t group)
      /*@modifies errno, fileSystem@*/;
-     
-int select (int mfd, fd_set /*@null@*/ *r, fd_set /*@null@*/ *w, 
+
+int select (int mfd, fd_set /*@null@*/ *r, fd_set /*@null@*/ *w,
 	    fd_set /*@null@*/ *e, /*@null@*/ struct timeval *t)
   /*@modifies *r, *w, *e, *t, errno@*/;
   /* evans - 2002-05-26: added null for t, bug reported by Enrico Scholz */
@@ -3282,25 +3282,25 @@ int setegid (gid_t egid)
 
 int seteuid (uid_t euid)
    /*@modifies errno, internalState@*/;
-     
+
 int setgroups (int ngroups, const gid_t *gidset)
    /*@modifies errno, internalState@*/;
-     
+
 int setregid (gid_t rgid, gid_t egid)
    /*@modifies errno, internalState@*/;
-     
+
 int setreuid (gid_t ruid, gid_t euid)
    /*@modifies errno, internalState@*/;
-     
+
 void sync (void)
    /*@modifies fileSystem@*/;
-     
+
 //int symlink (const char *path, const char *path2)
 //   /*@modifies fileSystem@*/;
-     
+
 int truncate (const char *name, off_t length)
    /*@modifies errno, fileSystem@*/;
-     
+
 /*@constant int EBADRPC@*/
 /*@constant int ERPCMISMATCH@*/
 /*@constant int EPROGUNAVAIL@*/
@@ -3505,7 +3505,7 @@ semop (int id, struct sembuf *semoparray, size_t nops)
 
 void * shmat (int id, /*@null@*/ void *addr, int flag)
      /*@modifies errno@*/ ;
-     
+
 extern int shmctl (int id, int cmd, /*@out@*/ struct shmid_ds *buf)
      /*@modifies errno, *buf@*/ ;
 
@@ -3563,22 +3563,22 @@ extern int shmget (key_t key, int size, int flag)
 
 int LOG_MASK (int pri)
      /*@*/;
-     
+
 int LOG_UPTO (int pri)
      /*@*/;
-     
+
 void closelog (void)
      /*@modifies fileSystem@*/;
-     
+
 void openlog (const char *ident, int logopt, int facility)
      /*@modifies fileSystem@*/;
-     
+
 int setlogmask (int maskpri)
      /*@modifies internalState@*/;
-     
+
 void /*@printflike@*/ syslog (int priority, const char *message, ...)
      /*@modifies fileSystem@*/;
-     
+
 void vsyslog (int priority, const char *message, va_list args)
      /*@modifies fileSystem@*/;
 
@@ -3707,7 +3707,7 @@ int /*@alt _Bool@*/ S_TYPEISSHM  (/*@sef@*/ struct stat *buf) /*@*/ ;
 int lstat(const char *, /*@out@*/ struct stat *)
      /*:errorcode -1:*/
      /*@modifies errno@*/ ;
-     
+
 int mknod (const char *, mode_t, dev_t)
   /*@warn portability "The only portable use of mknod is to create FIFO-special file. If mode is not S_IFIFO or dev is not 0, the behaviour of mknod() is unspecified."@*/
   /*:errorcode -1:*/
@@ -3722,9 +3722,9 @@ int fchflags (int fd, u_long flags)
   /*@modifies fileSystem, errno@*/;
 
 /* evans 2002-03-17: this was missing, reported by Ralf Wildenhues */
-int fchmod(int fildes, mode_t mode) 
-   /*@modifies fileSystem, errno@*/ ; 
-  
+int fchmod(int fildes, mode_t mode)
+   /*@modifies fileSystem, errno@*/ ;
+
 /*
 ** sys/statvfs.h
 ** from http://www.opengroup.org/onlinepubs/007908799/xsh/sysstatvfs.h.html
@@ -3738,20 +3738,20 @@ struct statvfs {
    fsblkcnt_t    f_bavail;
    fsfilcnt_t    f_files;
    fsfilcnt_t    f_ffree;
-   fsfilcnt_t    f_favail;                       
+   fsfilcnt_t    f_favail;
    unsigned long f_fsid;
    unsigned long f_flag;
-   unsigned long f_namemax; 
+   unsigned long f_namemax;
 } ;
 
 /*@constant unsigned long ST_RDONLY; @*/
 /*@constant unsigned long ST_NOSUID; @*/
 
-int fstatvfs (int fildes, /*@out@*/ struct statvfs *buf) 
+int fstatvfs (int fildes, /*@out@*/ struct statvfs *buf)
    /*@modifies buf@*/ ;
 
 int statvfs (const char *path, /*@out@*/ struct statvfs *buf)
-    /*@modifies buf@*/ ; 
+    /*@modifies buf@*/ ;
 
 
 /*________________________________________________________________________
@@ -3870,10 +3870,10 @@ struct servent
   /*@observer@*/ char *s_proto;		        /* Protocol to use.  */
 } ;
 
-/*@observer@*/ /*@dependent@*/ /*@null@*/ struct servent *getservbyname (const char *name, /*@null@*/ const char *proto) 
+/*@observer@*/ /*@dependent@*/ /*@null@*/ struct servent *getservbyname (const char *name, /*@null@*/ const char *proto)
      /*@warn multithreaded "Unsafe in multithreaded applications, use getsrvbyname_r instead"@*/ ;
 
-struct servent *getservbyname_r (const char *name, /*@null@*/ const char *proto, /*@out@*/ /*@returned@*/ struct servent *result, /*@out@*/ char *buffer, int buflen) 
+struct servent *getservbyname_r (const char *name, /*@null@*/ const char *proto, /*@out@*/ /*@returned@*/ struct servent *result, /*@out@*/ char *buffer, int buflen)
      /*@requires maxSet (buffer) >= buflen@*/ ;
 
 
@@ -3893,19 +3893,19 @@ int endservent (void);
 extern int h_errno;
 
 /*@null@*/ /*@observer@*/ struct hostent *gethostbyname (/*@nullterminated@*/ /*@notnull@*/ const char *name)
-     /*@warn multithreaded "Unsafe in multithreaded applications, use gethostbyname_r instead"@*/ 
+     /*@warn multithreaded "Unsafe in multithreaded applications, use gethostbyname_r instead"@*/
      /*@modifies h_errno@*/ ;
 
 struct hostent *gethostbyname_r (/*@nullterminated@*/ const char *name, /*@notnull@*/ /*@returned@*/ struct hostent *hent, /*@out@*/ /*@exposed@*/ char *buffer, int bufsize, /*@out@*/ int *h_errnop)
      /*@requires maxSet(buffer) >= bufsize@*/ ;
 
-/*@null@*/ /*@observer@*/ struct hostent *gethostbyaddr (/*@notnull@*/ const void *addr, size_t addrlen, int type) 
+/*@null@*/ /*@observer@*/ struct hostent *gethostbyaddr (/*@notnull@*/ const void *addr, size_t addrlen, int type)
      /*@requires maxRead(addr) == addrlen@*/ /*:i534 ??? is this right? */
-     /*@warn multithreaded "Unsafe in multithreaded applications, use gethostbyaddr_r instead"@*/ 
+     /*@warn multithreaded "Unsafe in multithreaded applications, use gethostbyaddr_r instead"@*/
      /*@modifies h_errno@*/ ;
 
-struct hostent *gethostbyaddr_r (/*@notnull@*/ const void *addr, size_t addrlen, int type, 
-				 /*@returned@*/ /*@out@*/ struct hostent *hent, 
+struct hostent *gethostbyaddr_r (/*@notnull@*/ const void *addr, size_t addrlen, int type,
+				 /*@returned@*/ /*@out@*/ struct hostent *hent,
 				 /*@exposed@*/ /*@out@*/ char *buffer, int bufsize, /*@out@*/ int *h_errnop)
      /*@requires maxRead(addr) == addrlen /\ maxSet(buffer) >= bufsize@*/
      /*:i534 ??? is this right? */ ;
@@ -4265,9 +4265,9 @@ int nice(int)
 ssize_t pread(int, /*@out@*/ void *buf, size_t nbyte, off_t offset)
      /*@modifies errno, fileSystem@*/
      /*@requires maxSet(buf) >= (nbyte - 1) @*/
-     /*@ensures maxRead(buf) >= nbyte @*/ 
+     /*@ensures maxRead(buf) >= nbyte @*/
      /*:errorcode -1:*/ ;
-     
+
 int pthread_atfork(void (*)(void), void (*)(void), void(*)(void))
      /*@modifies errno, fileSystem@*/
      /*:errorcode !0:*/ ;
@@ -4357,7 +4357,7 @@ useconds_t ualarm(useconds_t, useconds_t)
 //int unlink(const char *)
 //     /*@modifies fileSystem, errno@*/
 //     /*:errorcode -1:*/ ;
-//     
+//
 //int usleep(useconds_t)
 //     /*@modifies fileSystem, errno@*/
 //     /*:errorcode -1:*/ ;
@@ -4371,7 +4371,7 @@ useconds_t ualarm(useconds_t, useconds_t)
 //
 //int chroot (/*@notnull@*/ /*@nullterminated@*/ const char *path)
 //     /*@modifies internalState, errno@*/
-//     /*:errorcode -1:*/ 
+//     /*:errorcode -1:*/
 //     /*@warn superuser "Only super-user processes may call chroot."@*/ ;
 //
 //int fchroot (int fildes)
@@ -4380,7 +4380,7 @@ useconds_t ualarm(useconds_t, useconds_t)
 
 
 /*
-** ctype.h 
+** ctype.h
 **
 ** evans 2001-08-26 - added from http://www.opengroup.org/onlinepubs/007908799/xsh/ctype.h.html
 */
@@ -4405,11 +4405,11 @@ char  _tolower(/*@sef@*/ int) /*@*/ ;
 ** evans 2001-08-27 - added from http://www.opengroup.org/onlinepubs/007908799/xsh/drand48.html
 */
 
-double drand48 (void) /*@modifies internalState@*/ ; 
-double erand48 (unsigned short int /*@-fixedformalarray@*/ xsubi[3] /*@=fixedformalarray@*/ ) 
-   /*@modifies internalState@*/ ; 
+double drand48 (void) /*@modifies internalState@*/ ;
+double erand48 (unsigned short int /*@-fixedformalarray@*/ xsubi[3] /*@=fixedformalarray@*/ )
+   /*@modifies internalState@*/ ;
 
-void srand48 (long int seedval) /*@modifies internalState@*/ ; 
+void srand48 (long int seedval) /*@modifies internalState@*/ ;
 
 /*
 ** netinet/in.h
@@ -4434,8 +4434,8 @@ struct sockaddr_in {
 } ;
 
 
-/* The <netinet/in.h> header defines the following macros for use as values of the level argument of 
-   getsockopt() and setsockopt(): 
+/* The <netinet/in.h> header defines the following macros for use as values of the level argument of
+   getsockopt() and setsockopt():
  */
 
 /*@constant int IPPROTO_IP@*/
@@ -4443,7 +4443,7 @@ struct sockaddr_in {
 /*@constant int IPPROTO_TCP@*/
 /*@constant int IPPROTO_UDP@*/
 
-/* The <netinet/in.h> header defines the following macros for use as destination addresses for connect(), sendmsg() and sendto(): 
+/* The <netinet/in.h> header defines the following macros for use as destination addresses for connect(), sendmsg() and sendto():
  */
 
 /*@constant in_addr_t INADDR_ANY@*/
@@ -4469,7 +4469,7 @@ in_port_t ntohs (in_port_t netshort) /*@*/ ;
 struct dirent
 {
   ino_t  d_ino;
-  char   d_name[];    
+  char   d_name[];
 } ;
 
 /*@=redef@*/ /*@=matchfields@*/
@@ -4478,7 +4478,7 @@ struct dirent
 
 /*:i32 need to check annotations on these */
 
-//int closedir (DIR *) /*:errorcode -1*/ ; 
+//int closedir (DIR *) /*:errorcode -1*/ ;
 ///*@null@*/ /*@dependent@*/ DIR *opendir(const char *)  /*@modifies errno, fileSystem@*/ ;
 //
 ///* in posix.h: struct dirent *readdir(DIR *); */
@@ -4511,16 +4511,16 @@ extern char * stpncpy(/*@out@*/ /*@returned@*/ char * dest,
 		      const char * src, size_t n)
            /*@modifies *dest @*/
    /*@requires MaxSet(dest) >= ( n - 1 ); @*/ /*@ensures MaxRead (src) >= MaxRead(dest) /\ MaxRead (dest) <= n; @*/
-  ; 
+  ;
 
   /* drl added 09-25-001
-     Alexander Ma pointed out these were missing 
+     Alexander Ma pointed out these were missing
   */
-  
+
 int usleep (useconds_t useconds) /*@modifies systemState, errno@*/
      /*error -1 sucess 0 */
      /* warn opengroup unix specification recommends using setitimer(), timer_create(), timer_delete(), timer_getoverrun(), timer_gettime() or
-     timer_settime() instead of this interface. 
+     timer_settime() instead of this interface.
      */
      ;
 
@@ -4531,7 +4531,7 @@ int usleep (useconds_t useconds) /*@modifies systemState, errno@*/
       */
      /*I'm going to assume that the address had the format:
        "###.###.###.###" which is 16 bytes*/
-     
+
        /*@kept@*/ char *inet_ntoa(struct in_addr in)
      /*@ensures maxSet(result) <= 15 /\ maxRead(result) <= 15 @*/
      ;
@@ -4550,20 +4550,20 @@ int usleep (useconds_t useconds) /*@modifies systemState, errno@*/
 
 //     extern       double acosh(double x)  /*@modifies errno @*/ /*error errno and implementation-dependent(NaN if present) */ /*error NaN and may errno*/;
 //     extern       double asinh(double x) /*@modifies errno @*/  /*error NaN and may errno */;
-//     
+//
 //  extern        double atanh(double x) /*@modifies errno @*/ /*error errno and implementation-dependent(NaN if present) */ /*error NaN and may errno */ ;
 
 //     extern         double lgamma(double x)  /*@modifies errno @*/  /*error NaN or HUGE_VAL may set errno */;
-//     
+//
 //     extern int signgam ;
-//     
+//
 //      extern      double erf(double x)  /*@modifies errno @*/  /*error NaN or 0 may set errno */;
 //
 //   extern      double erfc (double x) /*@modifies errno @*/  /*error NaN or 0
 //					may set errno */;
 
-     
 
-     
-     
+
+
+
 

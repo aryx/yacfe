@@ -82,7 +82,7 @@
 
 
 //BAD:!!!!!    "built-in default (" STRINGIFY_ARG(MYSQL_PORT) ").",
-#define STRINGIFY_ARG(a) "stringified" 
+#define STRINGIFY_ARG(a) "stringified"
 
 //BAD:!!!!!   SECTION( ATTRIBUTE_LIST_SECTION = 0 );
 #define SECTION(a) a
@@ -111,7 +111,7 @@
 //bad: MY_LOCALE my_locale_ru_UA
 //bad: (
 //BAD:!!!!!   44,
-//#define MY_LOCALE 
+//#define MY_LOCALE
 
 //BAD:!!!!!       RT_D_MBR_KORR(int8, mi_sint1korr, 1, (double));
 #define RT_D_MBR_KORR(a,b,c,d) int foo
@@ -122,23 +122,23 @@
 #define _VARARGS(a) a
 
 //BAD:!!!!! extern int ax_unreg __P((int, long));
-#define __P(a) a 
+#define __P(a) a
 
 //BAD:!!!!!   my_bool SV::*offset;
 //
 //BAD:!!!!!   String *val_str(String *) ZLIB_DEPENDED_FUNCTION
-#define ZLIB_DEPENDED_FUNCTION 
+#define ZLIB_DEPENDED_FUNCTION
 
 //BAD:!!!!! STATIC int      regtry();
 #define STATIC
 
 //BAD:!!!!! extern void __cdecl _dosmaperr(unsigned long);
-#define __cdecl 
+#define __cdecl
 
 
 //bad: static void MD5Transform PROTO_LIST ((UINT4 [4], unsigned char [64]));
 //BAD:!!!!!        void my_MD5Init PROTO_LIST ((my_MD5_CTX *));
-#define PROTO_LIST(a) a 
+#define PROTO_LIST(a) a
 
 
 //BAD:!!!!! 	   void (*free_element)(void*),uint flags CALLER_INFO_PROTO)
@@ -147,37 +147,37 @@
 //BAD:!!!!! int _export FAR PASCAL libmain(HANDLE hModule,short cbHeapSize,
 #define _export
 #define FAR
-#define PASCAL 
+#define PASCAL
 //
 //BAD:!!!!! BOOL APIENTRY LibMain(HANDLE hInst,DWORD ul_reason_being_called,
 #define APIENTRY
 //
 //BAD:!!!!! SSL_STATIC my_bool opt_use_ssl  = 0;
-#define SSL_STATIC 
+#define SSL_STATIC
 
 //BAD:!!!!!   REGISTER struct link *old;
 #define REGISTER
 //
 //BAD:!!!!! ZEXTERN const char * ZEXPORT zlibVersion OF((void));
 #define ZEXTERN extern
-#define ZEXTERN 
+#define ZEXTERN
 
 #define OF(a) a
 
 //
 //BAD:!!!!! local void bi_flush(s)
-#define local 
+#define local
 
 //BAD:!!!!! int ZEXPORTVA gzprintf (file, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10,
 //bad:                        a11, a12, a13, a14, a15, a16, a17, a18, a19, a20)
-#define ZEXPORTVA 
+#define ZEXPORTVA
 
 
 //bad: NDB_COMMAND(DbAsyncGenerator, "DbAsyncGenerator",
 //bad: 	    "DbAsyncGenerator", "DbAsyncGenerator", 65535)
 //BAD:!!!!! {
 //bad:   ndb_init();
-#define NDB_COMMAND(a, str, str2, str3, i1) int a(void) 
+#define NDB_COMMAND(a, str, str2, str3, i1) int a(void)
 
 
 
@@ -190,16 +190,16 @@
 
 //BAD:!!!!! {
 //bad:   MYSQL_STORAGE_ENGINE_PLUGIN,
-#define mysql_storage_engine_plugin(q) int a = 
+#define mysql_storage_engine_plugin(q) int a =
 //mysql_declare_plugin_end;
 
 //bad: mysql_declare_plugin(blackhole)
-#define mysql_declare_plugin(q) int a = 
+#define mysql_declare_plugin(q) int a =
 #define mysql_declare_plugin_end
 
 
 //bad: #ifdef _MSC_VER
-//bad:     __declspec(naked) 
+//bad:     __declspec(naked)
 //bad: #endif
 #define __declspec(a)
 
@@ -218,7 +218,7 @@ register struct re_guts *g;
 bad: register char *cp;
 BAD:!!!!! {
 bad: 	register char *p;
-bad: 
+bad:
 bad: 	if (cs->multis == NULL)
 bad: 		return(NULL);
 bad: 	for (p = cs->multis; *p != '\0'; p += strlen(p) + 1)

@@ -1,8 +1,8 @@
-// used in firefox 
+// used in firefox
 
 #define jpeg_common_fields
 
-// conflict with minix 
+// conflict with minix
 #define EXTERN(a) a
 #define JPP(x) x
 
