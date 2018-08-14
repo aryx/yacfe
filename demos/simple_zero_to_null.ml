@@ -17,7 +17,7 @@ let null_transfo file =
   let (ast2, _stat) = Parse_c.parse_c_and_cpp file in
   let ast = Parse_c.program_of_program2 ast2 in
 
-  Type_annoter_c.annotate_program !Type_annoter_c.initial_env ast;
+  ignore (Type_annoter_c.annotate_program !Type_annoter_c.initial_env ast);
 
   let null_addon =
     Ast_cocci.ExpressionTag
