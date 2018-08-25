@@ -121,12 +121,12 @@ let mk_token_extended x =
 
 let rebuild_tokens_extented toks_ext =
   let _tokens = ref [] in
-  toks_ext +> List.iter (fun tok ->
-    tok.new_tokens_before +> List.iter (fun x -> Common.push x _tokens);
+  toks_ext |> List.iter (fun tok ->
+    tok.new_tokens_before |> List.iter (fun x -> Common.push x _tokens);
     if not tok.remove then Common.push tok.tok2 _tokens;
   );
   let tokens = List.rev !_tokens in
-  (tokens +> List.map mk_token_extended)
+  (tokens |> List.map mk_token_extended)
 
 
 let mcode_contain_plus = function
@@ -195,17 +195,17 @@ let get_fakeInfo_and_tokens celem toks =
         Common.push (Fake1 info) toks_out
     | OriginTok _ | ExpandedTok _ ->
         (* get the associated comments/space/cppcomment tokens *)
-        let (before, x, after) = !toks_in +> Common2.split_when (fun tok ->
+        let (before, x, after) = !toks_in |> Common2.split_when (fun tok ->
 	  info =*= TH.info_of_tok tok)
         in
         assert(info =*= TH.info_of_tok x);
-        (*old: assert(before +> List.for_all (TH.is_comment)); *)
-        before +> List.iter (fun x ->
+        (*old: assert(before |> List.for_all (TH.is_comment)); *)
+        before |> List.iter (fun x ->
           if not (TH.is_comment x)
           then pr2 ("WEIRD: not a comment:" ^ TH.str_of_tok x)
           (* case such as  int asm d3("x"); not yet in ast *)
         );
-        before +> List.iter (fun x -> Common.push (T1 x) toks_out);
+        before |> List.iter (fun x -> Common.push (T1 x) toks_out);
         Common.push (T1 x) toks_out;
         toks_in := after;
     | AbstractLineTok _ ->
@@ -304,7 +304,7 @@ let expand_mcode toks =
 	       "expanded token %s on line %d is either modified or stored in a metavariable"
 	       (TH.str_of_tok tok) (TH.line_of_tok tok)));
 
-        let tok' = tok +> TH.visitor_info_of_tok (fun i ->
+        let tok' = tok |> TH.visitor_info_of_tok (fun i ->
           { i with cocci_tag = ref Ast_c.emptyAnnot; }
         ) in
 
@@ -336,7 +336,7 @@ let expand_mcode toks =
       |	_ ->
 	  Printf.printf "line: %s\n" (Common.dump info);
 	  failwith "not an abstract line");
-      (!(info.Ast_c.comments_tag)).Ast_c.mafter +>
+      (!(info.Ast_c.comments_tag)).Ast_c.mafter |>
       List.iter (fun x -> Common.push (comment2t2 x) toks_out) in
 
 
@@ -380,7 +380,7 @@ let expand_mcode toks =
 
   in
 
-  toks +> List.iter expand_info;
+  toks |> List.iter expand_info;
   List.rev !toks_out
 
 
@@ -444,7 +444,7 @@ let set_minus_comment_or_plus = function
 let remove_minus_and_between_and_expanded_and_fake xs =
 
   (* get rid of exampled and fake tok *)
-  let xs = xs +> Common.exclude (function
+  let xs = xs |> Common.exclude (function
     | T2 (t,_,_) when TH.is_expanded t -> true
     | Fake2 -> true
 
@@ -529,7 +529,7 @@ let remove_minus_and_between_and_expanded_and_fake xs =
 
   let xs = adjust_between_minus xs in
 
-  let xs = xs +> Common.exclude (function
+  let xs = xs |> Common.exclude (function
     | T2 (t,true,_) -> true
     | _ -> false
   ) in
@@ -579,11 +579,11 @@ let rec add_space xs =
  *)
 let new_tabbing2 space =
   (list_of_string space)
-    +> List.rev
-    +> Common2.take_until (fun c -> c =<= '\n')
-    +> List.rev
-    +> List.map string_of_char
-    +> String.concat ""
+    |> List.rev
+    |> Common2.take_until (fun c -> c =<= '\n')
+    |> List.rev
+    |> List.map string_of_char
+    |> String.concat ""
 
 let new_tabbing a =
   Common.profile_code "C unparsing.new_tabbing" (fun () -> new_tabbing2 a)
@@ -625,7 +625,7 @@ let rec adjust_indentation xs =
 (* patch: coccinelle *)
     | ((T2 (Parser_c.TCommentNewline s, _, _)) as x)::_
       when started ->
-	let s = str_of_token2 x +> new_tabbing in
+	let s = str_of_token2 x |> new_tabbing in
 	tabbing_unit := Some (s,List.rev (list_of_string s))
     | x::xs -> find_first_tab started xs in
   find_first_tab false xs;
@@ -640,7 +640,7 @@ let rec adjust_indentation xs =
 	x::(Cocci2 " {")::(aux started xs)
     | ((T2 (Parser_c.TCommentNewline s, _, _)) as x)::xs ->
 	let old_tabbing = !_current_tabbing in
-        str_of_token2 x +> new_tabbing +> (fun s -> _current_tabbing := s);
+        str_of_token2 x |> new_tabbing |> (fun s -> _current_tabbing := s);
 	(* only trust the indentation after the first { *)
 	(if started then adjust_tabbing_unit old_tabbing !_current_tabbing);
 	let coccis_rest = Common.span all_coccis xs in
@@ -712,16 +712,16 @@ let rec find_paren_comma = function
 
 
 let fix_tokens toks =
-  let toks = toks +> List.map mk_token_extended in
+  let toks = toks |> List.map mk_token_extended in
 
-  let cleaner = toks +> Common.exclude (function
+  let cleaner = toks |> Common.exclude (function
     | {tok2 = T2 (t,_,_)} -> TH.is_real_comment t (* I want the ifdef *)
     | _ -> false
   ) in
   find_paren_comma cleaner;
 
   let toks = rebuild_tokens_extented toks in
-  toks +> List.map (fun x -> x.tok2)
+  toks |> List.map (fun x -> x.tok2)
 
 
 
@@ -758,7 +758,7 @@ let print_all_tokens2 pr xs =
   if !Flag_parsing_c.debug_unparsing
   then
     let current_kind = ref KOrigin in
-    xs +> List.iter (fun t ->
+    xs |> List.iter (fun t ->
       let newkind = kind_of_token2 t in
       if newkind =*= !current_kind
       then pr (str_of_token2 t)
@@ -770,7 +770,7 @@ let print_all_tokens2 pr xs =
       end
     );
   else
-    xs +> List.iter (fun x -> pr (str_of_token2 x))
+    xs |> List.iter (fun x -> pr (str_of_token2 x))
 
 
 
@@ -819,7 +819,7 @@ let pp_program2 xs outfile  =
         (* Common.pr2 ("UNPARSING: >" ^ s ^ "<"); *)
     in
 
-    xs +> List.iter (fun ((e,(str, toks_e)), ppmethod) ->
+    xs |> List.iter (fun ((e,(str, toks_e)), ppmethod) ->
 
       (* here can still work on ast *)
       let e = remove_useless_fakeInfo_struct e in
@@ -829,7 +829,7 @@ let pp_program2 xs outfile  =
           (* now work on tokens *)
 
           (* phase1: just get all the tokens, all the information *)
-          assert(toks_e +> List.for_all (fun t ->
+          assert(toks_e |> List.for_all (fun t ->
 	    TH.is_origin t || TH.is_expanded t
           ));
           let toks = get_fakeInfo_and_tokens e toks_e in
@@ -862,5 +862,5 @@ let pp_program a b =
 
 
 let pp_program_default xs outfile =
-  let xs' = xs +> List.map (fun x -> x, PPnormal) in
+  let xs' = xs |> List.map (fun x -> x, PPnormal) in
   pp_program xs' outfile

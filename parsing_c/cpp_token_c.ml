@@ -201,7 +201,7 @@ let rec remap_keyword_tokens xs =
 let rec (cpp_engine: (string , Parser_c.token list) assoc ->
           Parser_c.token list -> Parser_c.token list) =
  fun env xs ->
-  xs +> List.map (fun tok ->
+  xs |> List.map (fun tok ->
     (* expand only TIdent ? no cos the parameter of the macro
      * can actually be some 'register' so may have to look for
      * any tokens candidates for the expansion.
@@ -213,8 +213,8 @@ let rec (cpp_engine: (string , Parser_c.token list) assoc ->
     | TIdent (s,i1) when List.mem_assoc s env -> Common2.assoc s env
     | x -> [x]
   )
-  +> List.flatten
-  +> remap_keyword_tokens
+  |> List.flatten
+  |> remap_keyword_tokens
 
 
 
@@ -290,7 +290,7 @@ let rec apply_macro_defs
                 (* old: id.new_tokens_before <- bodymacro; *)
 
                 (* update: if wrong number, then I just pass this macro *)
-                [Parenthised (xxs, info_parens)] +>
+                [Parenthised (xxs, info_parens)] |>
                   iter_token_paren (set_as_comment Token_c.CppMacro);
                 set_as_comment Token_c.CppMacro id;
 
@@ -298,8 +298,8 @@ let rec apply_macro_defs
               end
               else
 
-                let xxs' = xxs +> List.map (fun x ->
-                  (tokens_of_paren_ordered x) +> List.map (fun x ->
+                let xxs' = xxs |> List.map (fun x ->
+                  (tokens_of_paren_ordered x) |> List.map (fun x ->
                     TH.visitor_info_of_tok Ast_c.make_expanded x.tok
                   )
                 ) in
@@ -311,7 +311,7 @@ let rec apply_macro_defs
                  * will pass as argument to the macro some tokens that
                  * are all TCommentCpp
                  *)
-                [Parenthised (xxs, info_parens)] +>
+                [Parenthised (xxs, info_parens)] |>
                   iter_token_paren (set_as_comment Token_c.CppMacro);
                 set_as_comment Token_c.CppMacro id;
 
@@ -336,14 +336,14 @@ let rec apply_macro_defs
 
                     msg_apply_known_macro_hint s;
                     id.tok <- token_from_parsinghack_hint (s,i1) hint;
-                    [Parenthised (xxs, info_parens)] +>
+                    [Parenthised (xxs, info_parens)] |>
                       iter_token_paren (set_as_comment Token_c.CppMacro);
                     set_as_comment Token_c.CppMacro id2;
 
                 | _ ->
                     msg_apply_known_macro_hint s;
                     id.tok <- token_from_parsinghack_hint (s,i1) hint;
-                    [Parenthised (xxs, info_parens)] +>
+                    [Parenthised (xxs, info_parens)] |>
                       iter_token_paren (set_as_comment Token_c.CppMacro);
                 )
 
@@ -370,7 +370,7 @@ let rec apply_macro_defs
           (match body with
           | DefineBody [newtok] ->
              (* special case when 1-1 substitution, we reuse the token *)
-              id.tok <- (newtok +> TH.visitor_info_of_tok (fun _ ->
+              id.tok <- (newtok |> TH.visitor_info_of_tok (fun _ ->
                 TH.info_of_tok id.tok))
           | DefineBody bodymacro ->
               set_as_comment Token_c.CppMacro id;
@@ -388,7 +388,7 @@ let rec apply_macro_defs
   (* recurse *)
   | (PToken x)::xs -> apply_macro_defs xs
   | (Parenthised (xxs, info_parens))::xs ->
-      xxs +> List.iter apply_macro_defs;
+      xxs |> List.iter apply_macro_defs;
       apply_macro_defs xs
  in
  apply_macro_defs xs
@@ -564,11 +564,11 @@ let rec define_parse xs =
   | [] -> []
   | TDefine i1::TIdentDefine (s,i2)::TOParDefine i3::xs ->
       let (tokparams, _, xs) =
-        xs +> Common2.split_when (function TCPar _ -> true | _ -> false) in
+        xs |> Common2.split_when (function TCPar _ -> true | _ -> false) in
       let (body, _, xs) =
-        xs +> Common2.split_when (function TDefEOL _ -> true | _ -> false) in
+        xs |> Common2.split_when (function TDefEOL _ -> true | _ -> false) in
       let params =
-        tokparams +> Common.map_filter (function
+        tokparams |> Common.map_filter (function
         | TComma _ -> None
         | TIdent (s, _) -> Some s
 
@@ -591,7 +591,7 @@ let rec define_parse xs =
       (* bugfix: also substitute to ident in body so cpp_engine will
        * have an easy job.
        *)
-      let body = body +> List.map (fun tok ->
+      let body = body |> List.map (fun tok ->
         match tok with
         | TIdent _ -> tok
         | _ ->
@@ -603,14 +603,14 @@ let rec define_parse xs =
               TIdent (s, ii)
             end
             else tok
-      ) +> List.map (TH.visitor_info_of_tok Ast_c.make_expanded) in
+      ) |> List.map (TH.visitor_info_of_tok Ast_c.make_expanded) in
       let def = (s, (s, Params params, macro_body_to_maybe_hint body)) in
       def::define_parse xs
 
   | TDefine i1::TIdentDefine (s,i2)::xs ->
       let (body, _, xs) =
-        xs +> Common2.split_when (function TDefEOL _ -> true | _ -> false) in
-      let body = body +> List.map
+        xs |> Common2.split_when (function TDefEOL _ -> true | _ -> false) in
+      let body = body |> List.map
         (TH.visitor_info_of_tok Ast_c.make_expanded) in
       let def = (s, (s, NoParam, macro_body_to_maybe_hint body)) in
       def::define_parse xs
@@ -623,7 +623,7 @@ let rec define_parse xs =
 
 
 let extract_cpp_define xs =
-  let cleaner = xs +> List.filter (fun x ->
+  let cleaner = xs |> List.filter (fun x ->
     not (TH.is_comment x)
   ) in
   define_parse cleaner

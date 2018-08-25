@@ -68,7 +68,7 @@ let mk_info_item2 filename toks =
   let s =
     (* old: get_slice_file filename (line1, line2) *)
     begin
-      toks +> List.iter (fun tok ->
+      toks |> List.iter (fun tok ->
         match TH.pinfo_of_tok tok with
         | Ast_c.OriginTok _ ->
             Buffer.add_string buf (TH.str_of_tok tok)
@@ -87,14 +87,14 @@ let mk_info_item a b =
 
 
 let info_same_line line xs =
-  xs +> List.filter (fun info -> Ast_c.line_of_info info =|= line)
+  xs |> List.filter (fun info -> Ast_c.line_of_info info =|= line)
 
 
 (*****************************************************************************)
 (* Stats on what was passed/commentized  *)
 (*****************************************************************************)
 
-let commentized xs = xs +> Common.map_filter (function
+let commentized xs = xs |> Common.map_filter (function
   | Parser_c.TCommentCpp (cppkind, ii) ->
       let s = Ast_c.str_of_info ii in
       let legal_passing =
@@ -153,7 +153,7 @@ let count_lines_commentized xs =
   let line = ref (-1) in
   let count = ref 0 in
   begin
-    commentized xs +>
+    commentized xs |>
     List.iter
       (function
 	  Ast_c.OriginTok pinfo | Ast_c.ExpandedTok (_,(pinfo,_)) ->
@@ -173,7 +173,7 @@ let print_commentized xs =
   let line = ref (-1) in
   begin
     let ys = commentized xs in
-    ys +>
+    ys |>
     List.iter
       (function
 	  Ast_c.OriginTok pinfo | Ast_c.ExpandedTok (_,(pinfo,_)) ->
@@ -212,7 +212,7 @@ let tokens2 file =
     let rec tokens_aux acc =
       let tok = Lexer_c.token lexbuf in
       (* fill in the line and col information *)
-      let tok = tok +> TH.visitor_info_of_tok (fun ii ->
+      let tok = tok |> TH.visitor_info_of_tok (fun ii ->
         { ii with Ast_c.pinfo=
           (* could assert pinfo.filename = file ? *)
 	  match Ast_c.pinfo_of_info ii with
@@ -284,7 +284,7 @@ let parse_print_error file =
 
   let error_msg () = Parse_info.error_message file (lexbuf_to_strpos lexbuf) in
   try
-    lexbuf +> Parser_c.main Lexer_c.token
+    lexbuf |> Parser_c.main Lexer_c.token
   with
   | Lexer_c.Lexical s ->
       failwith ("lexical error " ^s^ "\n =" ^  error_msg ())
@@ -315,7 +315,7 @@ let parse_print_error file =
  *)
 
 let parse_gen parsefunc s =
-  let toks = tokens_of_string s +> List.filter TH.is_not_comment in
+  let toks = tokens_of_string s |> List.filter TH.is_not_comment in
 
 
   (* Why use this lexing scheme ? Why not classically give lexer func
@@ -417,8 +417,8 @@ let consistency_checking2 xs =
       match Ast_c.unwrap_expr x with
       | Ast_c.Ident (id) ->
           let s = Ast_c.str_of_name id in
-          stat +>
-            Common2.hfind_default s v1 +> Common2.hfind_default CIdent v2 +>
+          stat |>
+            Common2.hfind_default s v1 |> Common2.hfind_default CIdent v2 |>
             (fun aref -> incr aref)
 
       | _ -> k x
@@ -427,27 +427,27 @@ let consistency_checking2 xs =
       match Ast_c.unwrap_typeC t with
       | Ast_c.TypeName (name,_typ) ->
           let s = Ast_c.str_of_name name in
-          stat +>
-            Common2.hfind_default s v1 +> Common2.hfind_default CTypedef v2 +>
+          stat |>
+            Common2.hfind_default s v1 |> Common2.hfind_default CTypedef v2 |>
             (fun aref -> incr aref)
 
       | _ -> k t
     );
   }
   in
-  xs +> List.iter (fun (p, info_item) -> Visitor_c.vk_toplevel bigf p);
+  xs |> List.iter (fun (p, info_item) -> Visitor_c.vk_toplevel bigf p);
 
 
   let ident_to_type = ref [] in
 
 
   (* second phase, analyze data *)
-  stat +> Hashtbl.iter (fun k v ->
+  stat |> Hashtbl.iter (fun k v ->
     let xs = Common.hash_to_list v in
     if List.length xs >= 2
     then begin
       pr2_err ("CONFLICT:" ^ k);
-      let sorted = xs +> List.sort (fun (ka,va) (kb,vb) ->
+      let sorted = xs |> List.sort (fun (ka,va) (kb,vb) ->
         if !va =|= !vb then
           (match ka, kb with
           | CTypedef, _ -> 1 (* first is smaller *)
@@ -514,7 +514,7 @@ let consistency_checking2 xs =
         | _ -> k x
       );
     } in
-    xs +> List.map (fun (p, info_item) ->
+    xs |> List.map (fun (p, info_item) ->
       Visitor_c.vk_toplevel_s bigf p, info_item
     )
 
@@ -529,7 +529,7 @@ let consistency_checking a  =
 (*****************************************************************************)
 
 let is_define_passed passed =
-  let xs = passed +> List.rev +> List.filter TH.is_not_comment in
+  let xs = passed |> List.rev |> List.filter TH.is_not_comment in
   if List.length xs >= 2
   then
     (match Common2.head_middle_tail xs with
@@ -543,7 +543,7 @@ let is_define_passed passed =
   end
 
 let is_defined_passed_bis last_round =
-  let xs = last_round +> List.filter TH.is_not_comment in
+  let xs = last_round |> List.filter TH.is_not_comment in
   match xs with
   | Parser_c.TDefine _::_ -> true
   | _ -> false
@@ -577,7 +577,7 @@ let rec find_next_synchro next already_passed =
   else
 
   let (before, after) =
-    last_round +> Common.span (fun tok ->
+    last_round |> Common.span (fun tok ->
       match tok with
       (* by looking at TOBrace we are sure that the "start of something"
        * will not arrive too early
@@ -667,7 +667,7 @@ let candidate_macros_in_passed2 passed defs_optional =
   let res = ref [] in
   let res2 = ref [] in
 
-  passed +> List.iter (function
+  passed |> List.iter (function
   | Parser_c.TIdent (s,_)
    (* bugfix: may have to undo some infered things *)
   | Parser_c.TMacroIterator (s,_)
@@ -700,7 +700,7 @@ let find_optional_macro_to_expand2 ~defs toks =
 
   let defs = Common.hash_of_list defs in
 
-  let toks = toks +> List.map (function
+  let toks = toks |> List.map (function
 
     (* special cases to undo *)
     | Parser_c.TMacroIterator (s, ii) ->
@@ -726,8 +726,8 @@ let find_optional_macro_to_expand2 ~defs toks =
    * Hence even if it's expensive, it's currently better to
    * just call directly fix_tokens_cpp again here.
 
-  let tokens2 = ref (tokens +> Common.acc_map TV.mk_token_extended) in
-  let cleaner = !tokens2 +> Parsing_hacks.filter_cpp_stuff in
+  let tokens2 = ref (tokens |> Common.acc_map TV.mk_token_extended) in
+  let cleaner = !tokens2 |> Parsing_hacks.filter_cpp_stuff in
   let paren_grouped = TV.mk_parenthised  cleaner in
   Cpp_token_c.apply_macro_defs
     ~msg_apply_known_macro:(fun s -> pr2 (spf "APPLYING: %s" s))
@@ -736,7 +736,7 @@ let find_optional_macro_to_expand2 ~defs toks =
   (* because the before field is used by apply_macro_defs *)
   tokens2 := TV.rebuild_tokens_extented !tokens2;
   Parsing_hacks.insert_virtual_positions
-    (!tokens2 +> Common.acc_map (fun x -> x.TV.tok))
+    (!tokens2 |> Common.acc_map (fun x -> x.TV.tok))
   *)
 let find_optional_macro_to_expand ~defs a =
     Common.profile_code "MACRO managment" (fun () ->
@@ -875,15 +875,15 @@ type program2 = toplevel2 list
      and toplevel2 = Ast_c.toplevel * info_item
 
 let program_of_program2 xs =
-  xs +> List.map fst
+  xs |> List.map fst
 
 let with_program2 f program2 =
   program2
-  +> Common2.unzip
-  +> (fun (program, infos) ->
+  |> Common2.unzip
+  |> (fun (program, infos) ->
     f program, infos
   )
-  +> Common2.uncurry Common2.zip
+  |> Common2.uncurry Common2.zip
 
 
 
@@ -938,7 +938,7 @@ type tokens_state = {
 let mk_tokens_state toks =
   {
     rest       = toks;
-    rest_clean = (toks +> List.filter TH.is_not_comment);
+    rest_clean = (toks |> List.filter TH.is_not_comment);
     current    = (List.hd toks);
     passed = [];
     passed_clean = [];
@@ -1047,7 +1047,7 @@ let rec lexer_function ~pass tr = fun lexbuf ->
             let (v,new_tokens) =
               tokens_include (info, includes, filename, inifdef) in
             let new_tokens_clean =
-              new_tokens +> List.filter TH.is_not_comment  in
+              new_tokens |> List.filter TH.is_not_comment  in
 
             tr.passed <- v::tr.passed;
             tr.passed_clean <- v::tr.passed_clean;
@@ -1133,7 +1133,7 @@ let get_one_elem ~pass tr (file, filelines) =
       tr.current <- List.hd passed';
       tr.passed_clean <- [];           (* enough ? *)
       (* with error recovery, rest and rest_clean may not be in sync *)
-      tr.rest_clean <- (tr.rest +> List.filter TH.is_not_comment);
+      tr.rest_clean <- (tr.rest |> List.filter TH.is_not_comment);
 
 
       let info_of_bads = Common2.map_eff_rev TH.info_of_tok tr.passed in
@@ -1181,7 +1181,7 @@ let parse_print_error_heuristic2 file =
       (* include also builtins as some macros may generate some builtins too
        * like __decl_spec or __stdcall
        *)
-      !_defs_builtins +> Hashtbl.iter (fun s def ->
+      !_defs_builtins |> Hashtbl.iter (fun s def ->
         Hashtbl.replace macros   s def;
       );
       macros
@@ -1189,7 +1189,7 @@ let parse_print_error_heuristic2 file =
   in
   Common.profile_code "MACRO mgmt prep 2" (fun () ->
     let local_macros = parse_cpp_define_file file in
-    local_macros +> List.iter (fun (s, def) ->
+    local_macros |> List.iter (fun (s, def) ->
       Hashtbl.replace macros   s def;
     );
   );
@@ -1320,11 +1320,11 @@ let parse_print_error_heuristic2 file =
 
             let pbline =
               toks_of_bads
-              +> Common2.filter (TH.is_same_line_or_close line_error)
-              +> Common2.filter TH.is_ident_like
+              |> Common2.filter (TH.is_same_line_or_close line_error)
+              |> Common2.filter TH.is_ident_like
             in
             let error_info =
-              (pbline +> List.map TH.str_of_tok), line_error
+              (pbline |> List.map TH.str_of_tok), line_error
             in
             stat.Stat.problematic_lines <-
               error_info::stat.Stat.problematic_lines;
@@ -1401,8 +1401,8 @@ let parse_cache file =
 
 let (cstatement_of_string: string -> Ast_c.statement) = fun s ->
   Common.write_file ("/tmp/__cocci.c") ("void main() { \n" ^ s ^ "\n}");
-  let program = parse_c_and_cpp ("/tmp/__cocci.c") +> fst in
-  program +> Common.find_some (fun (e,_) ->
+  let program = parse_c_and_cpp ("/tmp/__cocci.c") |> fst in
+  program |> Common.find_some (fun (e,_) ->
     match e with
     | Ast_c.Definition ({Ast_c.f_body = [Ast_c.StmtElem st]},_) -> Some st
     | _ -> None
@@ -1410,8 +1410,8 @@ let (cstatement_of_string: string -> Ast_c.statement) = fun s ->
 
 let (cexpression_of_string: string -> Ast_c.expression) = fun s ->
   Common.write_file ("/tmp/__cocci.c") ("void main() { \n" ^ s ^ ";\n}");
-  let program = parse_c_and_cpp ("/tmp/__cocci.c") +> fst in
-  program +> Common.find_some (fun (e,_) ->
+  let program = parse_c_and_cpp ("/tmp/__cocci.c") |> fst in
+  program |> Common.find_some (fun (e,_) ->
     match e with
     | Ast_c.Definition ({Ast_c.f_body = compound},_) ->
         (match compound with

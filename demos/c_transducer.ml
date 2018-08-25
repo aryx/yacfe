@@ -53,10 +53,10 @@ let visit asts2 =
           ()
     );
   } in
-  asts +> List.iter (Visitor_c.vk_toplevel bigf);
+  asts |> List.iter (Visitor_c.vk_toplevel bigf);
 
   let stats = Statistics_c.statistics_of_program asts in
-  stats +> Statistics_code.assoc_of_entities_stat +> List.iter (fun (s,v) ->
+  stats |> Statistics_code.assoc_of_entities_stat |> List.iter (fun (s,v) ->
     Common.push2 (spf "nb_%s:%d" s v) props
   );
 

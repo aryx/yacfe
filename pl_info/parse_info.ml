@@ -100,7 +100,7 @@ let full_charpos_to_pos a =
   profile_code "Common.full_charpos_to_pos" (fun () -> full_charpos_to_pos2 a)
 
 let test_charpos file =
-  full_charpos_to_pos file +> dump +> pr2
+  full_charpos_to_pos file |> dump |> pr2
 
 
 

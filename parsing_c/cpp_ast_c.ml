@@ -75,14 +75,14 @@ type cpp_option =
 
 
 let i_of_cpp_options xs =
-  xs +> Common.map_filter (function
+  xs |> Common.map_filter (function
   | I f -> Some f
   | D _ -> None
   )
 
 let cpp_option_of_cmdline (xs, ys) =
-  (xs +> List.map (fun s -> I s)) @
-  (ys +> List.map (fun s ->
+  (xs |> List.map (fun s -> I s)) @
+  (ys |> List.map (fun s ->
     if s =~ "\\([A-Z][A-Z0-9_]*\\)=\\(.*\\)"
     then
       let (def, value) = matched2 s in
@@ -101,7 +101,7 @@ let init_adjust_candidate_header_files dir =
   let ext = "[h]" in
   let files = Common2.files_of_dir_or_files ext [dir] in
 
-  files +> List.iter (fun file ->
+  files |> List.iter (fun file ->
     let base = Filename.basename file in
     pr2 file;
     Hashtbl.add _hcandidates base file;
@@ -120,7 +120,7 @@ let find_header_file1 cppopts dirname inc_file =
       then [finalfile]
       else []
   | NonLocal f ->
-      i_of_cpp_options cppopts +> Common.map_filter (fun dirname ->
+      i_of_cpp_options cppopts |> Common.map_filter (fun dirname ->
         let finalfile =
           Filename.concat dirname (Ast_c.s_of_inc_file inc_file) in
         if Sys.file_exists finalfile
@@ -167,7 +167,7 @@ let find_header_file cppopts dirname inc_file =
 (* ---------------------------------------------------------------------- *)
 let trace_cpp_process depth mark inc_file =
   pr2 (spf "%s>%s %s"
-          (Common2.repeat "-" depth +> Common.join "")
+          (Common2.repeat "-" depth |> Common.join "")
           mark
           (s_of_inc_file_bis inc_file));
   ()
@@ -201,14 +201,14 @@ let parse_c_and_cpp_cache file =
 let (show_cpp_i_opts: string list -> unit) = fun xs ->
   if not (null xs) then begin
     pr2 "-I";
-    xs +> List.iter pr2
+    xs |> List.iter pr2
   end
 
 
 let (show_cpp_d_opts: string list -> unit) = fun xs ->
   if not (null xs) then begin
     pr2 "-D";
-    xs +> List.iter pr2
+    xs |> List.iter pr2
   end
 
 (*****************************************************************************)
@@ -227,7 +227,7 @@ let (cpp_expand_include2:
   let rec aux stack dirname ast =
     let depth = List.length stack in
 
-    ast +> Visitor_c.vk_program_s { Visitor_c.default_visitor_c_s with
+    ast |> Visitor_c.vk_program_s { Visitor_c.default_visitor_c_s with
       Visitor_c.kcppdirective_s = (fun (k, bigf) cpp ->
         match cpp with
         | Include {i_include = (inc_file, ii);
@@ -338,12 +338,12 @@ let should_ifdefize tag ifdefs_directives xxs =
 let group_ifdef tag xs =
   let (xxs, xs) = Common2.group_by_post (is_ifdef_and_same_tag tag) xs in
 
-  xxs +> List.map snd +> List.map (fun x ->
+  xxs |> List.map snd |> List.map (fun x ->
     match x with
     | IfdefStmt y -> y
     | StmtElem _ | CppDirectiveStmt _ | IfdefStmt2 _ -> raise Impossible
   ),
-  xxs +> List.map fst,
+  xxs |> List.map fst,
   xs
 
 

@@ -107,8 +107,8 @@ class ['a,'b] ograph_extended =
         match xs#view with (* could be done with an iter *)
         | Empty -> acc
         | Cons(x, xs) -> (acc#add x)
-              +> (fun newacc -> aux (o#predecessors x) newacc)
-              +> (fun newacc -> aux xs newacc)
+              |> (fun newacc -> aux (o#predecessors x) newacc)
+              |> (fun newacc -> aux xs newacc)
       in aux xs (f2()) (* (new osetb []) *)
 
     method children  xs =
@@ -116,8 +116,8 @@ class ['a,'b] ograph_extended =
         match xs#view with (* could be done with an iter *)
         | Empty -> acc
         | Cons(x, xs) -> (acc#add x)
-              +> (fun newacc -> aux (o#successors x) newacc)
-              +> (fun newacc -> aux xs newacc)
+              |> (fun newacc -> aux (o#successors x) newacc)
+              |> (fun newacc -> aux xs newacc)
       in aux xs (f2()) (* (new osetb []) *)
 
     method brothers  x =
@@ -206,13 +206,13 @@ class ['a,'b] ograph_mutable =
 let dfs_iter xi f g =
   let already = Hashtbl.create 101 in
   let rec aux_dfs xs =
-    xs +> List.iter (fun xi ->
+    xs |> List.iter (fun xi ->
       if Hashtbl.mem already xi then ()
       else begin
         Hashtbl.add already xi true;
         f xi;
         let succ = g#successors xi in
-        aux_dfs (succ#tolist +> List.map fst);
+        aux_dfs (succ#tolist |> List.map fst);
       end
     ) in
   aux_dfs [xi]
@@ -226,8 +226,8 @@ let dfs_iter_with_path xi f g =
       Hashtbl.add already xi true;
       f xi path;
       let succ = g#successors xi in
-      let succ' = succ#tolist +> List.map fst in
-      succ' +> List.iter (fun yi ->
+      let succ' = succ#tolist |> List.map fst in
+      succ' |> List.iter (fun yi ->
           aux_dfs (xi::path) yi
       );
       end

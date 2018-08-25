@@ -282,7 +282,7 @@ let extract_is_fake ((node, info), nodestr) = info.is_fake
 let mk_any_node is_fake node labels bclabels nodestr =
   let nodestr =
     if !Flag_parsing_c.show_flow_labels
-    then nodestr ^ ("[" ^ (labels +> List.map i_to_s +> join ",") ^ "]")
+    then nodestr ^ ("[" ^ (labels |> List.map i_to_s |> join ",") ^ "]")
     else nodestr
   in
   ((node, {labels = labels;is_loop=false;bclabels=bclabels;is_fake=is_fake}),
@@ -293,14 +293,14 @@ let mk_fake_node = mk_any_node true (* for duplicated braces *)
 
 (* ------------------------------------------------------------------------ *)
 let first_node g =
-  g#nodes#tolist +> List.find (fun (i, node) ->
+  g#nodes#tolist |> List.find (fun (i, node) ->
     match unwrap node with TopNode -> true | _ -> false
-    ) +> fst
+    ) |> fst
 
 let find_node f g =
-  g#nodes#tolist +> List.find (fun (nodei, node) ->
+  g#nodes#tolist |> List.find (fun (nodei, node) ->
     f (unwrap node))
-     +> fst
+     |> fst
 
 
 (* remove an intermediate node and redirect the connexion  *)
@@ -309,18 +309,18 @@ let remove_one_node nodei g =
   let succs = (g#successors nodei)#tolist in
   assert (not (null preds));
 
-  preds +> List.iter (fun (predi, Direct) ->
+  preds |> List.iter (fun (predi, Direct) ->
     g#del_arc ((predi, nodei), Direct);
   );
-  succs +> List.iter (fun (succi, Direct) ->
+  succs |> List.iter (fun (succi, Direct) ->
     g#del_arc ((nodei, succi), Direct);
   );
 
   g#del_node nodei;
 
   (* connect in-nodes to out-nodes *)
-  preds +> List.iter (fun (pred, Direct) ->
-    succs +> List.iter (fun (succ, Direct) ->
+  preds |> List.iter (fun (pred, Direct) ->
+    succs |> List.iter (fun (succ, Direct) ->
       g#add_arc ((pred, succ), Direct);
     );
   )

@@ -107,7 +107,7 @@ let normal_form_program xs =
 
   }
   in
-  xs +> List.map (fun p -> Visitor_c.vk_toplevel_s  bigf p)
+  xs |> List.map (fun p -> Visitor_c.vk_toplevel_s  bigf p)
 
 
 
@@ -120,7 +120,7 @@ let normal_form_token x =
     | Parser_c.TString ((s, kind),i1) -> Parser_c.TString (("",kind), i1)
     | x -> x
   in
-  x' +> Token_helpers.visitor_info_of_tok (fun info ->
+  x' |> Token_helpers.visitor_info_of_tok (fun info ->
     let info = Ast_c.al_info 0 info in
     let str = Ast_c.str_of_info info in
     if Common2.string_match_substring cvs_keyword_regexp str
@@ -169,7 +169,7 @@ let compare_ast filename1 filename2  =
   let process_filename filename =
     let (c, _stat) = Parse_c.parse_print_error_heuristic filename in
     let c = List.map fst c in
-    c +> Lib_parsing_c.al_program +> normal_form_program
+    c |> Lib_parsing_c.al_program |> normal_form_program
   in
 
   let c1 = process_filename filename1 in
@@ -183,7 +183,7 @@ let compare_ast filename1 filename2  =
     then Pb "not same number of entities (func, decl, ...)"
     else
       begin
-        zip c1 c2 +> List.iter (function
+        zip c1 c2 |> List.iter (function
         | Declaration a, Declaration b -> if not (a =*= b) then incr error
         | Definition a, Definition b ->   if not (a =*= b) then incr error
         | EmptyDef a, EmptyDef b ->       if not (a =*= b) then incr error
@@ -297,8 +297,8 @@ let compare_token filename1 filename2 =
   in
   let final_loop xs ys =
     loop
-      (xs +> List.filter (fun x -> not (is_normal_space_or_comment x)))
-      (ys +> List.filter (fun x -> not (is_normal_space_or_comment x)))
+      (xs |> List.filter (fun x -> not (is_normal_space_or_comment x)))
+      (ys |> List.filter (fun x -> not (is_normal_space_or_comment x)))
   in
 
   (*
@@ -314,7 +314,7 @@ let compare_token filename1 filename2 =
     if List.length c1 <> List.length c2
     then Pb "not same number of entities (func, decl, ...)"
     else
-        zip c1 c2 +> Common2.fold_k (fun acc ((a,infoa),(b,infob)) k ->
+        zip c1 c2 |> Common2.fold_k (fun acc ((a,infoa),(b,infob)) k ->
           match a, b with
           | NotParsedCorrectly a, NotParsedCorrectly b ->
               (match final_loop (snd infoa) (snd infob) with
@@ -370,12 +370,12 @@ let compare_result_to_string (correct, diffxs) =
   | Pb s ->
       ("seems incorrect: " ^ s) ^ "\n" ^
         "diff (result(-) vs expected_result(+)) = " ^ "\n" ^
-        (diffxs +> Common.join "\n") ^ "\n"
+        (diffxs |> Common.join "\n") ^ "\n"
   | PbOnlyInNotParsedCorrectly s ->
       "seems incorrect, but only because of code that was not parsable" ^ "\n"^
         ("explanation:" ^ s) ^ "\n" ^
         "diff (result(-) vs expected_result(+)) = " ^ "\n" ^
-        (diffxs +> Common.join "\n") ^ "\n"
+        (diffxs |> Common.join "\n") ^ "\n"
 
 
 let compare_result_to_bool correct =

@@ -309,11 +309,11 @@ let rec vk_expr = fun bigf expr ->
      *)
     | StatementExpr ((statxs, is)) ->
         iif is;
-        statxs +> List.iter (vk_statement_sequencable bigf);
+        statxs |> List.iter (vk_statement_sequencable bigf);
 
     | Constructor (t, initxs) ->
         vk_type bigf t;
-        initxs +> List.iter (fun (ini, ii) ->
+        initxs |> List.iter (fun (ini, ii) ->
           vk_ini bigf ini;
           vk_ii bigf ii;
         )
@@ -333,14 +333,14 @@ and vk_name = fun bigf ident ->
     match id with
     | RegularName (s, ii) -> iif ii
     | CppConcatenatedName xs ->
-        xs +> List.iter (fun ((x,ii1), ii2) ->
+        xs |> List.iter (fun ((x,ii1), ii2) ->
           iif ii2;
           iif ii1;
         );
     | CppVariadicName (s, ii) -> iif ii
     | CppIdentBuilder ((s,iis), xs) ->
         iif iis;
-        xs +> List.iter (fun ((x,iix), iicomma) ->
+        xs |> List.iter (fun ((x,iix), iicomma) ->
           iif iicomma;
           iif iix;
         )
@@ -365,7 +365,7 @@ and vk_statement = fun bigf (st: Ast_c.statement) ->
     | Labeled (Default st) -> statf st;
 
     | Compound statxs ->
-        statxs +> List.iter (vk_statement_sequencable bigf)
+        statxs |> List.iter (vk_statement_sequencable bigf)
     | ExprStatement (eopt) -> do_option (vk_expr bigf) eopt;
 
     | Selection  (If (e, st1, st2)) ->
@@ -408,9 +408,9 @@ and vk_statement_sequencable = fun bigf stseq ->
     | IfdefStmt ifdef ->
         vk_ifdef_directive bigf ifdef
     | IfdefStmt2 (ifdef, xxs) ->
-        ifdef +> List.iter (vk_ifdef_directive bigf);
-        xxs +> List.iter (fun xs ->
-          xs +> List.iter (vk_statement_sequencable bigf)
+        ifdef |> List.iter (vk_ifdef_directive bigf);
+        xxs |> List.iter (fun xs ->
+          xs |> List.iter (vk_statement_sequencable bigf)
         )
 
   in f (k, bigf) stseq
@@ -442,10 +442,10 @@ and vk_type = fun bigf t ->
         )
 
     | Enum  (sopt, enumt) ->
-        enumt +> List.iter (fun ((name, eopt), iicomma) ->
+        enumt |> List.iter (fun ((name, eopt), iicomma) ->
           vk_name bigf name;
           iif iicomma;
-          eopt +> Common.do_option (fun (info, e) ->
+          eopt |> Common.do_option (fun (info, e) ->
             iif [info];
             vk_expr bigf e
           )
@@ -483,7 +483,7 @@ and vk_decl = fun bigf d ->
   let f = bigf.kdecl in
   let rec k decl =
     match decl with
-    | DeclList (xs,ii) -> xs +> List.iter (fun (x,ii) ->
+    | DeclList (xs,ii) -> xs |> List.iter (fun (x,ii) ->
         iif ii;
         vk_onedecl bigf x;
       );
@@ -502,10 +502,10 @@ and vk_onedecl = fun bigf onedecl ->
       v_attr = attrs})  ->
 
     vk_type bigf t;
-    attrs +> List.iter (vk_attribute bigf);
-    var +> Common.do_option (fun (name, iniopt) ->
+    attrs |> List.iter (vk_attribute bigf);
+    var |> Common.do_option (fun (name, iniopt) ->
       vk_name bigf name;
-      iniopt +> Common.do_option (fun (info, ini) ->
+      iniopt |> Common.do_option (fun (info, ini) ->
       iif [info];
       vk_ini bigf ini;
       );
@@ -520,12 +520,12 @@ and vk_ini = fun bigf ini ->
     match ini with
     | InitExpr e -> vk_expr bigf e
     | InitList initxs ->
-        initxs +> List.iter (fun (ini, ii) ->
+        initxs |> List.iter (fun (ini, ii) ->
           inif ini;
           iif ii;
         )
     | InitDesignators (xs, e) ->
-        xs +> List.iter (vk_designator bigf);
+        xs |> List.iter (vk_designator bigf);
         inif e
 
     | InitFieldOld (s, e) -> inif e
@@ -549,7 +549,7 @@ and vk_designator = fun bigf design ->
 (* ------------------------------------------------------------------------ *)
 
 and vk_struct_fields = fun bigf fields ->
-  fields +> List.iter (vk_struct_field bigf);
+  fields |> List.iter (vk_struct_field bigf);
 
 and vk_struct_field = fun bigf field ->
   let iif ii = vk_ii bigf ii in
@@ -579,7 +579,7 @@ and vk_struct_field = fun bigf field ->
 
 and vk_struct_fieldkinds = fun bigf onefield_multivars ->
   let iif ii = vk_ii bigf ii in
-  onefield_multivars +> List.iter (fun (field, iicomma) ->
+  onefield_multivars |> List.iter (fun (field, iicomma) ->
     iif iicomma;
     match field with
     | Simple (nameopt, t) ->
@@ -611,17 +611,17 @@ and vk_def = fun bigf d ->
         ->
         iif ii;
         iif iib;
-        attrs +> List.iter (vk_attribute bigf);
+        attrs |> List.iter (vk_attribute bigf);
         vk_type bigf returnt;
-        paramst +> List.iter (fun (param,iicomma) ->
+        paramst |> List.iter (fun (param,iicomma) ->
           vk_param bigf param;
           iif iicomma;
         );
-        oldstyle +> Common.do_option (fun decls ->
-          decls +> List.iter (vk_decl bigf);
+        oldstyle |> Common.do_option (fun decls ->
+          decls |> List.iter (vk_decl bigf);
         );
 
-        statxs +> List.iter (vk_statement_sequencable bigf)
+        statxs |> List.iter (vk_statement_sequencable bigf)
   in f (k, bigf) d
 
 
@@ -647,7 +647,7 @@ and vk_toplevel = fun bigf p ->
   in f (k, bigf) p
 
 and vk_program = fun bigf xs ->
-  xs +> List.iter (vk_toplevel bigf)
+  xs |> List.iter (vk_toplevel bigf)
 
 and vk_ifdef_directive bigf directive =
   let iif ii =  vk_ii bigf ii in
@@ -670,7 +670,7 @@ and vk_cpp_directive bigf directive =
          * and pretty_print do not use visitor_c so no problem.
          *)
         iif ii;
-        copt +> Common.do_option (fun (file, asts) ->
+        copt |> Common.do_option (fun (file, asts) ->
           vk_program bigf asts
         );
     | Define ((s,ii), (defkind, defval)) ->
@@ -689,7 +689,7 @@ and vk_define_kind bigf defkind =
   | DefineVar -> ()
   | DefineFunc (params, ii) ->
       vk_ii bigf ii;
-      params +> List.iter (fun ((s,iis), iicomma) ->
+      params |> List.iter (fun ((s,iis), iicomma) ->
         vk_ii bigf iis;
         vk_ii bigf iicomma;
       )
@@ -749,7 +749,7 @@ and vk_node = fun bigf node ->
     | F.Decl decl -> vk_decl bigf decl
     | F.ExprStatement (st, (eopt, ii)) ->
         iif ii;
-        eopt +> do_option (vk_expr bigf)
+        eopt |> do_option (vk_expr bigf)
 
     | F.IfHeader (_, (e,ii))
     | F.SwitchHeader (_, (e,ii))
@@ -761,9 +761,9 @@ and vk_node = fun bigf node ->
     | F.ForHeader (_st, (((e1opt,i1), (e2opt,i2), (e3opt,i3)), ii)) ->
         iif i1; iif i2; iif i3;
         iif ii;
-        e1opt +> do_option (vk_expr bigf);
-        e2opt +> do_option (vk_expr bigf);
-        e3opt +> do_option (vk_expr bigf);
+        e1opt |> do_option (vk_expr bigf);
+        e2opt |> do_option (vk_expr bigf);
+        e3opt |> do_option (vk_expr bigf);
     | F.MacroIterHeader (_s, ((s,es), ii)) ->
         iif ii;
         vk_argument_list bigf es;
@@ -854,7 +854,7 @@ and vk_argument = fun bigf arg ->
 
 and vk_argument_list = fun bigf es ->
   let iif ii = vk_ii bigf ii in
-  es +> List.iter (fun (e, ii) ->
+  es |> List.iter (fun (e, ii) ->
     iif ii;
     vk_argument bigf e
   )
@@ -864,13 +864,13 @@ and vk_argument_list = fun bigf es ->
 and vk_param = fun bigf param  ->
   let iif ii = vk_ii bigf ii in
   let {p_namei = swrapopt; p_register = (b, iib); p_type=ft} = param in
-  swrapopt +> Common.do_option (vk_name bigf);
+  swrapopt |> Common.do_option (vk_name bigf);
   iif iib;
   vk_type bigf ft
 
 and vk_param_list = fun bigf ts ->
   let iif ii = vk_ii bigf ii in
-  ts +> List.iter (fun (param,iicomma) ->
+  ts |> List.iter (fun (param,iicomma) ->
     vk_param bigf param;
     iif iicomma;
   )
@@ -882,9 +882,9 @@ and vk_asmbody = fun bigf (string_list, colon_list) ->
   let iif ii = vk_ii bigf ii in
 
   iif string_list;
-  colon_list +> List.iter (fun (Colon xs, ii)  ->
+  colon_list |> List.iter (fun (Colon xs, ii)  ->
     iif ii;
-    xs +> List.iter (fun (x,iicomma) ->
+    xs |> List.iter (fun (x,iicomma) ->
       iif iicomma;
       (match x with
       | ColonMisc, ii -> iif ii
@@ -898,7 +898,7 @@ and vk_asmbody = fun bigf (string_list, colon_list) ->
 (* ------------------------------------------------------------------------ *)
 let vk_args_splitted = fun bigf args_splitted ->
   let iif ii = vk_ii bigf ii in
-  args_splitted +> List.iter (function
+  args_splitted |> List.iter (function
   | Left arg -> vk_argument bigf arg
   | Right ii -> iif ii
   )
@@ -906,7 +906,7 @@ let vk_args_splitted = fun bigf args_splitted ->
 
 let vk_define_params_splitted = fun bigf args_splitted ->
   let iif ii = vk_ii bigf ii in
-  args_splitted +> List.iter (function
+  args_splitted |> List.iter (function
   | Left (s, iis) -> vk_ii bigf iis
   | Right ii -> iif ii
   )
@@ -915,7 +915,7 @@ let vk_define_params_splitted = fun bigf args_splitted ->
 
 let vk_params_splitted = fun bigf args_splitted ->
   let iif ii = vk_ii bigf ii in
-  args_splitted +> List.iter (function
+  args_splitted |> List.iter (function
   | Left arg -> vk_param bigf arg
   | Right ii -> iif ii
   )
@@ -991,7 +991,7 @@ let rec vk_expr_s = fun bigf expr ->
   and k e =
     let ((unwrap_e, typ), ii) = e in
     (* !!! don't analyse optional type !!!
-     * old:  typ +> map_option (vk_type_s bigf) in
+     * old:  typ |> map_option (vk_type_s bigf) in
      *)
     let typ' = typ in
     let e' =
@@ -1000,7 +1000,7 @@ let rec vk_expr_s = fun bigf expr ->
       | Constant (c) -> Constant (c)
       | FunCall  (e, es)         ->
           FunCall (exprf e,
-                  es +> List.map (fun (e,ii) ->
+                  es |> List.map (fun (e,ii) ->
                     vk_argument_s bigf e, iif ii
                   ))
 
@@ -1030,7 +1030,7 @@ let rec vk_expr_s = fun bigf expr ->
       | Constructor (t, initxs) ->
           Constructor
             (vk_type_s bigf t,
-            (initxs +> List.map (fun (ini, ii) ->
+            (initxs |> List.map (fun (ini, ii) ->
               vk_ini_s bigf ini, vk_ii_s bigf ii)
             ))
 
@@ -1062,13 +1062,13 @@ and vk_name_s = fun bigf ident ->
     (match id with
     | RegularName (s,ii) -> RegularName (s, iif ii)
     | CppConcatenatedName xs ->
-        CppConcatenatedName (xs +> List.map (fun ((x,ii1), ii2) ->
+        CppConcatenatedName (xs |> List.map (fun ((x,ii1), ii2) ->
           (x, iif ii1), iif ii2
         ))
     | CppVariadicName (s, ii) -> CppVariadicName (s, iif ii)
     | CppIdentBuilder ((s,iis), xs) ->
         CppIdentBuilder ((s, iif iis),
-                        xs +> List.map (fun ((x,iix), iicomma) ->
+                        xs |> List.map (fun ((x,iix), iicomma) ->
                           ((x, iif iix), iif iicomma)))
     )
   in
@@ -1119,7 +1119,7 @@ and vk_statement_s = fun bigf st ->
           Iteration
             (MacroIteration
                 (s,
-                es +> List.map (fun (e, ii) ->
+                es |> List.map (fun (e, ii) ->
                   vk_argument_s bigf e, vk_ii_s bigf ii
                 ),
                 statf st
@@ -1153,8 +1153,8 @@ and vk_statement_sequencable_s = fun bigf stseq ->
         IfdefStmt (vk_ifdef_directive_s bigf ifdef)
     | IfdefStmt2 (ifdef, xxs) ->
         let ifdef' = List.map (vk_ifdef_directive_s bigf) ifdef in
-        let xxs' = xxs +> List.map (fun xs ->
-          xs +> vk_statement_sequencable_list_s bigf
+        let xxs' = xxs |> List.map (fun xs ->
+          xs |> vk_statement_sequencable_list_s bigf
         )
         in
         IfdefStmt2(ifdef', xxs')
@@ -1163,7 +1163,7 @@ and vk_statement_sequencable_s = fun bigf stseq ->
 and vk_statement_sequencable_list_s = fun bigf statxs ->
   let f = bigf.kstatementseq_list_s in
   let k xs =
-    xs +> List.map (vk_statement_sequencable_s bigf)
+    xs |> List.map (vk_statement_sequencable_s bigf)
   in
   f (k, bigf) statxs
 
@@ -1173,9 +1173,9 @@ and vk_asmbody_s = fun bigf (string_list, colon_list) ->
   let  iif ii = vk_ii_s bigf ii in
 
   iif string_list,
-  colon_list +> List.map (fun (Colon xs, ii) ->
+  colon_list |> List.map (fun (Colon xs, ii) ->
     Colon
-      (xs +> List.map (fun (x, iicomma) ->
+      (xs |> List.map (fun (x, iicomma) ->
         (match x with
         | ColonMisc, ii -> ColonMisc, iif ii
         | ColonExpr e, ii -> ColonExpr (vk_expr_s bigf e), iif ii
@@ -1208,17 +1208,17 @@ and vk_type_s = fun bigf t ->
             (typef returnt,
             (match paramst with
             | (ts, (b, iihas3dots)) ->
-                (ts +> List.map (fun (param,iicomma) ->
+                (ts |> List.map (fun (param,iicomma) ->
                   (vk_param_s bigf param, iif iicomma)),
                 (b, iif iihas3dots))
             ))
 
       | Enum  (sopt, enumt) ->
           Enum (sopt,
-               enumt +> List.map (fun ((name, eopt), iicomma) ->
+               enumt |> List.map (fun ((name, eopt), iicomma) ->
 
                  ((vk_name_s bigf name,
-                  eopt +> Common2.fmap (fun (info, e) ->
+                  eopt |> Common2.fmap (fun (info, e) ->
                     vk_info_s bigf info,
                     vk_expr_s bigf e
                  )),
@@ -1261,7 +1261,7 @@ and vk_decl_s = fun bigf d ->
     | MacroDecl ((s, args),ii) ->
         MacroDecl
           ((s,
-           args +> List.map (fun (e,ii) -> vk_argument_s bigf e, iif ii)
+           args |> List.map (fun (e,ii) -> vk_argument_s bigf e, iif ii)
            ),
           iif ii)
 
@@ -1272,16 +1272,16 @@ and vk_decl_s = fun bigf d ->
             v_local= local;
             v_attr = attrs}, iicomma) =
     {v_namei =
-      (var +> Common2.map_option (fun (name, iniopt) ->
+      (var |> Common2.map_option (fun (name, iniopt) ->
         vk_name_s bigf name,
-        iniopt +> Common2.map_option (fun (info, init) ->
+        iniopt |> Common2.map_option (fun (info, init) ->
           vk_info_s bigf info,
           vk_ini_s bigf init
         )));
      v_type = vk_type_s bigf t;
      v_storage = sto;
      v_local = local;
-     v_attr = attrs +> List.map (vk_attribute_s bigf);
+     v_attr = attrs |> List.map (vk_attribute_s bigf);
     },
     iif iicomma
 
@@ -1295,14 +1295,14 @@ and vk_ini_s = fun bigf ini ->
       match unwrap_ini with
       | InitExpr e -> InitExpr (vk_expr_s bigf e)
       | InitList initxs ->
-          InitList (initxs +> List.map (fun (ini, ii) ->
+          InitList (initxs |> List.map (fun (ini, ii) ->
             inif ini, vk_ii_s bigf ii)
           )
 
 
       | InitDesignators (xs, e) ->
           InitDesignators
-            (xs +> List.map (vk_designator_s bigf),
+            (xs |> List.map (vk_designator_s bigf),
             inif e
             )
 
@@ -1330,7 +1330,7 @@ and vk_designator_s = fun bigf design ->
 and vk_struct_fieldkinds_s = fun bigf onefield_multivars ->
   let iif ii = vk_ii_s bigf ii in
 
-  onefield_multivars +> List.map (fun (field, iicomma) ->
+  onefield_multivars |> List.map (fun (field, iicomma) ->
     (match field with
     | Simple (nameopt, t) ->
         Simple (Common2.map_option (vk_name_s bigf) nameopt,
@@ -1347,7 +1347,7 @@ and vk_struct_fields_s = fun bigf fields ->
 
   let iif ii = vk_ii_s bigf ii in
 
-  fields +> List.map (fun (field) ->
+  fields |> List.map (fun (field) ->
     (match field with
     | (DeclarationField (FieldDeclList (onefield_multivars, iiptvirg))) ->
         DeclarationField
@@ -1357,7 +1357,7 @@ and vk_struct_fields_s = fun bigf fields ->
     | MacroDeclField ((s, args),ii) ->
         MacroDeclField
           ((s,
-           args +> List.map (fun (e,ii) -> vk_argument_s bigf e, iif ii)
+           args |> List.map (fun (e,ii) -> vk_argument_s bigf e, iif ii)
            ),
           iif ii)
 
@@ -1386,17 +1386,17 @@ and vk_def_s = fun bigf d ->
         {f_name = s;
          f_type =
             (vk_type_s bigf returnt,
-            (paramst +> List.map (fun (param, iicomma) ->
+            (paramst |> List.map (fun (param, iicomma) ->
               (vk_param_s bigf param, iif iicomma)
             ), (b, iif iib)));
          f_storage = sto;
          f_body =
             vk_statement_sequencable_list_s bigf statxs;
          f_attr =
-            attrs +> List.map (vk_attribute_s bigf);
+            attrs |> List.map (vk_attribute_s bigf);
          f_old_c_style =
-            oldstyle +> Common2.map_option (fun decls ->
-              decls +> List.map (vk_decl_s bigf)
+            oldstyle |> Common2.map_option (fun decls ->
+              decls |> List.map (vk_decl_s bigf)
             );
         },
         iif ii
@@ -1414,7 +1414,7 @@ and vk_toplevel_s = fun bigf p ->
     | MacroTop (s, xs, ii) ->
         MacroTop
           (s,
-          xs +> List.map (fun (elem, iicomma) ->
+          xs |> List.map (fun (elem, iicomma) ->
             vk_argument_s bigf elem, iif iicomma
           ),
           iif ii
@@ -1427,7 +1427,7 @@ and vk_toplevel_s = fun bigf p ->
   in f (k, bigf) p
 
 and vk_program_s = fun bigf xs ->
-  xs +> List.map (vk_toplevel_s bigf)
+  xs |> List.map (vk_toplevel_s bigf)
 
 
 and vk_cpp_directive_s = fun bigf top ->
@@ -1444,7 +1444,7 @@ and vk_cpp_directive_s = fun bigf top ->
       -> Include {i_include = (s, iif ii);
                   i_rel_pos = h_rel_pos;
                   i_is_in_ifdef = b;
-                  i_content = copt +> Common2.map_option (fun (file, asts) ->
+                  i_content = copt |> Common2.map_option (fun (file, asts) ->
                     file, vk_program_s bigf asts
                   );
       }
@@ -1468,7 +1468,7 @@ and vk_define_kind_s  = fun bigf defkind ->
   | DefineVar -> DefineVar
   | DefineFunc (params, ii) ->
       DefineFunc
-        (params +> List.map (fun ((s,iis),iicomma) ->
+        (params |> List.map (fun ((s,iis),iicomma) ->
           ((s, vk_ii_s bigf iis), vk_ii_s bigf iicomma)
         ),
         vk_ii_s bigf ii
@@ -1523,7 +1523,7 @@ and vk_node_s = fun bigf node ->
 
     | F.Decl declb -> F.Decl (vk_decl_s bigf declb)
     | F.ExprStatement (st, (eopt, ii)) ->
-        F.ExprStatement (st, (eopt +> Common2.map_option (vk_expr_s bigf), iif ii))
+        F.ExprStatement (st, (eopt |> Common2.map_option (vk_expr_s bigf), iif ii))
 
     | F.IfHeader (st, (e,ii))     ->
         F.IfHeader    (st, (vk_expr_s bigf e, iif ii))
@@ -1536,15 +1536,15 @@ and vk_node_s = fun bigf node ->
 
     | F.ForHeader (st, (((e1opt,i1), (e2opt,i2), (e3opt,i3)), ii)) ->
         F.ForHeader (st,
-                    (((e1opt +> Common2.map_option (vk_expr_s bigf), iif i1),
-                     (e2opt +> Common2.map_option (vk_expr_s bigf), iif i2),
-                     (e3opt +> Common2.map_option (vk_expr_s bigf), iif i3)),
+                    (((e1opt |> Common2.map_option (vk_expr_s bigf), iif i1),
+                     (e2opt |> Common2.map_option (vk_expr_s bigf), iif i2),
+                     (e3opt |> Common2.map_option (vk_expr_s bigf), iif i3)),
                     iif ii))
 
     | F.MacroIterHeader (st, ((s,es), ii)) ->
         F.MacroIterHeader
           (st,
-          ((s, es +> List.map (fun (e, ii) -> vk_argument_s bigf e, iif ii)),
+          ((s, es |> List.map (fun (e, ii) -> vk_argument_s bigf e, iif ii)),
           iif ii))
 
 
@@ -1582,7 +1582,7 @@ and vk_node_s = fun bigf node ->
     | F.MacroTop (s, args, ii) ->
         F.MacroTop
           (s,
-          args +> List.map (fun (e, ii) -> vk_argument_s bigf e, iif ii),
+          args |> List.map (fun (e, ii) -> vk_argument_s bigf e, iif ii),
           iif ii)
 
 
@@ -1624,37 +1624,37 @@ and vk_node_s = fun bigf node ->
 and vk_param_s = fun bigf param ->
   let iif ii = vk_ii_s bigf ii in
   let {p_namei = swrapopt; p_register = (b, iib); p_type=ft} = param in
-  { p_namei = swrapopt +> Common2.map_option (vk_name_s bigf);
+  { p_namei = swrapopt |> Common2.map_option (vk_name_s bigf);
     p_register = (b, iif iib);
     p_type = vk_type_s bigf ft;
   }
 
 let vk_args_splitted_s = fun bigf args_splitted ->
   let iif ii = vk_ii_s bigf ii in
-  args_splitted +> List.map (function
+  args_splitted |> List.map (function
   | Left arg -> Left (vk_argument_s bigf arg)
   | Right ii -> Right (iif ii)
   )
 
 let vk_arguments_s = fun bigf args ->
   let iif ii = vk_ii_s bigf ii in
-  args +> List.map (fun (e, ii) -> vk_argument_s bigf e, iif ii)
+  args |> List.map (fun (e, ii) -> vk_argument_s bigf e, iif ii)
 
 
 let vk_params_splitted_s = fun bigf args_splitted ->
   let iif ii = vk_ii_s bigf ii in
-  args_splitted +> List.map (function
+  args_splitted |> List.map (function
   | Left arg -> Left (vk_param_s bigf arg)
   | Right ii -> Right (iif ii)
   )
 
 let vk_params_s = fun bigf args ->
   let iif ii = vk_ii_s bigf ii in
-  args +> List.map (fun (p,ii) -> vk_param_s bigf p, iif ii)
+  args |> List.map (fun (p,ii) -> vk_param_s bigf p, iif ii)
 
 let vk_define_params_splitted_s = fun bigf args_splitted ->
   let iif ii = vk_ii_s bigf ii in
-  args_splitted +> List.map (function
+  args_splitted |> List.map (function
   | Left (s, iis) -> Left (s, vk_ii_s bigf iis)
   | Right ii -> Right (iif ii)
   )
