@@ -29,8 +29,8 @@ fact more a concrete syntax tree (c.f. `parsing_c/ast_c.ml`).
 Compilation
 -----------
 
-To install Yacfe from its source, see the instructions in INSTALL.
-It should mainly consists in doing:
+To install Yacfe from its source, see the instructions in INSTALL.md.
+If OCaml is installed, this should consist of doing:
 
 ```
     $ ./configure
