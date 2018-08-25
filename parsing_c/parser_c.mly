@@ -150,9 +150,9 @@ let (fixDeclSpecForDecl: decl -> (fullType * (storage wrap)))  = function
  | (Some sign,   None, (None| Some (BaseType (IntType (Si (_,CInt))))))  ->
      BaseType(IntType (Si (sign, CInt))), iit
  | ((None|Some Signed),Some x,(None|Some(BaseType(IntType (Si (_,CInt)))))) ->
-     BaseType(IntType (Si (Signed, [Short,CShort; Long, CLong; LongLong, CLongLong] +> List.assoc x))), iit
+     BaseType(IntType (Si (Signed, [Short,CShort; Long, CLong; LongLong, CLongLong] |> List.assoc x))), iit
  | (Some UnSigned, Some x, (None| Some (BaseType (IntType (Si (_,CInt))))))->
-     BaseType(IntType (Si (UnSigned, [Short,CShort; Long, CLong; LongLong, CLongLong] +> List.assoc x))), iit
+     BaseType(IntType (Si (UnSigned, [Short,CShort; Long, CLong; LongLong, CLongLong] |> List.assoc x))), iit
  | (Some sign,   None, (Some (BaseType (IntType CChar))))   -> BaseType(IntType (Si (sign, CChar2))), iit
  | (None, Some Long,(Some(BaseType(FloatType CDouble))))    -> BaseType (FloatType (CLongDouble)), iit
 
@@ -230,7 +230,7 @@ let (fixOldCDecl: fullType -> fullType) = fun ty ->
       | [{p_namei = None; p_type = ((_qua, (BaseType Void,_)))},_] ->
           ty
       | params ->
-          (params +> List.iter (fun (param,_) ->
+          (params |> List.iter (fun (param,_) ->
             match param with
             | {p_namei = None} ->
               (* if majuscule, then certainly macro-parameter *)
@@ -260,7 +260,7 @@ let fixFunc (typ, compound, old_style_opt) =
       (match params with
       | [{p_namei= None; p_type =((_qua, (BaseType Void,_)))}, _] ->  ()
       | params ->
-          params +> List.iter (function
+          params |> List.iter (function
           | ({p_namei = Some s}, _) -> ()
 	  | _ -> ()
                 (* failwith "internal errror: fixOldCDecl not good" *)
@@ -326,7 +326,7 @@ let fix_add_params_ident = function
       (match params with
       | [{p_namei=None; p_type=((_qua, (BaseType Void,_)))}, _] ->  ()
       | params ->
-          params +> List.iter (function
+          params |> List.iter (function
           | ({p_namei= Some name}, _) ->
               LP.add_ident (Ast_c.str_of_name s)
 	  | _ ->
@@ -1056,7 +1056,7 @@ type_qualif_attr:
  *)*/
 
 declarator:
- | pointer direct_d { (fst $2, fun x -> x +> $1 +> (snd $2)  ) }
+ | pointer direct_d { (fst $2, fun x -> x |> $1 |> (snd $2)  ) }
  | direct_d         { $1  }
 
 /*(* so must do  int * const p; if the pointer is constant, not the pointee *)*/
@@ -1096,7 +1096,7 @@ tccro: TCCro { dt "tccro" ();$1 }
 abstract_declarator:
  | pointer                            { $1 }
  |         direct_abstract_declarator { $1 }
- | pointer direct_abstract_declarator { fun x -> x +> $2 +> $1 }
+ | pointer direct_abstract_declarator { fun x -> x |> $2 |> $1 }
 
 direct_abstract_declarator:
  | TOPar abstract_declarator TCPar /*(* forunparser: old: $2 *)*/
@@ -1242,7 +1242,7 @@ decl2:
        let (returnType,storage) = fixDeclSpecForDecl $1 in
        let iistart = Ast_c.fakeInfo () in
        DeclList (
-         ($2 +> List.map (fun ((((name,f),attrs), ini), iivirg) ->
+         ($2 |> List.map (fun ((((name,f),attrs), ini), iivirg) ->
            let s = str_of_name name in
            let iniopt =
              match ini with
@@ -1408,7 +1408,7 @@ designator:
 
 gcc_comma_opt_struct:
  | TComma {  [$1] }
- | /*(* empty *)*/  {  [Ast_c.fakeInfo() +> Ast_c.rewrap_str ","]  }
+ | /*(* empty *)*/  {  [Ast_c.fakeInfo() |> Ast_c.rewrap_str ","]  }
 
 
 
@@ -1462,7 +1462,7 @@ field_declaration:
        if fst (unwrap storage) <> NoSto
        then Common2.internal_error "parsing dont allow this";
 
-       FieldDeclList ($2 +> (List.map (fun (f, iivirg) ->
+       FieldDeclList ($2 |> (List.map (fun (f, iivirg) ->
          f returnType, iivirg))
                          ,[$3])
          (* dont need to check if typedef or func initialised cos

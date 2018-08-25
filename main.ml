@@ -41,7 +41,7 @@ let parse_and_comments_of_file file =
 
       (* let _estat = Statistics_c.statistics_of_program program in *)
 
-  program2 +> List.iter (fun (ast, (s, toks)) ->
+  program2 |> List.iter (fun (ast, (s, toks)) ->
     Parse_c.print_commentized toks
   )
 
@@ -66,7 +66,7 @@ let main_action xs =
 
         Common2.check_stack_nbfiles nbfiles;
 
-        files +> Common.index_list +> List.iter (fun (file, i) ->
+        files |> Common.index_list |> List.iter (fun (file, i) ->
 
           pr2 (spf "PARSING: %s (%d/%d)" file i nbfiles);
 
@@ -85,7 +85,7 @@ let main_action xs =
           in
 
           (*
-          let _info_comments = comments +> List.map fst in
+          let _info_comments = comments |> List.map fst in
           Parse_c_comments_only.check_extraction file info_comments;
           *)
 
@@ -132,7 +132,7 @@ let parse_all xs =
     match xs with
     | [x] when Common2.is_directory x -> Some x
     | xs ->
-        Some (xs +> Common.join "" +> Common2.md5sum_of_string)
+        Some (xs |> Common.join "" |> Common2.md5sum_of_string)
   in
 *)
 
@@ -157,7 +157,7 @@ let parse_all xs =
   let biglist = (fun () ->
 
     let files =
-      if (xs +> List.for_all Common2.is_directory)
+      if (xs |> List.for_all Common2.is_directory)
       then
         let ext = "[ch]" in
         let ext2 = "java" in
@@ -173,7 +173,7 @@ let parse_all xs =
     let nbfiles = List.length files in
     Common2.check_stack_nbfiles nbfiles;
 
-    files +> Common.index_list +> List.map (fun (i,j) -> (i,j,nbfiles))
+    files |> Common.index_list |> List.map (fun (i,j) -> (i,j,nbfiles))
   )
   in
   let map_ex = parse_one_file in
@@ -181,7 +181,7 @@ let parse_all xs =
   let reduce_ex = (fun xxs ->
     let stats_parse = xxs in
 
-    stats_parse +> List.iter (fun (file, stat) ->
+    stats_parse |> List.iter (fun (file, stat) ->
       let s =
         spf "bad = %d, timeout = %B"
           stat.Statistics_parsing.bad stat.Statistics_parsing.have_timeout
@@ -196,7 +196,7 @@ let parse_all xs =
     );
 
 
-    dirname_opt +> Common.do_option (fun dirname ->
+    dirname_opt |> Common.do_option (fun dirname ->
       pr2 "--------------------------------";
       pr2 "regression testing  information";
       pr2 "--------------------------------";

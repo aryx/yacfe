@@ -84,12 +84,12 @@ let mk_token_extended x =
 
 let rebuild_tokens_extented toks_ext =
   let _tokens = ref [] in
-  toks_ext +> List.iter (fun tok ->
-    tok.new_tokens_before +> List.iter (fun x -> Common.push x _tokens);
+  toks_ext |> List.iter (fun tok ->
+    tok.new_tokens_before |> List.iter (fun x -> Common.push x _tokens);
     Common.push tok.tok _tokens
   );
   let tokens = List.rev !_tokens in
-  (tokens +> Common2.acc_map mk_token_extended)
+  (tokens |> Common2.acc_map mk_token_extended)
 
 
 
@@ -351,28 +351,28 @@ let rec mk_body_function_grouped xs =
 (* ------------------------------------------------------------------------- *)
 
 let rec iter_token_paren f xs =
-  xs +> List.iter (function
+  xs |> List.iter (function
   | PToken tok -> f tok;
   | Parenthised (xxs, info_parens) ->
-      info_parens +> List.iter f;
-      xxs +> List.iter (fun xs -> iter_token_paren f xs)
+      info_parens |> List.iter f;
+      xxs |> List.iter (fun xs -> iter_token_paren f xs)
   )
 
 let rec iter_token_brace f xs =
-  xs +> List.iter (function
+  xs |> List.iter (function
   | BToken tok -> f tok;
   | Braceised (xxs, tok1, tok2opt) ->
       f tok1; do_option f tok2opt;
-      xxs +> List.iter (fun xs -> iter_token_brace f xs)
+      xxs |> List.iter (fun xs -> iter_token_brace f xs)
   )
 
 let rec iter_token_ifdef f xs =
-  xs +> List.iter (function
-  | NotIfdefLine xs -> xs +> List.iter f;
+  xs |> List.iter (function
+  | NotIfdefLine xs -> xs |> List.iter f;
   | Ifdefbool (_, xxs, info_ifdef)
   | Ifdef (xxs, info_ifdef) ->
-      info_ifdef +> List.iter f;
-      xxs +> List.iter (iter_token_ifdef f)
+      info_ifdef |> List.iter f;
+      xxs |> List.iter (iter_token_ifdef f)
   )
 
 
@@ -380,7 +380,7 @@ let rec iter_token_ifdef f xs =
 
 let tokens_of_paren xs =
   let g = ref [] in
-  xs +> iter_token_paren (fun tok -> Common.push tok g);
+  xs |> iter_token_paren (fun tok -> Common.push tok g);
   List.rev !g
 
 
@@ -407,16 +407,16 @@ let tokens_of_paren_ordered xs =
   and aux_args (xxs, commas) =
     match xxs, commas with
     | [], [] -> ()
-    | [xs], [] -> xs +> List.iter aux_tokens_ordered
+    | [xs], [] -> xs |> List.iter aux_tokens_ordered
     | xs::ys::xxs, comma::commas ->
-        xs +> List.iter aux_tokens_ordered;
+        xs |> List.iter aux_tokens_ordered;
         Common.push comma g;
         aux_args (ys::xxs, commas)
     | _ -> raise Impossible
 
   in
 
-  xs +> List.iter aux_tokens_ordered;
+  xs |> List.iter aux_tokens_ordered;
   List.rev !g
 
 
@@ -437,7 +437,7 @@ let rec set_in_function_tag xs =
   (* ) { and the closing } is in column zero, then certainly a function *)
   | BToken ({tok = TCPar _ })::(Braceised (body, tok1, Some tok2))::xs
       when tok1.col <> 0 && tok2.col =|= 0 ->
-      body +> List.iter (iter_token_brace (fun tok ->
+      body |> List.iter (iter_token_brace (fun tok ->
         tok.where <- InFunction
       ));
       set_in_function_tag xs
@@ -446,7 +446,7 @@ let rec set_in_function_tag xs =
 
   | (Braceised (body, tok1, Some tok2))::xs
       when tok1.col =|= 0 && tok2.col =|= 0 ->
-      body +> List.iter (iter_token_brace (fun tok ->
+      body |> List.iter (iter_token_brace (fun tok ->
         tok.where <- InFunction
       ));
       set_in_function_tag xs
@@ -463,7 +463,7 @@ let rec set_in_other xs =
   | BToken ({tok = Tenum _})
     ::Braceised(body, tok1, tok2)::xs
     ->
-      body +> List.iter (iter_token_brace (fun tok ->
+      body |> List.iter (iter_token_brace (fun tok ->
         tok.where <- InEnum;
       ));
       set_in_other xs
@@ -471,14 +471,14 @@ let rec set_in_other xs =
   (* struct x { } *)
   | BToken ({tok = Tstruct _})::BToken ({tok = TIdent _})
     ::Braceised(body, tok1, tok2)::xs ->
-      body +> List.iter (iter_token_brace (fun tok ->
+      body |> List.iter (iter_token_brace (fun tok ->
         tok.where <- InStruct;
       ));
       set_in_other xs
   (* = { } *)
   | BToken ({tok = TEq _})
     ::Braceised(body, tok1, tok2)::xs ->
-      body +> List.iter (iter_token_brace (fun tok ->
+      body |> List.iter (iter_token_brace (fun tok ->
         tok.where <- InInitializer;
       ));
       set_in_other xs
@@ -486,7 +486,7 @@ let rec set_in_other xs =
   | BToken _::xs -> set_in_other xs
 
   | Braceised(body, tok1, tok2)::xs ->
-      body +> List.iter set_in_other;
+      body |> List.iter set_in_other;
       set_in_other xs
 
 

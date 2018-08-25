@@ -133,7 +133,7 @@ let add_entities_stat st1 st2 =
 
 
 let sum_entities_stat_list xs =
-  xs +> List.fold_left add_entities_stat (default_entities_stat())
+  xs |> List.fold_left add_entities_stat (default_entities_stat())
 
 let div_pourcent_entities_stat st1 st2 =
   let (+++) n1 n2 =
@@ -224,6 +224,6 @@ let hash_of_entities_stat sum =
   end
 
 let assoc_of_entities_stat x =
-  x +> hash_of_entities_stat +> Common.hash_to_list
+  x |> hash_of_entities_stat |> Common.hash_to_list
 
 

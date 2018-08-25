@@ -1,5 +1,7 @@
 
-val (+>) : 'a -> ('a -> 'b) -> 'b
+
+(* obsolete, replaced by "|>" in the standard library. *)
+(* val (+>) : 'a -> ('a -> 'b) -> 'b *)
 
 val (=|=) : int    -> int    -> bool
 val (=<=) : char   -> char   -> bool

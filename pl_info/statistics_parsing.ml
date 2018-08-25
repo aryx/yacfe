@@ -45,20 +45,20 @@ let print_parsing_stat_list ?(verbose=false) = fun statxs ->
   let total = (List.length statxs) in
   let perfect =
     statxs
-      +> List.filter (function
+      |> List.filter (function
           {have_timeout = false; bad = 0} -> true | _ -> false)
-      +> List.length
+      |> List.length
   in
 
   if verbose then begin
   pr "\n\n\n---------------------------------------------------------------";
   pr "pbs with files:";
   statxs
-    +> List.filter (function
+    |> List.filter (function
       | {have_timeout = true} -> true
       | {bad = n} when n > 0 -> true
       | _ -> false)
-    +> List.iter (function
+    |> List.iter (function
         {filename = file; have_timeout = timeout; bad = n} ->
           pr (file ^ "  " ^ (if timeout then "TIMEOUT" else i_to_s n));
         );
@@ -67,10 +67,10 @@ let print_parsing_stat_list ?(verbose=false) = fun statxs ->
   pr "files with lots of tokens passed/commentized:";
   let threshold_passed = 100 in
   statxs
-    +> List.filter (function
+    |> List.filter (function
       | {commentized = n} when n > threshold_passed -> true
       | _ -> false)
-    +> List.iter (function
+    |> List.iter (function
         {filename = file; commentized = n} ->
           pr (file ^ "  " ^ (i_to_s n));
         );
@@ -78,9 +78,9 @@ let print_parsing_stat_list ?(verbose=false) = fun statxs ->
   pr "\n\n\n";
   end;
 
-  let good = statxs +> List.fold_left (fun acc {correct = x} -> acc+x) 0 in
-  let bad  = statxs +> List.fold_left (fun acc {bad = x} -> acc+x) 0  in
-  let passed = statxs +> List.fold_left (fun acc {commentized = x} -> acc+x) 0
+  let good = statxs |> List.fold_left (fun acc {correct = x} -> acc+x) 0 in
+  let bad  = statxs |> List.fold_left (fun acc {bad = x} -> acc+x) 0  in
+  let passed = statxs |> List.fold_left (fun acc {commentized = x} -> acc+x) 0
   in
   let total_lines = good + bad in
 
@@ -89,12 +89,12 @@ let print_parsing_stat_list ?(verbose=false) = fun statxs ->
   (spf "NB total files = %d; " total) ^
   (spf "NB total lines = %d; " total_lines) ^
   (spf "perfect = %d; " perfect) ^
-  (spf "pbs = %d; "     (statxs +> List.filter (function
+  (spf "pbs = %d; "     (statxs |> List.filter (function
       {have_timeout = b; bad = n} when n > 0 -> true | _ -> false)
-                               +> List.length)) ^
-  (spf "timeout = %d; " (statxs +> List.filter (function
+                               |> List.length)) ^
+  (spf "timeout = %d; " (statxs |> List.filter (function
       {have_timeout = true; bad = n} -> true | _ -> false)
-                               +> List.length)) ^
+                               |> List.length)) ^
   (spf "=========> %d" ((100 * perfect) / total)) ^ "%"
 
  );

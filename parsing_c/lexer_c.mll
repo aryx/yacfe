@@ -24,11 +24,11 @@ open Ast_c (* to factorise tokens, OpAssign, ... *)
  * For instance must do
  *
  *  let info = tokinfo lexbuf in
- *  TComment (info +> tok_add_s (comment lexbuf))
+ *  TComment (info |> tok_add_s (comment lexbuf))
  *
  * and not
  *
- *   TComment (tokinfo lexbuf +> tok_add_s (comment lexbuf))
+ *   TComment (tokinfo lexbuf |> tok_add_s (comment lexbuf))
  *
  * because of the "wierd" order of evaluation of OCaml.
  *
@@ -218,7 +218,7 @@ rule token = parse
       { let info = tokinfo lexbuf in
         let com = comment lexbuf in
 
-        let info' = info +> tok_add_s com in
+        let info' = info |> tok_add_s com in
         let s = Ast_c.str_of_info info' in
         (* could be more flexible, use [\t ]* instead of hardcoded
          * single space. *)
@@ -304,7 +304,7 @@ rule token = parse
   | (("#" [' ' '\t']* "undef" [' ' '\t']+) as _undef) (id as id)
       { let info = tokinfo lexbuf in
         TUndef (id, info)
-        (*+> tok_add_s (cpp_eat_until_nl lexbuf))*)
+        (* |> tok_add_s (cpp_eat_until_nl lexbuf)) *)
       }
 
 
@@ -345,7 +345,7 @@ rule token = parse
   | "#" [' ' '\t']* "if" [' ' '\t']* '0'+           (* [^'\n']*  '\n' *)
       { let info = tokinfo lexbuf in
         TIfdefBool (false, no_ifdef_mark(), info)
-          (* +> tok_add_s (cpp_eat_until_nl lexbuf)*)
+          (* |> tok_add_s (cpp_eat_until_nl lexbuf)*)
       }
 
   | "#" [' ' '\t']* "if" [' ' '\t']* '1'   (* [^'\n']*  '\n' *)
@@ -370,7 +370,7 @@ rule token = parse
   | "#" spopt ("ifdef"|"if") sp "__STDC__"
       { let info = tokinfo lexbuf in
         TIfdefVersion (true, no_ifdef_mark(),
-                      info +> tok_add_s (cpp_eat_until_nl lexbuf))
+                      info |> tok_add_s (cpp_eat_until_nl lexbuf))
       }
 
 
@@ -404,7 +404,7 @@ rule token = parse
   | "#" spopt "if" sp "("?  "LINUX_VERSION_CODE" sp (">=" | ">") sp
       { let info = tokinfo lexbuf in
         TIfdefVersion (true, no_ifdef_mark(),
-                      info +> tok_add_s (cpp_eat_until_nl lexbuf))
+                      info |> tok_add_s (cpp_eat_until_nl lexbuf))
       }
   (* linuxext: *)
   | "#" spopt "if" sp "!" "("?  "LINUX_VERSION_CODE" sp (">=" | ">") sp
@@ -412,7 +412,7 @@ rule token = parse
 
       { let info = tokinfo lexbuf in
         TIfdefVersion (false, no_ifdef_mark(),
-                      info +> tok_add_s (cpp_eat_until_nl lexbuf))
+                      info |> tok_add_s (cpp_eat_until_nl lexbuf))
       }
 
 
@@ -425,16 +425,16 @@ rule token = parse
       { TIfdef (no_ifdef_mark(), tokinfo lexbuf) }
   | "#" [' ''\t']* "if" [' ' '\t']+
       { let info = tokinfo lexbuf in
-        TIfdef (no_ifdef_mark(), info +> tok_add_s (cpp_eat_until_nl lexbuf))
+        TIfdef (no_ifdef_mark(), info |> tok_add_s (cpp_eat_until_nl lexbuf))
       }
   | "#" [' ' '\t']* "if" '('
       { let info = tokinfo lexbuf in
-        TIfdef (no_ifdef_mark(), info +> tok_add_s (cpp_eat_until_nl lexbuf))
+        TIfdef (no_ifdef_mark(), info |> tok_add_s (cpp_eat_until_nl lexbuf))
       }
 
   | "#" [' ' '\t']* "elif" [' ' '\t']+
       { let info = tokinfo lexbuf in
-        TIfdefelif (no_ifdef_mark(), info +> tok_add_s (cpp_eat_until_nl lexbuf))
+        TIfdefelif (no_ifdef_mark(), info |> tok_add_s (cpp_eat_until_nl lexbuf))
       }
 
 
@@ -615,23 +615,23 @@ rule token = parse
   | "'"
       { let info = tokinfo lexbuf in
         let s = char lexbuf   in
-        TChar     ((s,   IsChar),  (info +> tok_add_s (s ^ "'")))
+        TChar     ((s,   IsChar),  (info |> tok_add_s (s ^ "'")))
       }
   | '"'
       { let info = tokinfo lexbuf in
         let s = string lexbuf in
-        TString   ((s,   IsChar),  (info +> tok_add_s (s ^ "\"")))
+        TString   ((s,   IsChar),  (info |> tok_add_s (s ^ "\"")))
       }
   (* wide character encoding, TODO L'toto' valid ? what is allowed ? *)
   | 'L' "'"
       { let info = tokinfo lexbuf in
         let s = char lexbuf   in
-        TChar     ((s,   IsWchar),  (info +> tok_add_s (s ^ "'")))
+        TChar     ((s,   IsWchar),  (info |> tok_add_s (s ^ "'")))
       }
   | 'L' '"'
       { let info = tokinfo lexbuf in
         let s = string lexbuf in
-        TString   ((s,   IsWchar),  (info +> tok_add_s (s ^ "\"")))
+        TString   ((s,   IsWchar),  (info |> tok_add_s (s ^ "\"")))
       }
 
 
@@ -677,13 +677,13 @@ rule token = parse
 
 (* gccext: http://gcc.gnu.org/onlinedocs/gcc/Binary-constants.html *)
 (*
- | "0b" ['0'-'1'] { TInt (((tok lexbuf)<!!>(??,??)) +> int_of_stringbits) }
- | ['0'-'1']+'b' { TInt (((tok lexbuf)<!!>(0,-2)) +> int_of_stringbits) }
+ | "0b" ['0'-'1'] { TInt (((tok lexbuf)<!!>(??,??)) |> int_of_stringbits) }
+ | ['0'-'1']+'b' { TInt (((tok lexbuf)<!!>(0,-2)) |> int_of_stringbits) }
 *)
 
 
   (*------------------------------------------------------------------------ *)
-  | eof { EOF (tokinfo lexbuf +> Ast_c.rewrap_str "") }
+  | eof { EOF (tokinfo lexbuf |> Ast_c.rewrap_str "") }
 
   | _
       {
@@ -754,7 +754,7 @@ and string  = parse
   *)
  (*
   | [^ '\\']+
-    { let cs = lexbuf +> tok +> list_of_string +> List.map Char.code in
+    { let cs = lexbuf |> tok |> list_of_string |> List.map Char.code in
       cs ++ string lexbuf
     }
   *)

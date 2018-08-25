@@ -1063,7 +1063,7 @@ let rec (unsplit_comma: ('a, il) either list -> 'a wrap2 list) =
 (*****************************************************************************)
 
 let rec stmt_elems_of_sequencable xs =
-  xs +> List.map (fun x ->
+  xs |> List.map (fun x ->
     match x with
     | StmtElem e -> [e]
     | CppDirectiveStmt _
@@ -1073,11 +1073,11 @@ let rec stmt_elems_of_sequencable xs =
         []
     | IfdefStmt2 (_ifdef, xxs) ->
         pr2 ("stmt_elems_of_sequencable: IfdefStm2 TODO?");
-        xxs +> List.map (fun xs ->
+        xxs |> List.map (fun xs ->
           let xs' = stmt_elems_of_sequencable xs in
           xs'
-        ) +> List.flatten
-  ) +> List.flatten
+        ) |> List.flatten
+  ) |> List.flatten
 
 
 
@@ -1086,14 +1086,14 @@ let rec stmt_elems_of_sequencable xs =
 
 let s_of_inc_file inc_file =
   match inc_file with
-  | Local xs -> xs +> Common.join "/"
-  | NonLocal xs -> xs +> Common.join "/"
+  | Local xs -> xs |> Common.join "/"
+  | NonLocal xs -> xs |> Common.join "/"
   | Weird s -> s
 
 let s_of_inc_file_bis inc_file =
   match inc_file with
-  | Local xs -> "\"" ^ xs +> Common.join "/" ^ "\""
-  | NonLocal xs -> "<" ^ xs +> Common.join "/" ^ ">"
+  | Local xs -> "\"" ^ (xs |> Common.join "/") ^ "\""
+  | NonLocal xs -> "<" ^ (xs |> Common.join "/") ^ ">"
   | Weird s -> s
 
 let fieldname_of_fieldkind fieldkind =
@@ -1104,18 +1104,18 @@ let fieldname_of_fieldkind fieldkind =
 
 let s_of_attr attr =
   attr
-  +> List.map (fun (Attribute s, ii) -> s)
-  +> Common.join ","
+  |> List.map (fun (Attribute s, ii) -> s)
+  |> Common.join ","
 
 let str_of_name ident =
   match ident with
   | RegularName (s,ii) -> s
   | CppConcatenatedName xs ->
-      xs +> List.map (fun (x,iiop) -> unwrap x) +> Common.join "##"
+      xs |> List.map (fun (x,iiop) -> unwrap x) |> Common.join "##"
   | CppVariadicName (s, ii) -> "##" ^ s
   | CppIdentBuilder ((s,iis), xs) ->
       s ^ "(" ^
-        (xs +> List.map (fun ((x,iix), iicomma) -> x) +> Common.join ",") ^
+        (xs |> List.map (fun ((x,iix), iicomma) -> x) |> Common.join ",") ^
         ")"
 
 let info_of_name ident =
@@ -1149,5 +1149,5 @@ let get_s_and_ii_of_name name =
 
 
 let name_of_parameter param =
-  param.p_namei +> Common2.map_option (str_of_name)
+  param.p_namei |> Common2.map_option (str_of_name)
 

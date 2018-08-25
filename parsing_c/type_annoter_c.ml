@@ -299,22 +299,22 @@ let lookup_typedef a b =
 let rec find_final_type ty env =
 
   match Ast_c.unwrap_typeC ty with
-  | BaseType x  -> (BaseType x) +> Ast_c.rewrap_typeC ty
+  | BaseType x  -> (BaseType x) |> Ast_c.rewrap_typeC ty
 
-  | Pointer t -> (Pointer (find_final_type t env))  +> Ast_c.rewrap_typeC ty
-  | Array (e, t) -> Array (e, find_final_type t env) +> Ast_c.rewrap_typeC ty
+  | Pointer t -> (Pointer (find_final_type t env))  |> Ast_c.rewrap_typeC ty
+  | Array (e, t) -> Array (e, find_final_type t env) |> Ast_c.rewrap_typeC ty
 
-  | StructUnion (sopt, su) -> StructUnion (sopt, su)  +> Ast_c.rewrap_typeC ty
+  | StructUnion (sopt, su) -> StructUnion (sopt, su)  |> Ast_c.rewrap_typeC ty
 
-  | FunctionType t -> (FunctionType t) (* todo ? *) +> Ast_c.rewrap_typeC ty
-  | Enum  (s, enumt) -> (Enum  (s, enumt)) (* todo? *) +> Ast_c.rewrap_typeC ty
-  | EnumName s -> (EnumName s) (* todo? *) +> Ast_c.rewrap_typeC ty
+  | FunctionType t -> (FunctionType t) (* todo ? *) |> Ast_c.rewrap_typeC ty
+  | Enum  (s, enumt) -> (Enum  (s, enumt)) (* todo? *) |> Ast_c.rewrap_typeC ty
+  | EnumName s -> (EnumName s) (* todo? *) |> Ast_c.rewrap_typeC ty
 
   | StructUnionName (su, s) ->
       (try
           let ((structtyp,ii), env') = lookup_structunion (su, s) env in
           Ast_c.nQ, (StructUnion (Some s, structtyp), ii)
-          (* old: +> Ast_c.rewrap_typeC ty
+          (* old: |> Ast_c.rewrap_typeC ty
            * but must wrap with good ii, otherwise pretty_print_c
            * will be lost and raise some Impossible
            *)
@@ -356,7 +356,7 @@ let rec type_unfold_one_step ty env =
       (try
           let (((su,fields),ii), env') = lookup_structunion (su, s) env in
           Ast_c.nQ, (StructUnion (su, Some s, fields), ii)
-          (* old: +> Ast_c.rewrap_typeC ty
+          (* old: |> Ast_c.rewrap_typeC ty
            * but must wrap with good ii, otherwise pretty_print_c
            * will be lost and raise some Impossible
            *)
@@ -399,20 +399,20 @@ let rec typedef_fix ty env =
   | BaseType x  ->
       ty
   | Pointer t ->
-      Pointer (typedef_fix t env)  +> Ast_c.rewrap_typeC ty
+      Pointer (typedef_fix t env)  |> Ast_c.rewrap_typeC ty
   | Array (e, t) ->
-      Array (e, typedef_fix t env) +> Ast_c.rewrap_typeC ty
+      Array (e, typedef_fix t env) |> Ast_c.rewrap_typeC ty
   | StructUnion (su, sopt, fields) ->
       (* normalize, fold.
        * todo? but what if correspond to a nested struct def ?
        *)
       Type_c.structdef_to_struct_name ty
   | FunctionType ft ->
-      (FunctionType ft) (* todo ? *) +> Ast_c.rewrap_typeC ty
+      (FunctionType ft) (* todo ? *) |> Ast_c.rewrap_typeC ty
   | Enum  (s, enumt) ->
-      (Enum  (s, enumt)) (* todo? *) +> Ast_c.rewrap_typeC ty
+      (Enum  (s, enumt)) (* todo? *) |> Ast_c.rewrap_typeC ty
   | EnumName s ->
-      (EnumName s) (* todo? *) +> Ast_c.rewrap_typeC ty
+      (EnumName s) (* todo? *) |> Ast_c.rewrap_typeC ty
 
   (* we prefer StructUnionName to StructUnion when it comes to typed metavar *)
   | StructUnionName (su, s) -> ty
@@ -433,7 +433,7 @@ let rec typedef_fix ty env =
            * can have some weird mutually recursive typedef which
            * each new type alias search for its mutual def.
            *)
-          TypeName (name, Some (typedef_fix t' env')) +> Ast_c.rewrap_typeC ty
+          TypeName (name, Some (typedef_fix t' env')) |> Ast_c.rewrap_typeC ty
         with Not_found ->
           ty
       ))
@@ -652,7 +652,7 @@ let annotater_expr_visitor_subpart = (fun (k,bigf) expr ->
     | FunCall (((Ident (ident), typ), _ii) as e1, args) ->
 
         (* recurse *)
-        args +> List.iter (fun (e,ii) ->
+        args |> List.iter (fun (e,ii) ->
           (* could typecheck if arguments agree with prototype *)
           Visitor_c.vk_argument bigf e
         );
@@ -693,7 +693,7 @@ let annotater_expr_visitor_subpart = (fun (k,bigf) expr ->
                       Type_c.fake_function_type rettype args
                     in
 
-                    macrotype_opt +> Common.do_option (fun t ->
+                    macrotype_opt |> Common.do_option (fun t ->
                       pr2 ("Type_annotater: generate fake function type" ^
                               "for macro: " ^ s);
                       let tyinfo = make_info_def_fix t in
@@ -719,7 +719,7 @@ let annotater_expr_visitor_subpart = (fun (k,bigf) expr ->
     | FunCall (e, args) ->
         k expr;
 
-        (Ast_c.get_type_expr e) +> Type_c.do_with_type (fun typ ->
+        (Ast_c.get_type_expr e) |> Type_c.do_with_type (fun typ ->
           (* copy paste of above *)
           (match unwrap_unfold_env typ with
           | FunctionType (ret, params) -> make_info_def ret
@@ -781,7 +781,7 @@ let annotater_expr_visitor_subpart = (fun (k,bigf) expr ->
     | ArrayAccess (e, _) ->
         k expr; (* recurse to set the types-ref of sub expressions *)
 
-        (Ast_c.get_type_expr e) +> Type_c.do_with_type (fun t ->
+        (Ast_c.get_type_expr e) |> Type_c.do_with_type (fun t ->
           (* todo: maybe not good env !! *)
           match unwrap_unfold_env t with
           | Pointer x
@@ -794,7 +794,7 @@ let annotater_expr_visitor_subpart = (fun (k,bigf) expr ->
     | Unary (e, GetRef) ->
         k expr; (* recurse to set the types-ref of sub expressions *)
 
-        (Ast_c.get_type_expr e) +> Type_c.do_with_type (fun t ->
+        (Ast_c.get_type_expr e) |> Type_c.do_with_type (fun t ->
           (* must generate an element so that '=' can be used
            * to compare type ?
            *)
@@ -815,7 +815,7 @@ let annotater_expr_visitor_subpart = (fun (k,bigf) expr ->
 
         k expr; (* recurse to set the types-ref of sub expressions *)
 
-        (Ast_c.get_type_expr e) +> Type_c.do_with_type (fun t ->
+        (Ast_c.get_type_expr e) |> Type_c.do_with_type (fun t ->
 
           let topt =
             match x with
@@ -982,14 +982,14 @@ let rec visit_toplevel ~just_add_in_env ~depth elem =
        * file, not inside include.
        *)
       | Include {i_content = opt} ->
-          opt +> Common.do_option (fun (filename, program) ->
+          opt |> Common.do_option (fun (filename, program) ->
             save_excursion Flag_parsing_c.verbose_type (fun () ->
               Flag_parsing_c.verbose_type := false;
 
               (* old: Visitor_c.vk_program bigf program;
                * opti: set the just_add_in_env
                *)
-              program +> List.iter (fun elem ->
+              program |> List.iter (fun elem ->
                 visit_toplevel ~just_add_in_env:true ~depth:(depth+1) elem
               )
             )
@@ -1042,7 +1042,7 @@ let rec visit_toplevel ~just_add_in_env ~depth elem =
     Visitor_c.kdecl = (fun (k, bigf) d ->
       (match d with
       | (DeclList (xs, ii)) ->
-          xs +> List.iter (fun ({v_namei = var; v_type = t;
+          xs |> List.iter (fun ({v_namei = var; v_type = t;
                                  v_storage = sto; v_local = local}, iicomma) ->
 
             (* to add possible definition in type found in Decl *)
@@ -1055,7 +1055,7 @@ let rec visit_toplevel ~just_add_in_env ~depth elem =
 	      |	Ast_c.LocalDecl -> Ast_c.LocalVar (offset t)
             in
 
-            var +> Common.do_option (fun (name, iniopt) ->
+            var |> Common.do_option (fun (name, iniopt) ->
               let s = Ast_c.str_of_name name in
 
               match sto with
@@ -1067,7 +1067,7 @@ let rec visit_toplevel ~just_add_in_env ~depth elem =
 
                   if need_annotate_body then begin
                     (* int x = sizeof(x) is legal so need process ini *)
-                    iniopt +> Common.do_option (fun (info, ini) ->
+                    iniopt |> Common.do_option (fun (info, ini) ->
                       Visitor_c.vk_ini bigf ini
                     );
                   end
@@ -1099,12 +1099,12 @@ let rec visit_toplevel ~just_add_in_env ~depth elem =
 
       | Enum (sopt, enums), ii ->
 
-          enums +> List.iter (fun ((name, eopt), iicomma) ->
+          enums |> List.iter (fun ((name, eopt), iicomma) ->
 
             let s = Ast_c.str_of_name name in
 
             if need_annotate_body
-            then eopt +> Common.do_option (fun (ieq, e) ->
+            then eopt |> Common.do_option (fun (ieq, e) ->
               Visitor_c.vk_expr bigf e
             );
             add_binding (EnumConstant (s, sopt)) true;
@@ -1151,7 +1151,7 @@ let rec visit_toplevel ~just_add_in_env ~depth elem =
 
               if need_annotate_body then
                 do_in_new_scope (fun () ->
-                  paramst +> List.iter (fun ({p_namei= nameopt; p_type= t},_)->
+                  paramst |> List.iter (fun ({p_namei= nameopt; p_type= t},_)->
                     match nameopt with
                     | Some name ->
                         let s = Ast_c.str_of_name name in
@@ -1222,7 +1222,7 @@ let rec (annotate_program2 :
   _scoped_env := env;
   _notyped_var := (Hashtbl.create 100);
 
-  prog +> List.map (fun elem ->
+  prog |> List.map (fun elem ->
     let beforeenv = !_scoped_env in
     visit_toplevel ~just_add_in_env:false ~depth:0 elem;
     let afterenv = !_scoped_env in
@@ -1273,7 +1273,7 @@ let annotate_test_expressions prog =
       | _ -> k st
     )
   } in
-  (prog +> List.iter (fun elem ->
+  (prog |> List.iter (fun elem ->
     Visitor_c.vk_toplevel bigf elem
   ))
 

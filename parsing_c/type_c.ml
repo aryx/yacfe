@@ -254,7 +254,7 @@ let (fake_function_type:
   let fake_cparen = Ast_c.rewrap_str ")" fake in
 
   let (tyargs: parameterType wrap2 list) =
-    args +> Common.map_filter (fun (arg,ii) ->
+    args |> Common.map_filter (fun (arg,ii) ->
       match arg with
       | Left e ->
           (match Ast_c.get_onlytype_expr e with
@@ -274,7 +274,7 @@ let (fake_function_type:
   if List.length args <> List.length tyargs
   then None
   else
-    rettype +> Common2.map_option (fun rettype ->
+    rettype |> Common2.map_option (fun rettype ->
       let (ftyp: functionType) = (rettype, (tyargs, (false,[]))) in
       let (t: fullType) =
         (Ast_c.nQ, (FunctionType ftyp, [fake_oparen;fake_cparen]))
@@ -348,10 +348,10 @@ let (type_field:
   let res = ref [] in
 
   let rec aux_fields fields =
-    fields +> List.iter (fun x ->
+    fields |> List.iter (fun x ->
       match x with
       | DeclarationField (FieldDeclList (onefield_multivars, iiptvirg)) ->
-          onefield_multivars +> List.iter (fun (fieldkind, iicomma) ->
+          onefield_multivars |> List.iter (fun (fieldkind, iicomma) ->
             match fieldkind with
             | Simple (Some name, t) | BitField (Some name, t, _, _) ->
                 let s = Ast_c.str_of_name name in

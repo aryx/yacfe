@@ -41,7 +41,7 @@ let strip_info_visitor _ =
       let ft' = k ft in
       match Ast_c.unwrap_typeC ft' with
       | Ast_c.TypeName (s,_typ) ->
-          Ast_c.TypeName (s, Ast_c.noTypedefDef()) +> Ast_c.rewrap_typeC ft'
+          Ast_c.TypeName (s, Ast_c.noTypedefDef()) |> Ast_c.rewrap_typeC ft'
       | _ -> ft'
 
     );
@@ -111,7 +111,7 @@ let real_strip_info_visitor _ =
       let ft' = k ft in
       match Ast_c.unwrap_typeC ft' with
       | Ast_c.TypeName (s,_typ) ->
-          Ast_c.TypeName (s, Ast_c.noTypedefDef()) +> Ast_c.rewrap_typeC ft'
+          Ast_c.TypeName (s, Ast_c.noTypedefDef()) |> Ast_c.rewrap_typeC ft'
       | _ -> ft'
 
     );
@@ -166,7 +166,7 @@ let max_min_ii_by_pos xs =
   | [x] -> (x, x)
   | x::xs ->
       let pos_leq p1 p2 = (Ast_c.compare_pos p1 p2) =|= (-1) in
-      xs +> List.fold_left (fun (maxii,minii) e ->
+      xs |> List.fold_left (fun (maxii,minii) e ->
         let maxii' = if pos_leq maxii e then e else maxii in
         let minii' = if pos_leq e minii then e else minii in
         maxii', minii'
@@ -232,12 +232,12 @@ let names_of_parameters_in_def def =
   | None ->
       let ftyp = def.Ast_c.f_type in
       let (ret, (params, bwrap)) = ftyp in
-      params +> Common.map_filter (fun (param,ii) ->
+      params |> Common.map_filter (fun (param,ii) ->
         Ast_c.name_of_parameter param
       )
 
 let names_of_parameters_in_macro xs =
-  xs +> List.map (fun (xx, ii) ->
+  xs |> List.map (fun (xx, ii) ->
     let (s, ii2) = xx in
     s
   )

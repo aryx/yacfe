@@ -116,12 +116,12 @@ let annotate_program toks asts =
    assert(List.length toks_with_after =|= List.length toks_with_before);
 
    Common2.zip toks_with_before toks_with_after
-   +> List.iter (fun ((t1, before), (t2, after)) ->
+   |> List.iter (fun ((t1, before), (t2, after)) ->
 
      assert(t1 =*= t2);
 
-     let before' = before +> List.map convert_relevant_tokens in
-     let after' = after  +> List.map convert_relevant_tokens in
+     let before' = before |> List.map convert_relevant_tokens in
+     let after' = after  |> List.map convert_relevant_tokens in
 
      let info = Token_helpers.info_of_tok t1 in
      info.Ast_c.comments_tag :=

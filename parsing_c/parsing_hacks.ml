@@ -281,7 +281,7 @@ let not_annot s =
 let (count_open_close_stuff_ifdef_clause: TV.ifdef_grouped list -> (int * int))=
  fun xs ->
    let cnt_paren, cnt_brace = ref 0, ref 0 in
-   xs +> TV.iter_token_ifdef (fun x ->
+   xs |> TV.iter_token_ifdef (fun x ->
      (match x.tok with
      | x when TH.is_opar x  -> incr cnt_paren
      | TOBrace _ -> incr cnt_brace
@@ -325,7 +325,7 @@ let rec is_really_foreach xs =
         is_foreach_aux xs'
     | x::xs -> is_foreach_aux xs
   in
-  is_foreach_aux xs +> fst
+  is_foreach_aux xs |> fst
 
 
 (* ------------------------------------------------------------------------- *)
@@ -350,7 +350,7 @@ let ifdef_paren_cnt = ref 0
 
 
 let rec set_ifdef_parenthize_info xs =
-  xs +> List.iter (function
+  xs |> List.iter (function
   | NotIfdefLine xs -> ()
   | Ifdefbool (_, xxs, info_ifdef)
   | Ifdef (xxs, info_ifdef) ->
@@ -358,10 +358,10 @@ let rec set_ifdef_parenthize_info xs =
       incr ifdef_paren_cnt;
       let total_directives = List.length info_ifdef in
 
-      info_ifdef +> List.iter (fun x ->
+      info_ifdef |> List.iter (fun x ->
         set_ifdef_token_parenthize_info (!ifdef_paren_cnt, total_directives)
           x.tok);
-      xxs +> List.iter set_ifdef_parenthize_info
+      xxs |> List.iter set_ifdef_parenthize_info
   )
 
 
@@ -384,13 +384,13 @@ let rec commentize_skip_start_to_end xs =
       | {tok = TCommentSkipTagStart info} ->
           (try
             let (before, x2, after) =
-              xs +> Common2.split_when (function
+              xs |> Common2.split_when (function
               | {tok = TCommentSkipTagEnd _ } -> true
               | _ -> false
               )
             in
             let topass = x::x2::before in
-            topass +> List.iter (fun tok ->
+            topass |> List.iter (fun tok ->
               set_as_comment Token_c.CppPassingExplicit tok
             );
             commentize_skip_start_to_end after
@@ -412,7 +412,7 @@ let rec commentize_skip_start_to_end xs =
 
 (* #if 0, #if 1,  #if LINUX_VERSION handling *)
 let rec find_ifdef_bool xs =
-  xs +> List.iter (function
+  xs |> List.iter (function
   | NotIfdefLine _ -> ()
   | Ifdefbool (is_ifdef_positif, xxs, info_ifdef_stmt) ->
 
@@ -421,24 +421,24 @@ let rec find_ifdef_bool xs =
       (match xxs with
       | [] -> raise Impossible
       | firstclause::xxs ->
-          info_ifdef_stmt +> List.iter (set_as_comment Token_c.CppDirective);
+          info_ifdef_stmt |> List.iter (set_as_comment Token_c.CppDirective);
 
           if is_ifdef_positif
-          then xxs +> List.iter
+          then xxs |> List.iter
             (iter_token_ifdef (set_as_comment Token_c.CppPassingNormal))
           else begin
-            firstclause +> iter_token_ifdef (set_as_comment Token_c.CppPassingNormal);
+            firstclause |> iter_token_ifdef (set_as_comment Token_c.CppPassingNormal);
             (match List.rev xxs with
             (* keep only last *)
             | last::startxs ->
-                startxs +> List.iter
+                startxs |> List.iter
                   (iter_token_ifdef (set_as_comment Token_c.CppPassingNormal))
             | [] -> (* not #else *) ()
             );
           end
       );
 
-  | Ifdef (xxs, info_ifdef_stmt) -> xxs +> List.iter find_ifdef_bool
+  | Ifdef (xxs, info_ifdef_stmt) -> xxs |> List.iter find_ifdef_bool
   )
 
 
@@ -447,7 +447,7 @@ let thresholdIfdefSizeMid = 6
 
 (* infer ifdef involving not-closed expressions/statements *)
 let rec find_ifdef_mid xs =
-  xs +> List.iter (function
+  xs |> List.iter (function
   | NotIfdefLine _ -> ()
   | Ifdef (xxs, info_ifdef_stmt) ->
       (match xxs with
@@ -455,21 +455,21 @@ let rec find_ifdef_mid xs =
       | [first] -> ()
       | first::second::rest ->
           (* don't analyse big ifdef *)
-          if xxs +> List.for_all
+          if xxs |> List.for_all
             (fun xs -> List.length xs <= thresholdIfdefSizeMid) &&
             (* don't want nested ifdef *)
-            xxs +> List.for_all (fun xs ->
-              xs +> List.for_all
+            xxs |> List.for_all (fun xs ->
+              xs |> List.for_all
                 (function NotIfdefLine _ -> true | _ -> false)
             )
 
           then
-            let counts = xxs +> List.map count_open_close_stuff_ifdef_clause in
+            let counts = xxs |> List.map count_open_close_stuff_ifdef_clause in
             let cnt1, cnt2 = List.hd counts in
             if cnt1 <> 0 || cnt2 <> 0 &&
-               counts +> List.for_all (fun x -> x =*= (cnt1, cnt2))
+               counts |> List.for_all (fun x -> x =*= (cnt1, cnt2))
               (*
-                if counts +> List.exists (fun (cnt1, cnt2) ->
+                if counts |> List.exists (fun (cnt1, cnt2) ->
                 cnt1 <> 0 || cnt2 <> 0
                 )
               *)
@@ -477,8 +477,8 @@ let rec find_ifdef_mid xs =
               msg_ifdef_mid_something();
 
               (* keep only first, treat the rest as comment *)
-              info_ifdef_stmt +> List.iter (set_as_comment Token_c.CppDirective);
-              (second::rest) +> List.iter
+              info_ifdef_stmt |> List.iter (set_as_comment Token_c.CppDirective);
+              (second::rest) |> List.iter
                 (iter_token_ifdef (set_as_comment Token_c.CppPassingCosWouldGetError));
             end
 
@@ -514,10 +514,10 @@ let rec find_ifdef_funheaders = function
       find_ifdef_funheaders xs;
 
       msg_ifdef_funheaders ();
-      info_ifdef_stmt +> List.iter (set_as_comment Token_c.CppDirective);
+      info_ifdef_stmt |> List.iter (set_as_comment Token_c.CppDirective);
       let all_toks = [xline2] @ line2 in
-      all_toks +> List.iter (set_as_comment Token_c.CppPassingCosWouldGetError) ;
-      ifdefblock2 +> iter_token_ifdef (set_as_comment Token_c.CppPassingCosWouldGetError);
+      all_toks |> List.iter (set_as_comment Token_c.CppPassingCosWouldGetError) ;
+      ifdefblock2 |> iter_token_ifdef (set_as_comment Token_c.CppPassingCosWouldGetError);
 
   (* ifdef with nested ifdef *)
   | Ifdef
@@ -536,10 +536,10 @@ let rec find_ifdef_funheaders = function
       find_ifdef_funheaders xs;
 
       msg_ifdef_funheaders ();
-      info_ifdef_stmt  +> List.iter (set_as_comment Token_c.CppDirective);
-      info_ifdef_stmt2 +> List.iter (set_as_comment Token_c.CppDirective);
+      info_ifdef_stmt  |> List.iter (set_as_comment Token_c.CppDirective);
+      info_ifdef_stmt2 |> List.iter (set_as_comment Token_c.CppDirective);
       let all_toks = [xline2;xline3] @ line2 @ line3 in
-      all_toks +> List.iter (set_as_comment Token_c.CppPassingCosWouldGetError);
+      all_toks |> List.iter (set_as_comment Token_c.CppPassingCosWouldGetError);
 
  (* ifdef with elseif *)
   | Ifdef
@@ -554,9 +554,9 @@ let rec find_ifdef_funheaders = function
       find_ifdef_funheaders xs;
 
       msg_ifdef_funheaders ();
-      info_ifdef_stmt +> List.iter (set_as_comment Token_c.CppDirective);
+      info_ifdef_stmt |> List.iter (set_as_comment Token_c.CppDirective);
       let all_toks = [xline2;xline3] @ line2 @ line3 in
-      all_toks +> List.iter (set_as_comment Token_c.CppPassingCosWouldGetError)
+      all_toks |> List.iter (set_as_comment Token_c.CppPassingCosWouldGetError)
 
   (* recurse *)
   | Ifdef (xxs,info_ifdef_stmt)::xs
@@ -568,10 +568,10 @@ let rec find_ifdef_funheaders = function
 
 (* ?? *)
 let rec adjust_inifdef_include xs =
-  xs +> List.iter (function
+  xs |> List.iter (function
   | NotIfdefLine _ -> ()
   | Ifdef (xxs, info_ifdef_stmt) | Ifdefbool (_, xxs, info_ifdef_stmt) ->
-      xxs +> List.iter (iter_token_ifdef (fun tokext ->
+      xxs |> List.iter (iter_token_ifdef (fun tokext ->
         match tokext.tok with
         | Parser_c.TInclude (s1, s2, inifdef_ref, ii) ->
             inifdef_ref := true;
@@ -595,14 +595,14 @@ let rec find_string_macro_paren xs =
   match xs with
   | [] -> ()
   | Parenthised(xxs, info_parens)::xs ->
-      xxs +> List.iter (fun xs ->
-        if xs +> List.exists
+      xxs |> List.iter (fun xs ->
+        if xs |> List.exists
           (function PToken({tok = (TString _| TMacroString _)}) -> true | _ -> false) &&
-          xs +> List.for_all
+          xs |> List.for_all
           (function PToken({tok = (TString _| TMacroString _)}) | PToken({tok = TIdent _}) ->
             true | _ -> false)
         then
-          xs +> List.iter (fun tok ->
+          xs |> List.iter (fun tok ->
             match tok with
             | PToken({tok = TIdent (s,_)} as id) ->
                 msg_stringification s;
@@ -632,7 +632,7 @@ let rec find_macro_paren xs =
     ::xs
      ->
       pr2_cpp ("MACRO: __attribute detected ");
-      [Parenthised (xxs, info_parens)] +>
+      [Parenthised (xxs, info_parens)] |>
         iter_token_paren (set_as_comment Token_c.CppAttr);
       set_as_comment Token_c.CppAttr id;
       find_macro_paren xs
@@ -691,7 +691,7 @@ let rec find_macro_paren xs =
 
       msg_stringification_params s;
       id.tok <- TMacroString (s, TH.info_of_tok id.tok);
-      [Parenthised (xxs, info_parens)] +>
+      [Parenthised (xxs, info_parens)] |>
         iter_token_paren (set_as_comment Token_c.CppMacro);
       find_macro_paren xs
 
@@ -703,7 +703,7 @@ let rec find_macro_paren xs =
 
       msg_stringification_params s;
       id.tok <- TMacroString (s, TH.info_of_tok id.tok);
-      [Parenthised (xxs, info_parens)] +>
+      [Parenthised (xxs, info_parens)] |>
         iter_token_paren (set_as_comment Token_c.CppMacro);
       find_macro_paren xs
 
@@ -736,7 +736,7 @@ let rec find_macro_paren xs =
   (* recurse *)
   | (PToken x)::xs -> find_macro_paren xs
   | (Parenthised (xxs, info_parens))::xs ->
-      xxs +> List.iter find_macro_paren;
+      xxs |> List.iter find_macro_paren;
       find_macro_paren xs
 
 
@@ -972,7 +972,7 @@ let rec find_macro_lineparen xs =
         else begin
           msg_macro_noptvirg s;
           macro.tok <- TMacroStmt (s, TH.info_of_tok macro.tok);
-          [Parenthised (xxs, info_parens)] +>
+          [Parenthised (xxs, info_parens)] |>
             iter_token_paren (set_as_comment Token_c.CppMacro);
         end;
 
@@ -1090,7 +1090,7 @@ let rec find_define_init_brace_paren xs =
   | (PToken x)::xs -> aux xs
   | (Parenthised (xxs, info_parens))::xs ->
       (* not need for tobrace init:
-       *  xxs +> List.iter aux;
+       *  xxs |> List.iter aux;
        *)
       aux xs
  in
@@ -1110,7 +1110,7 @@ let rec find_actions = function
     ::Parenthised (xxs,info_parens)
     ::xs ->
       find_actions xs;
-      xxs +> List.iter find_actions;
+      xxs |> List.iter find_actions;
       let modified = find_actions_params xxs in
       if modified
       then msg_macro_higher_order s
@@ -1119,14 +1119,14 @@ let rec find_actions = function
       find_actions xs
 
 and find_actions_params xxs =
-  xxs +> List.fold_left (fun acc xs ->
+  xxs |> List.fold_left (fun acc xs ->
     let toks = tokens_of_paren xs in
-    if toks +> List.exists (fun x -> TH.is_statement x.tok)
+    if toks |> List.exists (fun x -> TH.is_statement x.tok)
       (* undo:  && List.length toks > 1
        * good for sparse, not good for linux
        *)
     then begin
-      xs +> iter_token_paren (fun x ->
+      xs |> iter_token_paren (fun x ->
         if TH.is_eof x.tok
         then
           (* certainly because paren detection had a pb because of
@@ -1199,7 +1199,7 @@ let insert_virtual_positions l =
 
 (* ------------------------------------------------------------------------- *)
 let fix_tokens_cpp2 ~macro_defs tokens =
-  let tokens2 = ref (tokens +> Common2.acc_map TV.mk_token_extended) in
+  let tokens2 = ref (tokens |> Common2.acc_map TV.mk_token_extended) in
 
   begin
     (* the order is important, if you put the action heuristic first,
@@ -1217,7 +1217,7 @@ let fix_tokens_cpp2 ~macro_defs tokens =
     commentize_skip_start_to_end !tokens2;
 
     (* ifdef *)
-    let cleaner = !tokens2 +> List.filter (fun x ->
+    let cleaner = !tokens2 |> List.filter (fun x ->
       (* is_comment will also filter the TCommentCpp created in
        * commentize_skip_start_to_end *)
       not (TH.is_comment x.tok) (* could filter also #define/#include *)
@@ -1232,7 +1232,7 @@ let fix_tokens_cpp2 ~macro_defs tokens =
 
 
     (* macro 1 *)
-    let cleaner = !tokens2 +> filter_cpp_stuff in
+    let cleaner = !tokens2 |> filter_cpp_stuff in
 
     let paren_grouped = TV.mk_parenthised  cleaner in
     Cpp_token_c.apply_macro_defs
@@ -1245,7 +1245,7 @@ let fix_tokens_cpp2 ~macro_defs tokens =
     (* tagging contextual info (InFunc, InStruct, etc). Better to do
      * that after the "ifdef-simplification" phase.
      *)
-    let cleaner = !tokens2 +> List.filter (fun x ->
+    let cleaner = !tokens2 |> List.filter (fun x ->
       not (TH.is_comment x.tok) (* could filter also #define/#include *)
     ) in
 
@@ -1255,7 +1255,7 @@ let fix_tokens_cpp2 ~macro_defs tokens =
 
 
     (* macro *)
-    let cleaner = !tokens2 +> filter_cpp_stuff in
+    let cleaner = !tokens2 |> filter_cpp_stuff in
 
     let paren_grouped      = TV.mk_parenthised  cleaner in
     let line_paren_grouped = TV.mk_line_parenthised paren_grouped in
@@ -1266,13 +1266,13 @@ let fix_tokens_cpp2 ~macro_defs tokens =
 
 
     (* obsolete: actions ? not yet *)
-    let cleaner = !tokens2 +> filter_cpp_stuff in
+    let cleaner = !tokens2 |> filter_cpp_stuff in
     let paren_grouped = TV.mk_parenthised  cleaner in
     find_actions  paren_grouped;
 
 
 
-    insert_virtual_positions (!tokens2 +> Common2.acc_map (fun x -> x.tok))
+    insert_virtual_positions (!tokens2 |> Common2.acc_map (fun x -> x.tok))
   end
 
 let time_hack1 ~macro_defs a =

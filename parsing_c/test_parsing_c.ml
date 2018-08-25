@@ -20,7 +20,7 @@ let test_tokens_c file =
   Flag_parsing_c.verbose_lexing := true;
   Flag_parsing_c.verbose_parsing := true;
 
-  Parse_c.tokens file +> List.iter (fun x -> pr2_gen x);
+  Parse_c.tokens file |> List.iter (fun x -> pr2_gen x);
   ()
 
 
@@ -50,7 +50,7 @@ let test_parse_gen xs ext =
 
   Common2.check_stack_nbfiles (List.length fullxs);
 
-  fullxs +> List.iter (fun file ->
+  fullxs |> List.iter (fun file ->
     if not (file =~ (".*\\."^ext))
     then pr2 ("warning: seems not a ."^ext^" file");
 
@@ -59,7 +59,7 @@ let test_parse_gen xs ext =
     pr2 ("PARSING: " ^ file);
 
     let (xs, stat) = Parse_c.parse_print_error_heuristic file in
-    xs +> List.iter (fun (ast, (s, toks)) ->
+    xs |> List.iter (fun (ast, (s, toks)) ->
       Parse_c.print_commentized toks
     );
 
@@ -73,7 +73,7 @@ let test_parse_gen xs ext =
     else Hashtbl.add newscore file (Common2.Pb s)
   );
 
-  dirname_opt +> Common.do_option (fun dirname ->
+  dirname_opt |> Common.do_option (fun dirname ->
     Common2.pr2_xxxxxxxxxxxxxxxxx();
     pr2 "regression testing  information";
     Common2.pr2_xxxxxxxxxxxxxxxxx();
@@ -115,13 +115,13 @@ let test_parse xs =
     | [x] when Common2.is_directory x -> Some x
     | _ -> None
   in
-  dirname_opt +> Common.do_option (fun dir ->
+  dirname_opt |> Common.do_option (fun dir ->
 
     let ext = "h" in
     let fullxs = Common2.files_of_dir_or_files_no_vcs ext [dir] in
-    fullxs +> List.iter (fun file ->
+    fullxs |> List.iter (fun file ->
       let xs = Parse_c.parse_cpp_define_file file in
-      xs +> List.iter (fun (x, def) ->
+      xs |> List.iter (fun (x, def) ->
         let (s, params, body) = def in
         Hashtbl.replace !Parse_c._defs s (s, params, body);
       );
@@ -135,7 +135,7 @@ let test_parse xs =
   let stat_list = ref [] in
   Common2.check_stack_nbfiles (List.length fullxs);
 
-  fullxs +> List.iter (fun file ->
+  fullxs |> List.iter (fun file ->
     if not (file =~ (".*\\."^ext))
     then pr2 ("warning: seems not a ."^ext^" file");
 
@@ -143,7 +143,7 @@ let test_parse xs =
     pr2 ("PARSING: " ^ file);
 
     let (xs, stat) = Parse_c.parse_print_error_heuristic file in
-    xs +> List.iter (fun (ast, (s, toks)) ->
+    xs |> List.iter (fun (ast, (s, toks)) ->
       Parse_c.print_commentized toks
     );
 
@@ -188,7 +188,7 @@ let test_cfg file =
 
   let (program, _stat) = Parse_c.parse_print_error_heuristic file in
 
-  program +> List.iter (fun (e,_) ->
+  program |> List.iter (fun (e,_) ->
     let toprocess =
       match specific_func, e with
       | None, _ -> true
@@ -202,7 +202,7 @@ let test_cfg file =
       (* old: Flow_to_ast.test !Flag.show_flow def *)
       (try
           let flow = Ast_to_flow.ast_to_control_flow e in
-          flow +> do_option (fun flow ->
+          flow |> do_option (fun flow ->
             Ast_to_flow.deadcode_detection flow;
             let flow = Ast_to_flow.annotate_loop_nodes flow in
 
@@ -229,10 +229,10 @@ let test_cfg_ifdef file =
 
   let ast = Cpp_ast_c.cpp_ifdef_statementize ast in
 
-  ast +> List.iter (fun e ->
+  ast |> List.iter (fun e ->
     (try
         let flow = Ast_to_flow.ast_to_control_flow e in
-        flow +> do_option (fun flow ->
+        flow |> do_option (fun flow ->
           Ast_to_flow.deadcode_detection flow;
           let flow = Ast_to_flow.annotate_loop_nodes flow in
           Ograph_extended.print_ograph_mutable flow ("/tmp/output.dot") true
@@ -248,13 +248,13 @@ let test_parse_unparse infile =
 
   let (program2, _stat) = Parse_c.parse_print_error_heuristic infile in
   let program2_with_ppmethod =
-    program2 +> List.map (fun x -> x, Unparse_c.PPnormal)
+    program2 |> List.map (fun x -> x, Unparse_c.PPnormal)
   in
   Unparse_c.pp_program program2_with_ppmethod tmpfile;
   Common.command2 ("cat " ^ tmpfile);
   (* if want see diff of space => no -b -B *)
   Common.command2 (spf "diff -u -p  %s %s" infile tmpfile);
-  (* +> Transformation.test_simple_trans1;*)
+  (* |> Transformation.test_simple_trans1;*)
   ()
 
 
@@ -269,16 +269,16 @@ let test_type_c infile =
   let (program2, _stat) =  Parse_c.parse_print_error_heuristic infile in
   let _program2 =
     program2
-    +> Common2.unzip
-    +> (fun (program, infos) ->
+    |> Common2.unzip
+    |> (fun (program, infos) ->
       Type_annoter_c.annotate_program !Type_annoter_c.initial_env
-        program +> List.map fst,
+        program |> List.map fst,
       infos
     )
-    +> Common2.uncurry Common2.zip
+    |> Common2.uncurry Common2.zip
   in
   let program2_with_ppmethod =
-    program2 +> List.map (fun x -> x, Unparse_c.PPnormal)
+    program2 |> List.map (fun x -> x, Unparse_c.PPnormal)
   in
   Unparse_c.pp_program program2_with_ppmethod tmpfile;
   Common.command2 ("cat " ^ tmpfile);
@@ -289,15 +289,15 @@ let test_type_c infile =
 (* ex: demos/platform_ifdef.c *)
 let test_comment_annotater infile =
   let (program2, _stat) =  Parse_c.parse_print_error_heuristic infile in
-  let asts = program2 +> List.map (fun (ast,_) -> ast) in
-  let toks = program2 +> List.map (fun (ast, (s, toks)) -> toks) +>
+  let asts = program2 |> List.map (fun (ast,_) -> ast) in
+  let toks = program2 |> List.map (fun (ast, (s, toks)) -> toks) |>
     List.flatten in
 
   Flag_parsing_c.pretty_print_comment_info := true;
 
   pr2 "pretty print, before comment annotation: --->";
   Common2.adjust_pp_with_indent (fun () ->
-  asts +> List.iter (fun ast ->
+  asts |> List.iter (fun ast ->
     Pretty_print_c.pp_toplevel_simple ast;
   );
   );
@@ -306,7 +306,7 @@ let test_comment_annotater infile =
 
   Common2.adjust_pp_with_indent (fun () ->
   pr2 "pretty print, after comment annotation: --->";
-  asts +> List.iter (fun ast ->
+  asts |> List.iter (fun ast ->
     Pretty_print_c.pp_toplevel_simple ast;
   );
   );
@@ -333,8 +333,8 @@ let test_compare_c_hardcoded () =
       "tests/equal_modulo1.c"
       "tests/equal_modulo2.c"
     *)
-  +> Compare_c.compare_result_to_string
-  +> pr2
+  |> Compare_c.compare_result_to_string
+  |> pr2
 
 
 
@@ -351,7 +351,7 @@ let test_attributes file =
     Visitor_c.kdecl = (fun (k, bigf) decl ->
       match decl with
       | DeclList (xs, ii) ->
-          xs +> List.iter (fun (onedecl, iicomma) ->
+          xs |> List.iter (fun (onedecl, iicomma) ->
 
             let sattr  = Ast_c.s_of_attr onedecl.v_attr in
             let idname =
@@ -391,11 +391,11 @@ let extract_macros ~selection x =
 
   let ext = "h" in
   let fullxs = Common2.files_of_dir_or_files_no_vcs ext [x] in
-  fullxs +> List.iter (fun file ->
+  fullxs |> List.iter (fun file ->
 
     pr ("/* PARSING: " ^ file ^ " */");
     let xs = Parse_c.parse_cpp_define_file file in
-    xs +> List.iter (fun (x, def) ->
+    xs |> List.iter (fun (x, def) ->
       let (s, params, body) = def in
       assert(s = x);
       (match params, body with
@@ -416,7 +416,7 @@ let extract_macros ~selection x =
             | Cpp_token_c.DefineHint _ ->
                 failwith "weird, hint in regular header file"
             | Cpp_token_c.DefineBody xs ->
-                Common.join " " (xs +> List.map Token_helpers.str_of_tok),
+                Common.join " " (xs |> List.map Token_helpers.str_of_tok),
                 xs
           in
 

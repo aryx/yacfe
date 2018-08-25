@@ -48,7 +48,7 @@ let null_transfo file =
   } ast;
   let tmpfile = "/tmp/modified.c" in
   Unparse_c.pp_program_default ast2 tmpfile;
-  Common.cat tmpfile +> List.iter pr2;
+  Common.cat tmpfile |> List.iter pr2;
   ()
 
 let main =

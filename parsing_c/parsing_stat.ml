@@ -65,20 +65,20 @@ let print_parsing_stat_list ?(verbose=false) = fun statxs ->
   let total = List.length statxs in
   let perfect =
     statxs
-      +> List.filter (function
+      |> List.filter (function
           {have_timeout = false; bad = 0} -> true | _ -> false)
-      +> List.length
+      |> List.length
   in
 
   if verbose then begin
   pr "\n\n\n---------------------------------------------------------------";
   pr "pbs with files:";
   statxs
-    +> List.filter (function
+    |> List.filter (function
       | {have_timeout = true} -> true
       | {bad = n} when n > 0 -> true
       | _ -> false)
-    +> List.iter (function
+    |> List.iter (function
         {filename = file; have_timeout = timeout; bad = n} ->
           pr (file ^ "  " ^ (if timeout then "TIMEOUT" else i_to_s n));
         );
@@ -87,10 +87,10 @@ let print_parsing_stat_list ?(verbose=false) = fun statxs ->
   pr "files with lots of tokens passed/commentized:";
   let threshold_passed = 100 in
   statxs
-    +> List.filter (function
+    |> List.filter (function
       | {commentized = n} when n > threshold_passed -> true
       | _ -> false)
-    +> List.iter (function
+    |> List.iter (function
         {filename = file; commentized = n} ->
           pr (file ^ "  " ^ (i_to_s n));
         );
@@ -101,18 +101,18 @@ let print_parsing_stat_list ?(verbose=false) = fun statxs ->
   pr (
   (spf "NB total files = %d; " total) ^
   (spf "perfect = %d; " perfect) ^
-  (spf "pbs = %d; "     (statxs +> List.filter (function
+  (spf "pbs = %d; "     (statxs |> List.filter (function
       {have_timeout = b; bad = n} when n > 0 -> true | _ -> false)
-                               +> List.length)) ^
-  (spf "timeout = %d; " (statxs +> List.filter (function
+                               |> List.length)) ^
+  (spf "timeout = %d; " (statxs |> List.filter (function
       {have_timeout = true; bad = n} -> true | _ -> false)
-                               +> List.length)) ^
+                               |> List.length)) ^
   (spf "=========> %d" ((100 * perfect) / total)) ^ "%"
 
   );
-  let good = statxs +> List.fold_left (fun acc {correct = x} -> acc+x) 0 in
-  let bad  = statxs +> List.fold_left (fun acc {bad = x} -> acc+x) 0  in
-  let passed = statxs +> List.fold_left (fun acc {commentized = x} -> acc+x) 0
+  let good = statxs |> List.fold_left (fun acc {correct = x} -> acc+x) 0 in
+  let bad  = statxs |> List.fold_left (fun acc {bad = x} -> acc+x) 0  in
+  let passed = statxs |> List.fold_left (fun acc {commentized = x} -> acc+x) 0
   in
   let gf, badf = float_of_int good, float_of_int bad in
   let passedf = float_of_int passed in
@@ -147,10 +147,10 @@ let lines_around_error_line ~context (file, line) =
 
 let print_recurring_problematic_tokens xs =
   let h = Hashtbl.create 101 in
-  xs +> List.iter (fun x ->
+  xs |> List.iter (fun x ->
     let file = x.filename in
-    x.problematic_lines +> List.iter (fun (xs, line_error) ->
-      xs +> List.iter (fun s ->
+    x.problematic_lines |> List.iter (fun (xs, line_error) ->
+      xs |> List.iter (fun s ->
         Common2.hupdate_default s
           (fun (old, example)  -> old + 1, example)
           (fun() -> 0, (file, line_error)) h;
@@ -159,13 +159,13 @@ let print_recurring_problematic_tokens xs =
   pr2 ("maybe 10 most problematic tokens");
   Common2.pr2_xxxxxxxxxxxxxxxxx();
   Common.hash_to_list h
-  +> List.sort (fun (k1,(v1,_)) (k2,(v2,_)) -> compare v2 v1)
-  +> Common.take_safe 10
-  +> List.iter (fun (k,(i, (file_ex, line_ex))) ->
+  |> List.sort (fun (k1,(v1,_)) (k2,(v2,_)) -> compare v2 v1)
+  |> Common.take_safe 10
+  |> List.iter (fun (k,(i, (file_ex, line_ex))) ->
     pr2 (spf "%s: present in %d parsing errors" k i);
     pr2 ("example: ");
     let lines = lines_around_error_line ~context:2 (file_ex, line_ex) in
-    lines +> List.iter (fun s -> pr2 ("       " ^ s));
+    lines |> List.iter (fun s -> pr2 ("       " ^ s));
 
   );
   Common2.pr2_xxxxxxxxxxxxxxxxx();
@@ -339,6 +339,6 @@ let assoc_stat_number =
   ]
 
 let print_stat_numbers () =
-  assoc_stat_number +> List.iter (fun (k, vref) ->
+  assoc_stat_number |> List.iter (fun (k, vref) ->
     pr2 (spf "%-30s -> %d" k !vref);
   )
