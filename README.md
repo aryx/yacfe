@@ -51,8 +51,8 @@ You can then test Yacfe with:
 
 ```
     $ cd demos/
-    $ ocamlc -I ../commons/ -I ../parsing_c/ unix.cma str.cma bigarray.cma ../commons/commons.cma ../parsing_c/parsing_c.cma simple_zero_to_null.ml -o zero_to_null
-    $ ./zero_to_null foo.c
+    $ ocamlc -I ../commons -I ../pl_info -I ../parsing_c str.cma bigarray.cma unix.cma ../commons/commons.cma ../pl_info/code_info.cma ../parsing_c/parsing_c.cma  simple_zero_to_null.ml -o zero_to_null.byte
+    $ ./zero_to_null.byte foo.c
     $ cat /tmp/modified.c
 ```
 
