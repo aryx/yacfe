@@ -185,8 +185,8 @@ let (iter_expr:((expression -> unit) -> expression -> unit) -> expression -> uni
     | Sequence (e1, e2)        -> f k e1; f k e2;
     | Assignment (e1, op, e2)  -> f k e1; f k e2;
 
+    | Prefix   (e, op) -> f k e
     | Postfix  (e, op) -> f k e
-    | Infix    (e, op) -> f k e
     | Unary    (e, op) -> f k e
     | Binary   (e1, op, e2) -> f k e1; f k  e2;
 
@@ -290,8 +290,8 @@ let rec vk_expr = fun bigf expr ->
     | Sequence (e1, e2)        -> exprf e1; exprf e2;
     | Assignment (e1, op, e2)  -> exprf e1; exprf e2;
 
+    | Prefix   (e, op) -> exprf e
     | Postfix  (e, op) -> exprf e
-    | Infix    (e, op) -> exprf e
     | Unary    (e, op) -> exprf e
     | Binary   (e1, op, e2) -> exprf e1; exprf  e2;
 
@@ -1008,8 +1008,8 @@ let rec vk_expr_s = fun bigf expr ->
       | Sequence (e1, e2)        -> Sequence (exprf e1, exprf e2)
       | Assignment (e1, op, e2)  -> Assignment (exprf e1, op, exprf e2)
 
+      | Prefix   (e, op) -> Prefix  (exprf e, op)
       | Postfix  (e, op) -> Postfix (exprf e, op)
-      | Infix    (e, op) -> Infix   (exprf e, op)
       | Unary    (e, op) -> Unary   (exprf e, op)
       | Binary   (e1, op, e2) -> Binary (exprf e1, op, exprf e2)
 

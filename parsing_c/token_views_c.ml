@@ -139,7 +139,7 @@ let rec mk_parenthised xs =
   | [] -> []
   | x::xs ->
       (match x.tok with
-      | TOPar _ | TOParDefine _ ->
+      | TOParen _ | TOParDefine _ ->
           let body, extras, xs = mk_parameters [x] [] xs in
           Parenthised (body,extras)::mk_parenthised xs
       | _ ->
@@ -160,9 +160,9 @@ and mk_parameters extras acc_before_sep  xs =
           pr2 "PB: found synchro point } in paren";
           [List.rev acc_before_sep], List.rev (extras), (x::xs)
 
-      | TCPar _ | TCParEOL _ ->
+      | TCParen _ | TCParEOL _ ->
           [List.rev acc_before_sep], List.rev (x::extras), xs
-      | TOPar _ | TOParDefine _ ->
+      | TOParen _ | TOParDefine _ ->
           let body, extrasnest, xs = mk_parameters [x] [] xs in
           mk_parameters extras
             (Parenthised (body,extrasnest)::acc_before_sep)
@@ -435,7 +435,7 @@ let rec set_in_function_tag xs =
   match xs with
   | [] -> ()
   (* ) { and the closing } is in column zero, then certainly a function *)
-  | BToken ({tok = TCPar _ })::(Braceised (body, tok1, Some tok2))::xs
+  | BToken ({tok = TCParen _ })::(Braceised (body, tok1, Some tok2))::xs
       when tok1.col <> 0 && tok2.col =|= 0 ->
       body |> List.iter (iter_token_brace (fun tok ->
         tok.where <- InFunction

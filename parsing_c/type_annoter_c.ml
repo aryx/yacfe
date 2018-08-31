@@ -882,7 +882,7 @@ let annotater_expr_visitor_subpart = (fun (k,bigf) expr ->
         k expr;
         Ast_c.get_type_expr e
 
-    | Infix (e, op)  | Postfix (e, op) ->
+    | Prefix (e, op)  | Postfix (e, op) ->
         k expr;
         Ast_c.get_type_expr e
 

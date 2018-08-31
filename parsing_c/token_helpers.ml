@@ -97,11 +97,11 @@ let is_gcc_token = function
 
 (* ---------------------------------------------------------------------- *)
 let is_opar = function
-  | TOPar _ | TOParDefine _ -> true
+  | TOParen _ | TOParDefine _ -> true
   | _ -> false
 
 let is_cpar = function
-  | TCPar _ | TCParEOL _ -> true
+  | TCParen _ | TCParEOL _ -> true
   | _ -> false
 
 
@@ -127,7 +127,7 @@ let is_statement = function
   | Tfor _ | Tdo _ | Tif _ | Twhile _ | Treturn _
   | Tbreak _ | Telse _ | Tswitch _ | Tcase _ | Tcontinue _
   | Tgoto _
-  | TPtVirg _
+  | TSemi _
   | TMacroIterator _
       -> true
   | _ -> false
@@ -163,7 +163,7 @@ let is_start_of_something = function
 
 let is_binary_operator = function
   | TOrLog _ | TAndLog _ |  TOr _ |  TXor _ |  TAnd _
-  | TEqEq _ |  TNotEq _  | TInf _ |  TSup _ |  TInfEq _ |  TSupEq _
+  | TEqEq _ |  TNotEq _  | TLt _ |  TGt _ |  TLtEq _ |  TGtEq _
   | TShl _ | TShr _
   | TPlus _ |  TMinus _ |  TMul _ |  TDiv _ |  TMod _
         -> true
@@ -240,18 +240,18 @@ let info_of_tok = function
 
   | TUnknown             (i) -> i
 
-  | TMacroIdentBuilder             (s, i) -> i
+  | TMacroIdentBuilder     (s, i) -> i
   | TMacroAttr             (s, i) -> i
-  | TMacroAttrStorage             (s, i) -> i
+  | TMacroAttrStorage      (s, i) -> i
   | TMacroStmt             (s, i) -> i
-  | TMacroString             (s, i) -> i
+  | TMacroString           (s, i) -> i
   | TMacroDecl             (s, i) -> i
-  | TMacroDeclConst             (i) -> i
-  | TMacroIterator             (s,i) -> i
+  | TMacroDeclConst        (i) -> i
+  | TMacroIterator         (s,i) -> i
 (*  | TMacroTop             (s,i) -> i *)
   | TCParEOL (i1) ->     i1
 
-  | TAction             (i) -> i
+  | TAction              (i) -> i
 
   | TComment             (i) -> i
   | TCommentSpace        (i) -> i
@@ -260,7 +260,7 @@ let info_of_tok = function
   | TCommentMisc         (i) -> i
 
   | TCommentSkipTagStart (i) -> i
-  | TCommentSkipTagEnd (i) -> i
+  | TCommentSkipTagEnd   (i) -> i
 
   | TIfdef               (_, i) -> i
   | TIfdefelse           (_, i) -> i
@@ -268,14 +268,14 @@ let info_of_tok = function
   | TEndif               (_, i) -> i
   | TIfdefBool           (b, _, i) -> i
   | TIfdefMisc           (b, _, i) -> i
-  | TIfdefVersion           (b, _, i) -> i
+  | TIfdefVersion        (b, _, i) -> i
 
-  | TOPar                (i) -> i
-  | TCPar                (i) -> i
+  | TOParen              (i) -> i
+  | TCParen              (i) -> i
   | TOBrace              (i) -> i
   | TCBrace              (i) -> i
-  | TOCro                (i) -> i
-  | TCCro                (i) -> i
+  | TOBrack              (i) -> i
+  | TCBrack              (i) -> i
   | TDot                 (i) -> i
   | TComma               (i) -> i
   | TPtrOp               (i) -> i
@@ -286,8 +286,8 @@ let info_of_tok = function
   | TTilde               (i) -> i
   | TBang                (i) -> i
   | TEllipsis            (i) -> i
-  | TDotDot              (i) -> i
-  | TPtVirg              (i) -> i
+  | TColon               (i) -> i
+  | TSemi                (i) -> i
   | TOrLog               (i) -> i
   | TAndLog              (i) -> i
   | TOr                  (i) -> i
@@ -295,10 +295,10 @@ let info_of_tok = function
   | TAnd                 (i) -> i
   | TEqEq                (i) -> i
   | TNotEq               (i) -> i
-  | TInf                 (i) -> i
-  | TSup                 (i) -> i
-  | TInfEq               (i) -> i
-  | TSupEq               (i) -> i
+  | TLt                  (i) -> i
+  | TGt                  (i) -> i
+  | TLtEq                (i) -> i
+  | TGtEq                (i) -> i
   | TShl                 (i) -> i
   | TShr                 (i) -> i
   | TPlus                (i) -> i
@@ -420,12 +420,12 @@ let visitor_info_of_tok f = function
   | TIfdefMisc           (b, t, i) -> TIfdefMisc        (b, t, f i)
   | TIfdefVersion        (b, t, i) -> TIfdefVersion     (b, t, f i)
 
-  | TOPar                (i) -> TOPar                (f i)
-  | TCPar                (i) -> TCPar                (f i)
+  | TOParen              (i) -> TOParen              (f i)
+  | TCParen              (i) -> TCParen              (f i)
   | TOBrace              (i) -> TOBrace              (f i)
   | TCBrace              (i) -> TCBrace              (f i)
-  | TOCro                (i) -> TOCro                (f i)
-  | TCCro                (i) -> TCCro                (f i)
+  | TOBrack              (i) -> TOBrack              (f i)
+  | TCBrack              (i) -> TCBrack              (f i)
   | TDot                 (i) -> TDot                 (f i)
   | TComma               (i) -> TComma               (f i)
   | TPtrOp               (i) -> TPtrOp               (f i)
@@ -436,8 +436,8 @@ let visitor_info_of_tok f = function
   | TTilde               (i) -> TTilde               (f i)
   | TBang                (i) -> TBang                (f i)
   | TEllipsis            (i) -> TEllipsis            (f i)
-  | TDotDot              (i) -> TDotDot              (f i)
-  | TPtVirg              (i) -> TPtVirg              (f i)
+  | TColon               (i) -> TColon               (f i)
+  | TSemi                (i) -> TSemi                (f i)
   | TOrLog               (i) -> TOrLog               (f i)
   | TAndLog              (i) -> TAndLog              (f i)
   | TOr                  (i) -> TOr                  (f i)
@@ -445,10 +445,10 @@ let visitor_info_of_tok f = function
   | TAnd                 (i) -> TAnd                 (f i)
   | TEqEq                (i) -> TEqEq                (f i)
   | TNotEq               (i) -> TNotEq               (f i)
-  | TInf                 (i) -> TInf                 (f i)
-  | TSup                 (i) -> TSup                 (f i)
-  | TInfEq               (i) -> TInfEq               (f i)
-  | TSupEq               (i) -> TSupEq               (f i)
+  | TLt                  (i) -> TLt                  (f i)
+  | TGt                  (i) -> TGt                  (f i)
+  | TLtEq                (i) -> TLtEq                (f i)
+  | TGtEq                (i) -> TGtEq                (f i)
   | TShl                 (i) -> TShl                 (f i)
   | TShr                 (i) -> TShr                 (f i)
   | TPlus                (i) -> TPlus                (f i)

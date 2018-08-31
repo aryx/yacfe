@@ -618,30 +618,30 @@ and find_next_synchro_orig next already_passed =
       | [] -> raise Impossible (* there is a EOF token normally *)
 
       (* still useful: now parser.mly allow empty ';' so normally no pb *)
-      | Parser_c.TPtVirg iptvirg::xs ->
+      | Parser_c.TSemi iptvirg::xs ->
           pr2_err "ERROR-RECOV: found sync bis, eating } and ;";
-          (Parser_c.TPtVirg iptvirg)::v::already_passed, xs
+          (Parser_c.TSemi iptvirg)::v::already_passed, xs
 
-      | Parser_c.TIdent x::Parser_c.TPtVirg iptvirg::xs ->
+      | Parser_c.TIdent x::Parser_c.TSemi iptvirg::xs ->
           pr2_err "ERROR-RECOV: found sync bis, eating ident, }, and ;";
-          (Parser_c.TPtVirg iptvirg)::(Parser_c.TIdent x)::v::already_passed,
+          (Parser_c.TSemi iptvirg)::(Parser_c.TIdent x)::v::already_passed,
           xs
 
-      | Parser_c.TCommentSpace sp::Parser_c.TIdent x::Parser_c.TPtVirg iptvirg
+      | Parser_c.TCommentSpace sp::Parser_c.TIdent x::Parser_c.TSemi iptvirg
         ::xs ->
           pr2_err "ERROR-RECOV: found sync bis, eating ident, }, and ;";
           (Parser_c.TCommentSpace sp)::
-            (Parser_c.TPtVirg iptvirg)::
+            (Parser_c.TSemi iptvirg)::
             (Parser_c.TIdent x)::
             v::
             already_passed,
           xs
 
-      | Parser_c.TCommentNewline sp::Parser_c.TIdent x::Parser_c.TPtVirg iptvirg
+      | Parser_c.TCommentNewline sp::Parser_c.TIdent x::Parser_c.TSemi iptvirg
         ::xs ->
           pr2_err "ERROR-RECOV: found sync bis, eating ident, }, and ;";
           (Parser_c.TCommentNewline sp)::
-            (Parser_c.TPtVirg iptvirg)::
+            (Parser_c.TSemi iptvirg)::
             (Parser_c.TIdent x)::
             v::
             already_passed,

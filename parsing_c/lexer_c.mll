@@ -522,8 +522,8 @@ rule token = parse
    *)
 
 
-  | '[' { TOCro(tokinfo lexbuf) }   | ']' { TCCro(tokinfo lexbuf) }
-  | '(' { TOPar(tokinfo lexbuf)   } | ')' { TCPar(tokinfo lexbuf)   }
+  | '[' { TOBrack(tokinfo lexbuf) } | ']' { TCBrack(tokinfo lexbuf) }
+  | '(' { TOParen(tokinfo lexbuf) } | ')' { TCParen(tokinfo lexbuf) }
   | '{' { TOBrace(tokinfo lexbuf) } | '}' { TCBrace(tokinfo lexbuf) }
 
   | '+' { TPlus(tokinfo lexbuf) }   | '*' { TMul(tokinfo lexbuf) }
@@ -542,12 +542,12 @@ rule token = parse
   | "&=" { TAssign (OpAssign And, (tokinfo lexbuf))}
   | "|=" { TAssign (OpAssign Or, (tokinfo lexbuf)) }
   | "^=" { TAssign (OpAssign Xor, (tokinfo lexbuf))}
-  | "<<=" {TAssign (OpAssign DecLeft, (tokinfo lexbuf)) }
-  | ">>=" {TAssign (OpAssign DecRight, (tokinfo lexbuf))}
+  | "<<=" {TAssign (OpAssign ShLeft, (tokinfo lexbuf)) }
+  | ">>=" {TAssign (OpAssign ShRight, (tokinfo lexbuf))}
 
-  | "==" { TEqEq(tokinfo lexbuf) }  | "!=" { TNotEq(tokinfo lexbuf) }
-  | ">=" { TSupEq(tokinfo lexbuf) } | "<=" { TInfEq(tokinfo lexbuf) }
-  | "<"  { TInf(tokinfo lexbuf) }   | ">"  { TSup(tokinfo lexbuf) }
+  | "==" { TEqEq(tokinfo lexbuf) } | "!=" { TNotEq(tokinfo lexbuf) }
+  | ">=" { TGtEq(tokinfo lexbuf) } | "<=" { TLtEq(tokinfo lexbuf) }
+  | "<"  { TLt(tokinfo lexbuf) }   | ">"  { TGt(tokinfo lexbuf) }
 
   | "&&" { TAndLog(tokinfo lexbuf) } | "||" { TOrLog(tokinfo lexbuf) }
   | ">>" { TShr(tokinfo lexbuf) }    | "<<" { TShl(tokinfo lexbuf) }
@@ -556,11 +556,11 @@ rule token = parse
   | "..." { TEllipsis(tokinfo lexbuf) }
   | "->"   { TPtrOp(tokinfo lexbuf) }  | '.'  { TDot(tokinfo lexbuf) }
   | ','    { TComma(tokinfo lexbuf) }
-  | ";"    { TPtVirg(tokinfo lexbuf) }
-  | "?"    { TWhy(tokinfo lexbuf) }    | ":"   { TDotDot(tokinfo lexbuf) }
+  | ";"    { TSemi(tokinfo lexbuf) }
+  | "?"    { TWhy(tokinfo lexbuf) }    | ":"   { TColon(tokinfo lexbuf) }
   | "!"    { TBang(tokinfo lexbuf) }   | "~"   { TTilde(tokinfo lexbuf) }
 
-  | "<:" { TOCro(tokinfo lexbuf) } | ":>" { TCCro(tokinfo lexbuf) }
+  | "<:" { TOBrack(tokinfo lexbuf) } | ":>" { TCBrack(tokinfo lexbuf) }
   | "<%" { TOBrace(tokinfo lexbuf) } | "%>" { TCBrace(tokinfo lexbuf) }
 
 

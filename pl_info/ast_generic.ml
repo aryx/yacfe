@@ -1,7 +1,7 @@
 
 type unaryOp  = GetRef | DeRef | UnPlus |  UnMinus | Tilde | Not | GetRefLabel
 
-type fixOp    = Dec | Inc
+type incrOp   = Dec | Inc
 
 type assignOp = SimpleAssign | OpAssign of arithOp
 
@@ -9,7 +9,7 @@ and binaryOp = Arith of arithOp | Logical of logicalOp
 
        and arithOp   =
          | Plus | Minus | Mul | Div | Mod
-         | DecLeft | DecRight
+         | ShLeft | ShRight
          | And | Or | Xor
 
        and logicalOp =

@@ -139,7 +139,7 @@ type place =
    | MethodCall of string (* xxx.foo(); pointer function call =~ method call *)
 
    | SimpleAssignOp of Ast_generic.arithOp
-   | SimpleIncDec of Ast_generic.fixOp
+   | SimpleIncDec of Ast_generic.incrOp
 
    | Label of string (* often used as exception handler in Linux *)
    | Case of string option
@@ -169,7 +169,7 @@ let s_of_arithop op =
   match op with
   | Ast_generic.Plus | Ast_generic.Minus -> "plusminus"
   | Ast_generic.Mul | Ast_generic.Div | Ast_generic.Mod -> "muldiv"
-  | Ast_generic.DecLeft | Ast_generic.DecRight  -> "shift"
+  | Ast_generic.ShLeft | Ast_generic.ShRight  -> "shift"
   | Ast_generic.And | Ast_generic.Or | Ast_generic.Xor -> "logic"
 
 

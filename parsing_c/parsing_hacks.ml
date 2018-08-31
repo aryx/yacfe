@@ -305,22 +305,22 @@ let forLOOKAHEAD = 30
 let rec is_really_foreach xs =
   let rec is_foreach_aux = function
     | [] -> false, []
-    | TCPar _::TOBrace _::xs -> true, xs
+    | TCParen _::TOBrace _::xs -> true, xs
       (* the following attempts to handle the cases where there is a
 	 single statement in the body of the loop.  undoubtedly more
 	 cases are needed.
          todo: premier(statement) - suivant(funcall)
       *)
-    | TCPar _::TIdent _::xs -> true, xs
-    | TCPar _::Tif _::xs -> true, xs
-    | TCPar _::Twhile _::xs -> true, xs
-    | TCPar _::Tfor _::xs -> true, xs
-    | TCPar _::Tswitch _::xs -> true, xs
-    | TCPar _::Treturn _::xs -> true, xs
+    | TCParen _::TIdent _::xs -> true, xs
+    | TCParen _::Tif _::xs -> true, xs
+    | TCParen _::Twhile _::xs -> true, xs
+    | TCParen _::Tfor _::xs -> true, xs
+    | TCParen _::Tswitch _::xs -> true, xs
+    | TCParen _::Treturn _::xs -> true, xs
 
 
-    | TCPar _::xs -> false, xs
-    | TOPar _::xs ->
+    | TCParen _::xs -> false, xs
+    | TOParen _::xs ->
         let (_, xs') = is_foreach_aux xs in
         is_foreach_aux xs'
     | x::xs -> is_foreach_aux xs
@@ -754,7 +754,7 @@ let rec find_macro_lineparen xs =
           [PToken ({tok = Tstatic _});
            PToken ({tok = TIdent (s,_)} as macro);
            Parenthised (xxs,info_parens);
-           PToken ({tok = TPtVirg _});
+           PToken ({tok = TSemi _});
           ]
         ))
     ::xs
@@ -773,7 +773,7 @@ let rec find_macro_lineparen xs =
            PToken ({tok = Tconst _} as const);
            PToken ({tok = TIdent (s,_)} as macro);
            Parenthised (xxs,info_parens);
-           PToken ({tok = TPtVirg _});
+           PToken ({tok = TSemi _});
           ]
             (*as line1*)
 
@@ -787,9 +787,9 @@ let rec find_macro_lineparen xs =
 
       (* need retag this const, otherwise ambiguity in grammar
          21: shift/reduce conflict (shift 121, reduce 137) on Tconst
-  	 decl2 : Tstatic . TMacroDecl TOPar argument_list TCPar ...
-	 decl2 : Tstatic . Tconst TMacroDecl TOPar argument_list TCPar ...
-	 storage_class_spec : Tstatic .  (137)
+         decl2 : Tstatic . TMacroDecl TOParen argument_list TCParen ...
+         decl2 : Tstatic . Tconst TMacroDecl TOParen argument_list TCParen ...
+         storage_class_spec : Tstatic .  (137)
       *)
       const.tok <- TMacroDeclConst (TH.info_of_tok const.tok);
 
@@ -828,7 +828,7 @@ let rec find_macro_lineparen xs =
           (
             [PToken ({tok = TIdent (s,_)} as macro);
              Parenthised (xxs,info_parens);
-             PToken ({tok = TPtVirg _});
+             PToken ({tok = TSemi _});
             ]
           )
         )
@@ -857,7 +857,7 @@ let rec find_macro_lineparen xs =
   | (Line
         ([PToken ({tok = TIdent (s,_)} as macro);
           Parenthised (xxs,info_parens);
-          PToken ({tok = TPtVirg _});
+          PToken ({tok = TSemi _});
         ]
         ))
     ::xs
@@ -874,7 +874,7 @@ let rec find_macro_lineparen xs =
    * module_init(xxx)
    *
    * Could also transform the TIdent in a TMacroTop but can have false
-   * positive, so easier to just change the TCPar and so just solve
+   * positive, so easier to just change the TCParen and so just solve
    * the end-of-stream pb of ocamlyacc
    *)
   | (Line
@@ -892,8 +892,8 @@ let rec find_macro_lineparen xs =
              (match other.tok with
              | TOBrace _ -> false (* otherwise would match funcdecl *)
              | TCBrace _ when ctx <> InFunction -> false
-             | TPtVirg _
-             | TDotDot _
+             | TSemi _
+             | TColon _
                -> false
              | tok when TH.is_binary_operator tok -> false
 
@@ -939,8 +939,8 @@ let rec find_macro_lineparen xs =
             (match other.tok with
             | TOBrace _ -> false (* otherwise would match funcdecl *)
             | TCBrace _ when ctx <> InFunction -> false
-            | TPtVirg _
-            | TDotDot _
+            | TSemi _
+            | TColon _
                 -> false
             | tok when TH.is_binary_operator tok -> false
 
@@ -956,7 +956,7 @@ let rec find_macro_lineparen xs =
               | Telse _, _ -> true
 
               (* case of label, usually put in first line *)
-              | TIdent _, (PToken ({tok = TDotDot _}))::_ ->
+              | TIdent _, (PToken ({tok = TColon _}))::_ ->
                   true
 
 
@@ -999,7 +999,7 @@ let rec find_macro_lineparen xs =
         (col1 =|= col2 &&
             col1 <> 0 && (* otherwise can match typedef of fundecl*)
             (match other.tok with
-            | TPtVirg _ -> false
+            | TSemi _ -> false
             | TOr _ -> false
             | TCBrace _ when ctx <> InFunction -> false
             | tok when TH.is_binary_operator tok -> false
@@ -1333,7 +1333,7 @@ let lookahead2 ~pass next before =
   (* xx xx *)
   | (TIdent(s,i1)::TIdent(s2,i2)::_ , _) when not_struct_enum before && s =$= s2
       && ok_typedef s
-      (* (take_safe 1 !passed_tok <> [TOPar]) ->  *)
+      (* (take_safe 1 !passed_tok <> [TOParen]) ->  *)
     ->
       (* parse_typedef_fix3:
        *    acpi_object		acpi_object;
@@ -1369,7 +1369,7 @@ let lookahead2 ~pass next before =
 
 
   (* [,(] xx [,)] AND param decl *)
-  | (TIdent (s, i1)::(TComma _|TCPar _)::_ , (TComma _ |TOPar _)::_ )
+  | (TIdent (s, i1)::(TComma _|TCParen _)::_ , (TComma _ |TOParen _)::_ )
     when not_struct_enum before && (LP.current_context() =*= LP.InParameter)
       && ok_typedef s
       ->
@@ -1378,7 +1378,7 @@ let lookahead2 ~pass next before =
 
   (* xx* [,)] *)
   (* specialcase:  [,(] xx* [,)] *)
-  | (TIdent (s, i1)::TMul _::(TComma _|TCPar _)::_ , (*(TComma _|TOPar _)::*)_ )
+  | (TIdent (s, i1)::TMul _::(TComma _|TCParen _)::_ , (*(TComma _|TOParen _)::*)_ )
     when not_struct_enum before
         (* && !LP._lexer_hint = Some LP.ParameterDeclaration *)
       && ok_typedef s
@@ -1389,7 +1389,7 @@ let lookahead2 ~pass next before =
 
   (* xx** [,)] *)
   (* specialcase:  [,(] xx** [,)] *)
-  | (TIdent (s, i1)::TMul _::TMul _::(TComma _|TCPar _)::_ , (*(TComma _|TOPar _)::*)_ )
+  | (TIdent (s, i1)::TMul _::TMul _::(TComma _|TCParen _)::_ , (*(TComma _|TOParen _)::*)_ )
     when not_struct_enum before
       (* && !LP._lexer_hint = Some LP.ParameterDeclaration *)
       && ok_typedef s
@@ -1432,7 +1432,7 @@ let lookahead2 ~pass next before =
 
 
   (* ( const xx)  *)
-  | (TIdent (s, i1)::TCPar _::_,  (Tconst _ | Tvolatile _|Trestrict _)::TOPar _::_) when
+  | (TIdent (s, i1)::TCParen _::_,  (Tconst _ | Tvolatile _|Trestrict _)::TOParen _::_) when
       ok_typedef s ->
       msg_typedef s; LP.add_typedef_root s;
       TypedefIdent (s, i1)
@@ -1440,7 +1440,7 @@ let lookahead2 ~pass next before =
 
 
   (* ( xx ) [sizeof, ~] *)
-  | (TIdent (s, i1)::TCPar _::(Tsizeof _|TTilde _)::_ ,     TOPar _::_ )
+  | (TIdent (s, i1)::TCParen _::(Tsizeof _|TTilde _)::_ ,     TOParen _::_ )
     when not_struct_enum before
       && ok_typedef s
     ->
@@ -1448,7 +1448,7 @@ let lookahead2 ~pass next before =
       TypedefIdent (s, i1)
 
   (* [(,] xx [   AND parameterdeclaration *)
-  | (TIdent (s, i1)::TOCro _::_, (TComma _ |TOPar _)::_)
+  | (TIdent (s, i1)::TOBrack _::_, (TComma _ |TOParen _)::_)
       when (LP.current_context() =*= LP.InParameter)
       && ok_typedef s
      ->
@@ -1482,9 +1482,9 @@ let lookahead2 ~pass next before =
 
 
   (*  xx * yy ;     AND in Toplevel, except when have = before  *)
-  | (TIdent (s, i1)::TMul _::TIdent (s2, i2)::TPtVirg _::_ , TEq _::_) ->
+  | (TIdent (s, i1)::TMul _::TIdent (s2, i2)::TSemi _::_ , TEq _::_) ->
       TIdent (s, i1)
-  | (TIdent (s, i1)::TMul _::TIdent (s2, i2)::TPtVirg _::_ , _)
+  | (TIdent (s, i1)::TMul _::TIdent (s2, i2)::TSemi _::_ , _)
     when not_struct_enum before && (LP.is_top_or_struct (LP.current_context ()))
       ->
       msg_typedef s; LP.add_typedef_root s;
@@ -1500,7 +1500,7 @@ let lookahead2 ~pass next before =
       TypedefIdent (s, i1)
 
   (*  xx * yy (     AND in Toplevel  *)
-  | (TIdent (s, i1)::TMul _::TIdent (s2, i2)::TOPar _::_ , _)
+  | (TIdent (s, i1)::TMul _::TIdent (s2, i2)::TOParen _::_ , _)
     when not_struct_enum before
       && (LP.is_top_or_struct (LP.current_context ()))
       && ok_typedef s
@@ -1510,7 +1510,7 @@ let lookahead2 ~pass next before =
 
   (* xx * yy [ *)
   (* todo? enough ? cos in struct def we can have some expression ! *)
-  | (TIdent (s, i1)::TMul _::TIdent (s2, i2)::TOCro _::_ , _)
+  | (TIdent (s, i1)::TMul _::TIdent (s2, i2)::TOBrack _::_ , _)
     when not_struct_enum before &&
       (LP.is_top_or_struct (LP.current_context ()))
       && ok_typedef s
@@ -1519,7 +1519,7 @@ let lookahead2 ~pass next before =
       TypedefIdent (s, i1)
 
   (* u16: 10; in struct *)
-  | (TIdent (s, i1)::TDotDot _::_ , (TOBrace _ | TPtVirg _)::_)
+  | (TIdent (s, i1)::TColon _::_ , (TOBrace _ | TSemi _)::_)
     when       (LP.is_top_or_struct (LP.current_context ()))
       && ok_typedef s
       ->
@@ -1527,7 +1527,7 @@ let lookahead2 ~pass next before =
       TypedefIdent (s, i1)
 
 
-    (*  why need TOPar condition as stated in preceding rule ? really needed ? *)
+    (*  why need TOParen condition as stated in preceding rule ? really needed ? *)
     (*   YES cos at toplevel can have some expression !! for instance when *)
     (*   enter in the dimension of an array *)
     (*
@@ -1551,7 +1551,7 @@ let lookahead2 ~pass next before =
 
 
   (*  xx * yy)      AND in paramdecl *)
-  | (TIdent (s, i1)::TMul _::TIdent (s2, i2)::TCPar _::_ , _)
+  | (TIdent (s, i1)::TMul _::TIdent (s2, i2)::TCParen _::_ , _)
       when not_struct_enum before && (LP.current_context () =*= LP.InParameter)
       && ok_typedef s
         ->
@@ -1560,8 +1560,8 @@ let lookahead2 ~pass next before =
 
 
   (*  xx * yy; *) (* wrong ? *)
-  | (TIdent (s, i1)::TMul _::TIdent (s2, i2)::TPtVirg _::_ ,
-     (TOBrace _| TPtVirg _)::_)  when not_struct_enum before
+  | (TIdent (s, i1)::TMul _::TIdent (s2, i2)::TSemi _::_ ,
+     (TOBrace _| TSemi _)::_)  when not_struct_enum before
       && ok_typedef s
         ->
       msg_typedef s;  LP.add_typedef_root s;
@@ -1571,7 +1571,7 @@ let lookahead2 ~pass next before =
 
   (*  xx * yy,  and ';' before xx *) (* wrong ? *)
   | (TIdent (s, i1)::TMul _::TIdent (s2, i2)::TComma _::_ ,
-     (TOBrace _| TPtVirg _)::_) when
+     (TOBrace _| TSemi _)::_) when
       ok_typedef s
     ->
       msg_typedef s; LP.add_typedef_root s;
@@ -1606,7 +1606,7 @@ let lookahead2 ~pass next before =
       TypedefIdent (s, i1)
 
   (*  xx ** ) *)
-  | (TIdent (s, i1)::TMul _::TMul _::TCPar _::_ , _)
+  | (TIdent (s, i1)::TMul _::TMul _::TCParen _::_ , _)
     when not_struct_enum before
         (* && !LP._lexer_hint = Some LP.ParameterDeclaration *)
       && ok_typedef s
@@ -1618,21 +1618,21 @@ let lookahead2 ~pass next before =
 
   (* ----------------------------------- *)
   (* old: why not do like for other rules and start with TIdent ?
-   * why do TOPar :: TIdent :: ..., _  and not TIdent :: ...,  TOPAr::_ ?
+   * why do TOParen :: TIdent :: ..., _  and not TIdent :: ...,  TOPAr::_ ?
    * new: prefer now start with TIdent because otherwise the add_typedef_root
    * may have no effect if in second pass or if have disable the add_typedef.
    *)
 
   (*  (xx) yy *)
-  | (TIdent (s, i1)::TCPar i2::(TIdent (_,i3)|TInt (_,i3))::_ ,
-    (TOPar info)::x::_)
+  | (TIdent (s, i1)::TCParen i2::(TIdent (_,i3)|TInt (_,i3))::_ ,
+    (TOParen info)::x::_)
     when not (TH.is_stuff_taking_parenthized x) &&
       Ast_c.line_of_info i2 =|= Ast_c.line_of_info i3
       && ok_typedef s
       ->
 
       msg_typedef s; LP.add_typedef_root s;
-      (*TOPar info*)
+      (*TOParen info*)
       TypedefIdent (s, i1)
 
 
@@ -1640,35 +1640,35 @@ let lookahead2 ~pass next before =
    * but false positif: typedef int (xxx_t)(...), so do specialisation below.
    *)
   (*
-  | (TIdent (s, i1)::TCPar _::TOPar _::_ , (TOPar info)::x::_)
+  | (TIdent (s, i1)::TCParen _::TOParen _::_ , (TOParen info)::x::_)
     when not (TH.is_stuff_taking_parenthized x)
       && ok_typedef s
         ->
       msg_typedef s; LP.add_typedef_root s;
-      (* TOPar info *)
+      (* TOParen info *)
       TypedefIdent (s, i1)
   *)
   (* special case:  = (xx) (    yy) *)
-  | (TIdent (s, i1)::TCPar _::TOPar _::_ ,
-    (TOPar info)::(TEq _ |TEqEq _)::_)
+  | (TIdent (s, i1)::TCParen _::TOParen _::_ ,
+    (TOParen info)::(TEq _ |TEqEq _)::_)
     when ok_typedef s
         ->
       msg_typedef s; LP.add_typedef_root s;
-      (* TOPar info *)
+      (* TOParen info *)
       TypedefIdent (s, i1)
 
 
   (*  (xx * ) yy *)
-  | (TIdent (s, i1)::TMul _::TCPar _::TIdent (s2, i2)::_ , (TOPar info)::_) when
+  | (TIdent (s, i1)::TMul _::TCParen _::TIdent (s2, i2)::_ , (TOParen info)::_) when
       ok_typedef s
         ->
       msg_typedef s; LP.add_typedef_root s;
-      (*TOPar info*)
+      (*TOParen info*)
       TypedefIdent (s,i1)
 
 
   (* (xx){ ... }  constructor *)
-  | (TIdent (s, i1)::TCPar _::TOBrace _::_ , TOPar _::x::_)
+  | (TIdent (s, i1)::TCParen _::TOBrace _::_ , TOParen _::x::_)
       when (*s ==~ regexp_typedef && *) not (TH.is_stuff_taking_parenthized x)
       && ok_typedef s
         ->
@@ -1677,7 +1677,7 @@ let lookahead2 ~pass next before =
 
 
         (* can have sizeof on expression
-           | (Tsizeof::TOPar::TIdent s::TCPar::_,   _) ->
+           | (Tsizeof::TOParen::TIdent s::TCParen::_,   _) ->
            msg_typedef s;
            LP.add_typedef_root s;
            Tsizeof
@@ -1686,7 +1686,7 @@ let lookahead2 ~pass next before =
 
   (* ----------------------------------- *)
   (* x ( *y )(params),  function pointer *)
-  | (TIdent (s, i1)::TOPar _::TMul _::TIdent _::TCPar _::TOPar _::_,  _)
+  | (TIdent (s, i1)::TOParen _::TMul _::TIdent _::TCParen _::TOParen _::_,  _)
       when not_struct_enum before
       && ok_typedef s
         ->
@@ -1694,7 +1694,7 @@ let lookahead2 ~pass next before =
       TypedefIdent (s, i1)
 
   (* x* ( *y )(params),  function pointer 2 *)
-  | (TIdent (s, i1)::TMul _::TOPar _::TMul _::TIdent _::TCPar _::TOPar _::_,  _)
+  | (TIdent (s, i1)::TMul _::TOParen _::TMul _::TIdent _::TCParen _::TOParen _::_,  _)
       when not_struct_enum before
       && ok_typedef s
         ->
@@ -1755,7 +1755,7 @@ let lookahead2 ~pass next before =
     * to count the '('. Because this can be expensive, we do that only
     * when the token contains "for_each".
     *)
-  | (TIdent (s, i1)::TOPar _::rest, _)
+  | (TIdent (s, i1)::TOParen _::rest, _)
      when not (LP.current_context () =*= LP.InTopLevel)
       (* otherwise a function such as static void loopback_enable(int i) {
        * will be considered as a loop

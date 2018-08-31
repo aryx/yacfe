@@ -303,10 +303,10 @@ and vof_expressionbis =
       let v1 = vof_expression v1
       and v2 = vof_fixOp v2
       in Ocaml.VSum (("Postfix", [ v1; v2 ]))
-  | Infix ((v1, v2)) ->
+  | Prefix ((v1, v2)) ->
       let v1 = vof_expression v1
       and v2 = vof_fixOp v2
-      in Ocaml.VSum (("Infix", [ v1; v2 ]))
+      in Ocaml.VSum (("Prefix", [ v1; v2 ]))
   | Unary ((v1, v2)) ->
       let v1 = vof_expression v1
       and v2 = vof_unaryOp v2
@@ -419,8 +419,8 @@ and vof_arithOp =
   | Mul -> Ocaml.VSum (("Mul", []))
   | Div -> Ocaml.VSum (("Div", []))
   | Mod -> Ocaml.VSum (("Mod", []))
-  | DecLeft -> Ocaml.VSum (("DecLeft", []))
-  | DecRight -> Ocaml.VSum (("DecRight", []))
+  | ShLeft -> Ocaml.VSum (("ShLeft", []))
+  | ShRight -> Ocaml.VSum (("ShRight", []))
   | And -> Ocaml.VSum (("And", []))
   | Or -> Ocaml.VSum (("Or", []))
   | Xor -> Ocaml.VSum (("Xor", []))

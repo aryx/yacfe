@@ -291,8 +291,8 @@ and expression = (expressionbis * exp_info ref (* semantic: *)) wrap
   | Assignment     of expression * assignOp * expression
 
 
-  | Postfix        of expression * fixOp
-  | Infix          of expression * fixOp
+  | Prefix         of expression * incrOp
+  | Postfix        of expression * incrOp
 
   | Unary          of expression * unaryOp
   | Binary         of expression * binaryOp * expression
@@ -348,13 +348,13 @@ and expression = (expressionbis * exp_info ref (* semantic: *)) wrap
   and unaryOp  = GetRef | DeRef | UnPlus |  UnMinus | Tilde | Not
                  | GetRefLabel (* gccext: GetRefLabel, via &&label notation *)
   and assignOp = SimpleAssign | OpAssign of arithOp
-  and fixOp    = Dec | Inc
+  and incrOp   = Dec | Inc
 
   and binaryOp = Arith of arithOp | Logical of logicalOp
 
        and arithOp   =
          | Plus | Minus | Mul | Div | Mod
-         | DecLeft | DecRight
+         | ShLeft | ShRight
          | And | Or | Xor
 
        and logicalOp =
