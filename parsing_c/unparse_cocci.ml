@@ -228,8 +228,8 @@ let rec expression e =
       expression exp1; print_string " "; mcode print_string why;
       print_option (function e -> print_string " "; expression e) exp2;
       print_string " "; mcode print_string colon; expression exp3
-  | Ast.Postfix(exp,op) -> expression exp; mcode fixOp op
-  | Ast.Infix(exp,op) -> mcode fixOp op; expression exp
+  | Ast.Prefix(exp,op) -> mcode incrOp op; expression exp
+  | Ast.Postfix(exp,op) -> expression exp; mcode incrOp op
   | Ast.Unary(exp,op) -> mcode unaryOp op; expression exp
   | Ast.Binary(left,op,right) ->
       expression left; print_string " "; mcode binaryOp op; print_string " ";
@@ -317,7 +317,7 @@ and  assignOp = function
     Ast.SimpleAssign -> print_string "="
   | Ast.OpAssign(aop) -> arithOp aop; print_string "="
 
-and  fixOp = function
+and  incrOp = function
     Ast.Dec -> print_string "--"
   | Ast.Inc -> print_string "++"
 
@@ -331,8 +331,8 @@ and  arithOp = function
   | Ast.Mul -> print_string "*"
   | Ast.Div -> print_string "/"
   | Ast.Mod -> print_string "%"
-  | Ast.DecLeft -> print_string "<<"
-  | Ast.DecRight -> print_string ">>"
+  | Ast.ShLeft -> print_string "<<"
+  | Ast.ShRight -> print_string ">>"
   | Ast.And -> print_string "&"
   | Ast.Or -> print_string "|"
   | Ast.Xor -> print_string "^"
@@ -876,7 +876,7 @@ let rec pp_any = function
   | Ast.ConstantTag(x) -> constant x; false
   | Ast.UnaryOpTag(x) -> unaryOp x; false
   | Ast.AssignOpTag(x) -> assignOp x; false
-  | Ast.FixOpTag(x) -> fixOp x; false
+  | Ast.IncrOpTag(x) -> incrOp x; false
   | Ast.BinaryOpTag(x) -> binaryOp x; false
   | Ast.ArithOpTag(x) -> arithOp x; false
   | Ast.LogicalOpTag(x) -> logicalOp x; false

@@ -157,8 +157,8 @@ and base_expression =
 	              bool (* true if it can match an initialization *)
   | CondExpr       of expression * string mcode (* ? *) * expression option *
 	              string mcode (* : *) * expression
-  | Postfix        of expression * fixOp mcode
-  | Infix          of expression * fixOp mcode
+  | Prefix         of expression * incrOp mcode
+  | Postfix        of expression * incrOp mcode
   | Unary          of expression * unaryOp mcode
   | Binary         of expression * binaryOp mcode * expression
   | Nested         of expression * binaryOp mcode * expression
@@ -208,11 +208,11 @@ and listlen = meta_name mcode * keep_binding * inherited
 
 and  unaryOp = GetRef | DeRef | UnPlus |  UnMinus | Tilde | Not
 and  assignOp = SimpleAssign | OpAssign of arithOp
-and  fixOp = Dec | Inc
+and  incrOp = Dec | Inc
 
 and  binaryOp = Arith of arithOp | Logical of logicalOp
 and  arithOp =
-    Plus | Minus | Mul | Div | Mod | DecLeft | DecRight | And | Or | Xor
+    Plus | Minus | Mul | Div | Mod | ShLeft | ShRight | And | Or | Xor
 and  logicalOp = Inf | Sup | InfEq | SupEq | Eq | NotEq | AndLog | OrLog
 
 and constant =
@@ -564,7 +564,7 @@ and anything =
   | ConstantTag         of constant
   | UnaryOpTag          of unaryOp
   | AssignOpTag         of assignOp
-  | FixOpTag            of fixOp
+  | IncrOpTag           of incrOp
   | BinaryOpTag         of binaryOp
   | ArithOpTag          of arithOp
   | LogicalOpTag        of logicalOp

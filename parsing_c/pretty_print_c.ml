@@ -96,8 +96,8 @@ let pretty_print_c pr_elem pr_space pr_nl pr_indent pr_outdent pr_unindent =
     | Assignment (e1, op, e2),    [i]  ->
         pp_expression e1; pr_space(); pr_elem i; pr_space(); pp_expression e2
 
+    | Prefix   (e, op),    [i] -> pr_elem i; pp_expression e;
     | Postfix  (e, op),    [i] -> pp_expression e; pr_elem i;
-    | Infix    (e, op),    [i] -> pr_elem i; pp_expression e;
     | Unary    (e, op),    [i] -> pr_elem i; pp_expression e
     | Binary   (e1, op, e2),    [i] ->
         pp_expression e1; pr_space(); pr_elem i; pr_space(); pp_expression e2
@@ -139,7 +139,7 @@ let pretty_print_c pr_elem pr_space pr_nl pr_indent pr_outdent pr_unindent =
     | (Ident (_) | Constant _ | FunCall (_,_) | CondExpr (_,_,_)
     | Sequence (_,_)
     | Assignment (_,_,_)
-    | Postfix (_,_) | Infix (_,_) | Unary (_,_) | Binary (_,_,_)
+    | Prefix (_,_) | Postfix (_,_) | Unary (_,_) | Binary (_,_,_)
     | ArrayAccess (_,_) | RecordAccess (_,_) | RecordPtAccess (_,_)
     | SizeOfExpr (_) | SizeOfType (_) | Cast (_,_)
     | StatementExpr (_) | Constructor _

@@ -381,24 +381,24 @@ let mk_string_wrap (s,info) = (s, [info])
 
 
 /*
-(* Some tokens like TOPar and TCPar are used as synchronisation stuff,
+(* Some tokens like TOParen and TCParen are used as synchronisation stuff,
  * in parsing_hack.ml. So if define special tokens like TOParDefine and
  * TCParEOL, then take care to also modify in Token_helpers.
  *)
 */
 
-%token <Ast_c.info> TOPar TCPar TOBrace TCBrace TOCro TCCro
+%token <Ast_c.info> TOParen TCParen TOBrace TCBrace TOBrack TCBrack
 %token <Ast_c.info> TDot TComma TPtrOp
 %token <Ast_c.info> TInc TDec
 %token <Ast_c.assignOp * Ast_c.info> TAssign
 %token <Ast_c.info> TEq
 %token <Ast_c.info> TWhy  TTilde TBang
 %token <Ast_c.info> TEllipsis
-%token <Ast_c.info> TDotDot
+%token <Ast_c.info> TColon
 
-%token <Ast_c.info> TPtVirg
+%token <Ast_c.info> TSemi
 %token <Ast_c.info>
-       TOrLog TAndLog TOr TXor TAnd  TEqEq TNotEq TInf TSup TInfEq TSupEq
+       TOrLog TAndLog TOr TXor TAnd  TEqEq TNotEq TLt TGt TLtEq TGtEq
        TShl TShr
        TPlus TMinus TMul TDiv TMod
 
@@ -541,7 +541,7 @@ let mk_string_wrap (s,info) = (s, [info])
 %left TXor
 %left TAnd
 %left TEqEq TNotEq
-%left TInf TSup TInfEq TSupEq
+%left TLt TGt TLtEq TGtEq
 %left TShl TShr
 %left TPlus TMinus
 %left TMul TDiv TMod
@@ -644,7 +644,7 @@ ident_extra_cpp:
    }
  | TCppConcatOp TIdent
      { CppVariadicName (fst $2, [$1; snd $2]) }
- | TMacroIdentBuilder TOPar param_define_list TCPar
+ | TMacroIdentBuilder TOParen param_define_list TCParen
      { CppIdentBuilder ((fst $1, [snd $1;$2;$4]), $3) }
 
 identifier_cpp_list:
@@ -668,13 +668,13 @@ assign_expr:
  | cast_expr TEq     assign_expr { mk_e(Assignment ($1,SimpleAssign,$3)) [$2]}
 
 /*(* gccext: allow optional then part hence gcc_opt_expr
-   * bugfix: in C grammar they put TDotDot cond_expr, but in fact it must be
+   * bugfix: in C grammar they put TColon cond_expr, but in fact it must be
    * assign_expr, otherwise   pnp ? x : x = 0x388  is not allowed
    *)*/
 cond_expr:
  | arith_expr
      { $1 }
- | arith_expr TWhy gcc_opt_expr TDotDot assign_expr
+ | arith_expr TWhy gcc_opt_expr TColon assign_expr
      { mk_e (CondExpr ($1,$3,$5)) [$2;$4] }
 
 
@@ -685,12 +685,12 @@ arith_expr:
  | arith_expr TMod    arith_expr { mk_e(Binary ($1, Arith Mod,      $3)) [$2] }
  | arith_expr TPlus   arith_expr { mk_e(Binary ($1, Arith Plus,     $3)) [$2] }
  | arith_expr TMinus  arith_expr { mk_e(Binary ($1, Arith Minus,    $3)) [$2] }
- | arith_expr TShl    arith_expr { mk_e(Binary ($1, Arith DecLeft,  $3)) [$2] }
- | arith_expr TShr    arith_expr { mk_e(Binary ($1, Arith DecRight, $3)) [$2] }
- | arith_expr TInf    arith_expr { mk_e(Binary ($1, Logical Inf,    $3)) [$2] }
- | arith_expr TSup    arith_expr { mk_e(Binary ($1, Logical Sup,    $3)) [$2] }
- | arith_expr TInfEq  arith_expr { mk_e(Binary ($1, Logical InfEq,  $3)) [$2] }
- | arith_expr TSupEq  arith_expr { mk_e(Binary ($1, Logical SupEq,  $3)) [$2] }
+ | arith_expr TShl    arith_expr { mk_e(Binary ($1, Arith ShLeft,   $3)) [$2] }
+ | arith_expr TShr    arith_expr { mk_e(Binary ($1, Arith ShRight,  $3)) [$2] }
+ | arith_expr TLt     arith_expr { mk_e(Binary ($1, Logical Inf,    $3)) [$2] }
+ | arith_expr TGt     arith_expr { mk_e(Binary ($1, Logical Sup,    $3)) [$2] }
+ | arith_expr TLtEq   arith_expr { mk_e(Binary ($1, Logical InfEq,  $3)) [$2] }
+ | arith_expr TGtEq   arith_expr { mk_e(Binary ($1, Logical SupEq,  $3)) [$2] }
  | arith_expr TEqEq   arith_expr { mk_e(Binary ($1, Logical Eq,     $3)) [$2] }
  | arith_expr TNotEq  arith_expr { mk_e(Binary ($1, Logical NotEq,  $3)) [$2] }
  | arith_expr TAnd    arith_expr { mk_e(Binary ($1, Arith And,      $3)) [$2] }
@@ -705,8 +705,8 @@ cast_expr:
 
 unary_expr:
  | postfix_expr                    { $1 }
- | TInc unary_expr                 { mk_e(Infix ($2, Inc))    [$1] }
- | TDec unary_expr                 { mk_e(Infix ($2, Dec))    [$1] }
+ | TInc unary_expr                 { mk_e(Prefix ($2, Inc))   [$1] }
+ | TDec unary_expr                 { mk_e(Prefix ($2, Dec))   [$1] }
  | unary_op cast_expr              { mk_e(Unary ($2, fst $1)) [snd $1] }
  | Tsizeof unary_expr              { mk_e(SizeOfExpr ($2))    [$1] }
  | Tsizeof topar2 type_name tcpar2 { mk_e(SizeOfType ($3))    [$1;$2;$4] }
@@ -727,11 +727,11 @@ unary_op:
 
 postfix_expr:
  | primary_expr               { $1 }
- | postfix_expr TOCro expr TCCro
+ | postfix_expr TOBrack expr TCBrack
      { mk_e(ArrayAccess ($1, $3)) [$2;$4] }
- | postfix_expr TOPar argument_list_ne TCPar
+ | postfix_expr TOParen argument_list_ne TCParen
      { mk_e(FunCall ($1, $3)) [$2;$4] }
- | postfix_expr TOPar  TCPar  { mk_e(FunCall ($1, [])) [$2;$3] }
+ | postfix_expr TOParen TCParen  { mk_e(FunCall ($1, [])) [$2;$3] }
  | postfix_expr TDot   ident_cpp { mk_e(RecordAccess   ($1,$3)) [$2] }
  | postfix_expr TPtrOp ident_cpp { mk_e(RecordPtAccess ($1,$3)) [$2] }
  | postfix_expr TInc          { mk_e(Postfix ($1, Inc)) [$2] }
@@ -749,7 +749,7 @@ primary_expr:
  | TFloat  { mk_e(Constant (Float  (fst $1))) [snd $1] }
  | TString { mk_e(Constant (String (fst $1))) [snd $1] }
  | TChar   { mk_e(Constant (Char   (fst $1))) [snd $1] }
- | TOPar expr TCPar { mk_e(ParenExpr ($2)) [$1;$3] }  /*(* forunparser: *)*/
+ | TOParen expr TCParen { mk_e(ParenExpr ($2)) [$1;$3] }  /*(* forunparser: *)*/
 
  /*(* gccext: cppext: TODO better ast ? *)*/
  | TMacroString { mk_e(Constant (MultiString [fst $1])) [snd $1] }
@@ -757,7 +757,7 @@ primary_expr:
      { mk_e(Constant (MultiString ["TODO: MultiString"])) ($1 ++ $2) }
 
  /*(* gccext: allow statement as expressions via ({ statement }) *)*/
- | TOPar compound TCPar  { mk_e(StatementExpr ($2)) [$1;$3] }
+ | TOParen compound TCParen  { mk_e(StatementExpr ($2)) [$1;$3] }
 
 
 
@@ -803,8 +803,8 @@ action_higherordermacro:
 const_expr: cond_expr { $1  }
 
 
-topar2: TOPar { et "topar2" (); $1  }
-tcpar2: TCPar { et "tcpar2" (); $1 (*TODO? et ? sure ? c pas dt plutot ? *) }
+topar2: TOParen { et "topar2" (); $1  }
+tcpar2: TCParen { et "tcpar2" (); $1 (*TODO? et ? sure ? c pas dt plutot ? *) }
 
 
 
@@ -818,11 +818,11 @@ statement:
  | expr_statement  { ExprStatement(fst $1), snd $1 }
  | selection       { Selection    (fst $1), snd $1 ++ [fakeInfo()] }
  | iteration       { Iteration    (fst $1), snd $1 ++ [fakeInfo()] }
- | jump TPtVirg    { Jump         (fst $1), snd $1 ++ [$2] }
+ | jump TSemi    { Jump         (fst $1), snd $1 ++ [$2] }
 
  /*(* gccext: *)*/
- | Tasm TOPar asmbody TCPar TPtVirg             { Asm $3, [$1;$2;$4;$5] }
- | Tasm Tvolatile TOPar asmbody TCPar TPtVirg   { Asm $4, [$1;$2;$3;$5;$6] }
+ | Tasm TOParen asmbody TCParen TSemi             { Asm $3, [$1;$2;$4;$5] }
+ | Tasm Tvolatile TOParen asmbody TCParen TSemi   { Asm $4, [$1;$2;$3;$5;$6] }
 
  /*(* cppext: *)*/
  | TMacroStmt { MacroStmt, [snd $1] }
@@ -834,11 +834,11 @@ statement:
    * a Case  (1, (Case (2, i++)))  :(
    *)*/
 labeled:
- | ident_cpp        TDotDot statement   { Label ($1, $3),  [$2] }
- | Tcase const_expr TDotDot statement   { Case ($2, $4),       [$1; $3] }
- | Tcase const_expr TEllipsis const_expr TDotDot statement
+ | ident_cpp        TColon statement   { Label ($1, $3),  [$2] }
+ | Tcase const_expr TColon statement   { Case ($2, $4),       [$1; $3] }
+ | Tcase const_expr TEllipsis const_expr TColon statement
      { CaseRange ($2, $4, $6), [$1;$3;$5] } /*(* gccext: allow range *)*/
- | Tdefault         TDotDot statement   { Default $3,             [$1; $2] }
+ | Tdefault         TColon statement   { Default $3,             [$1; $2] }
 
 end_labeled:
  /*(* gccext:  allow toto: }
@@ -847,10 +847,10 @@ end_labeled:
     * update: julia fixed the problem by introducing end_labeled
     * and modifying below stat_or_decl_list
     *)*/
- | ident_cpp            TDotDot
+ | ident_cpp            TColon
      { Label ($1, (ExprStatement None, [])), [$2] }
- | Tcase const_expr TDotDot { Case ($2, (ExprStatement None, [])), [$1;$3] }
- | Tdefault         TDotDot { Default (ExprStatement None, []),    [$1; $2] }
+ | Tcase const_expr TColon { Case ($2, (ExprStatement None, [])), [$1;$3] }
+ | Tdefault         TColon { Default (ExprStatement None, []),    [$1; $2] }
 
 
 
@@ -897,36 +897,36 @@ stat_or_decl:
 
 
 expr_statement:
- | TPtVirg      { None,    [$1] }
- | expr TPtVirg { Some $1, [$2] }
+ | TSemi      { None,    [$1] }
+ | expr TSemi { Some $1, [$2] }
 
 selection:
- | Tif TOPar expr TCPar statement              %prec SHIFTHERE
+ | Tif TOParen expr TCParen statement              %prec SHIFTHERE
      { If ($3, $5, (ExprStatement None, [])),   [$1;$2;$4] }
- | Tif TOPar expr TCPar statement Telse statement
+ | Tif TOParen expr TCParen statement Telse statement
      { If ($3, $5, $7),  [$1;$2;$4;$6] }
- | Tswitch TOPar expr TCPar statement
+ | Tswitch TOParen expr TCParen statement
      { Switch ($3,$5),   [$1;$2;$4]  }
 
 iteration:
- | Twhile TOPar expr TCPar statement
+ | Twhile TOParen expr TCParen statement
      { While ($3,$5),                [$1;$2;$4] }
- | Tdo statement Twhile TOPar expr TCPar TPtVirg
+ | Tdo statement Twhile TOParen expr TCParen TSemi
      { DoWhile ($2,$5),              [$1;$3;$4;$6;$7] }
- | Tfor TOPar expr_statement expr_statement TCPar statement
+ | Tfor TOParen expr_statement expr_statement TCParen statement
      { For ($3,$4,(None, []),$6),    [$1;$2;$5]}
- | Tfor TOPar expr_statement expr_statement expr TCPar statement
+ | Tfor TOParen expr_statement expr_statement expr TCParen statement
      { For ($3,$4,(Some $5, []),$7), [$1;$2;$6] }
  /*(* c++ext: for(int i = 0; i < n; i++)*)*/
- | Tfor TOPar decl expr_statement expr_opt TCPar statement
+ | Tfor TOParen decl expr_statement expr_opt TCParen statement
      {
        (* pr2 "DECL in for"; *)
        MacroIteration ("toto", [], $7),[$1;$2;$6] (* TODOfake ast, TODO need decl2 ? *)
      }
  /*(* cppext: *)*/
- | TMacroIterator TOPar argument_list_ne TCPar statement
+ | TMacroIterator TOParen argument_list_ne TCParen statement
      { MacroIteration (fst $1, $3, $5), [snd $1;$2;$4] }
- | TMacroIterator TOPar TCPar statement
+ | TMacroIterator TOParen TCParen statement
      { MacroIteration (fst $1, [], $4), [snd $1;$2;$3] }
 
 /*(* the ';' in the caller grammar rule will be appended to the infos *)*/
@@ -954,13 +954,13 @@ asmbody:
  | string_list { $1, [] } /*(* in old kernel *)*/
 
 
-colon_asm: TDotDot colon_option_list { Colon $2, [$1]   }
+colon_asm: TColon colon_option_list { Colon $2, [$1]   }
 
 colon_option:
  | TString                      { ColonMisc, [snd $1] }
- | TString TOPar asm_expr TCPar { ColonExpr $3, [snd $1; $2;$4] }
+ | TString TOParen asm_expr TCParen { ColonExpr $3, [snd $1; $2;$4] }
  /*(* cppext: certainly a macro *)*/
- | TOCro identifier TCCro TString TOPar asm_expr TCPar
+ | TOBrack identifier TCBrack TString TOParen asm_expr TCParen
      { ColonExpr $6, [$1;snd $2;$3;snd $4; $5; $7 ] }
  | identifier                       { ColonMisc, [snd $1] }
  | /*(* empty *)*/                  { ColonMisc, [] }
@@ -1005,8 +1005,8 @@ type_spec2:
      { let name = RegularName (mk_string_wrap $1) in
        Right3 (TypeName (name, Ast_c.noTypedefDef())),[] }
 
- | Ttypeof TOPar assign_expr TCPar { Right3 (TypeOfExpr ($3)), [$1;$2;$4] }
- | Ttypeof TOPar type_name   TCPar { Right3 (TypeOfType ($3)), [$1;$2;$4] }
+ | Ttypeof TOParen assign_expr TCParen { Right3 (TypeOfExpr ($3)), [$1;$2;$4] }
+ | Ttypeof TOParen type_name   TCParen { Right3 (TypeOfType ($3)), [$1;$2;$4] }
 
 /*(*----------------------------*)*/
 /*(* workarounds *)*/
@@ -1030,7 +1030,7 @@ type_qualif:
 /*(*-----------------------------------------------------------------------*)*/
 
 attribute:
- | Tattribute TOPar /*stuff*/ TCPar { raise Todo }
+ | Tattribute TOParen /*stuff*/ TCParen { raise Todo }
  /*(* cppext: *)*/
  | TMacroAttr { Attribute (fst $1), [snd $1] }
 
@@ -1070,7 +1070,7 @@ pointer:
 direct_d:
  | identifier_cpp
      { ($1, fun x -> x) }
- | TOPar declarator TCPar      /*(* forunparser: old: $2 *)*/
+ | TOParen declarator TCParen      /*(* forunparser: old: $2 *)*/
      { (fst $2, fun x -> (nQ, (ParenType ((snd $2) x), [$1;$3]))) }
  | direct_d tocro            tccro
      { (fst $1,fun x->(snd $1) (nQ,(Array (None,x),         [$2;$3]))) }
@@ -1089,8 +1089,8 @@ direct_d:
 /*(* workarounds *)*/
 /*(*----------------------------*)*/
 
-tocro: TOCro { et "tocro" ();$1 }
-tccro: TCCro { dt "tccro" ();$1 }
+tocro: TOBrack { et "tocro" ();$1 }
+tccro: TCBrack { dt "tccro" ();$1 }
 
 /*(*-----------------------------------------------------------------------*)*/
 abstract_declarator:
@@ -1099,22 +1099,22 @@ abstract_declarator:
  | pointer direct_abstract_declarator { fun x -> x |> $2 |> $1 }
 
 direct_abstract_declarator:
- | TOPar abstract_declarator TCPar /*(* forunparser: old: $2 *)*/
+ | TOParen abstract_declarator TCParen /*(* forunparser: old: $2 *)*/
      { (fun x -> (nQ, (ParenType ($2 x), [$1;$3]))) }
 
- | TOCro            TCCro
+ | TOBrack            TCBrack
      { fun x ->   (nQ, (Array (None, x),      [$1;$2]))}
- | TOCro const_expr TCCro
+ | TOBrack const_expr TCBrack
      { fun x ->   (nQ, (Array (Some $2, x),   [$1;$3]))}
- | direct_abstract_declarator TOCro            TCCro
+ | direct_abstract_declarator TOBrack            TCBrack
      { fun x ->$1 (nQ, (Array (None, x),      [$2;$3])) }
- | direct_abstract_declarator TOCro const_expr TCCro
+ | direct_abstract_declarator TOBrack const_expr TCBrack
      { fun x ->$1 (nQ, (Array (Some $3,x),    [$2;$4])) }
- | TOPar TCPar
+ | TOParen TCParen
      { fun x ->   (nQ, (FunctionType (x, ([], (false,  []))),   [$1;$2])) }
  | topar parameter_type_list tcpar
      { fun x ->   (nQ, (FunctionType (x, $2),           [$1;$3]))}
-/*(* subtle: here must also use topar, not TOPar, otherwise if have for
+/*(* subtle: here must also use topar, not TOParen, otherwise if have for
    * instance   (xxx ( * )(xxx)) cast, then the second xxx may still be a Tident
    * but we want to reduce topar, to set the InParameter so that
    * parsing_hack can get a chance to change the type of xxx into a typedef.
@@ -1227,7 +1227,7 @@ abstract_declaratort:
 /*(*************************************************************************)*/
 
 decl2:
- | decl_spec TPtVirg
+ | decl_spec TSemi
      { function local ->
        let (returnType,storage) = fixDeclSpecForDecl $1 in
        let iistart = Ast_c.fakeInfo () in
@@ -1237,7 +1237,7 @@ decl2:
                 },[]],
                 ($2::iistart::snd storage))
      }
- | decl_spec init_declarator_list TPtVirg
+ | decl_spec init_declarator_list TSemi
      { function local ->
        let (returnType,storage) = fixDeclSpecForDecl $1 in
        let iistart = Ast_c.fakeInfo () in
@@ -1263,13 +1263,13 @@ decl2:
      }
  /*(* cppext: *)*/
 
- | TMacroDecl TOPar argument_list TCPar TPtVirg
+ | TMacroDecl TOParen argument_list TCParen TSemi
      { function _ ->
        MacroDecl ((fst $1, $3), [snd $1;$2;$4;$5;fakeInfo()]) }
- | Tstatic TMacroDecl TOPar argument_list TCPar TPtVirg
+ | Tstatic TMacroDecl TOParen argument_list TCParen TSemi
      { function _ ->
        MacroDecl ((fst $2, $4), [snd $2;$3;$5;$6;fakeInfo();$1]) }
- | Tstatic TMacroDeclConst TMacroDecl TOPar argument_list TCPar TPtVirg
+ | Tstatic TMacroDeclConst TMacroDecl TOParen argument_list TCParen TSemi
      { function _ ->
        MacroDecl ((fst $3, $5), [snd $3;$4;$6;$7;fakeInfo();$1;$2])}
 
@@ -1343,8 +1343,8 @@ declaratori:
 
 
 gcc_asm_decl:
- | Tasm TOPar asmbody TCPar              {  }
- | Tasm Tvolatile TOPar asmbody TCPar   {  }
+ | Tasm TOParen asmbody TCParen            {  }
+ | Tasm Tvolatile TOParen asmbody TCParen  {  }
 
 
 /*(*-----------------------------------------------------------------------*)*/
@@ -1383,10 +1383,10 @@ initialize2:
      { InitDesignators ($1, $3), [$2] }
 
  /*(* gccext: old format *)*/
- | ident TDotDot initialize2
+ | ident TColon initialize2
      { InitFieldOld (fst $1, $3),     [snd $1; $2] } /*(* in old kernel *)*/
 /* conflict
- | TOCro const_expr TCCro initialize2
+ | TOBrack const_expr TCBrack initialize2
      { InitIndexOld ($2, $4),    [$1;$3] }
 */
 
@@ -1396,9 +1396,9 @@ initialize2:
 designator:
  | TDot ident
      { DesignatorField (fst $2), [$1;snd $2] }
- | TOCro const_expr TCCro
+ | TOBrack const_expr TCBrack
      { DesignatorIndex ($2),  [$1;$3] }
- | TOCro const_expr TEllipsis const_expr TCCro
+ | TOBrack const_expr TEllipsis const_expr TCBrack
      { DesignatorRange ($2, $4),  [$1;$3;$5] }
 
 
@@ -1440,12 +1440,12 @@ struct_or_union2:
 
 struct_decl2:
  | field_declaration { DeclarationField $1 }
- | TPtVirg { EmptyField $1  }
+ | TSemi { EmptyField $1  }
 
  /*(* no conflict ? no need for a TMacroStruct ? apparently not as at struct
     * the rule are slightly different.
     *)*/
- | identifier TOPar argument_list TCPar TPtVirg
+ | identifier TOParen argument_list TCParen TSemi
      { MacroDeclField ((fst $1, $3), [snd $1;$2;$4;$5;fakeInfo()]) }
 
  /*(* cppext: *)*/
@@ -1456,7 +1456,7 @@ struct_decl2:
 
 
 field_declaration:
- | spec_qualif_list struct_declarator_list TPtVirg
+ | spec_qualif_list struct_declarator_list TSemi
      {
        let (returnType,storage) = fixDeclSpecForDecl $1 in
        if fst (unwrap storage) <> NoSto
@@ -1470,7 +1470,7 @@ field_declaration:
           *)
      }
 
- |  spec_qualif_list TPtVirg
+ |  spec_qualif_list TSemi
      {
        (* gccext: allow empty elements if it is a structdef or enumdef *)
        let (returnType,storage) = fixDeclSpecForDecl $1 in
@@ -1509,7 +1509,7 @@ struct_or_union_spec: s_or_u_spec2 { dt "su" (); $1 }
 struct_or_union: struct_or_union2 { et "su" (); $1 }
 struct_decl: struct_decl2  { et "struct" (); $1 }
 
-dotdot: TDotDot  { et "dotdot" (); $1 }
+dotdot: TColon  { et "dotdot" (); $1 }
 const_expr2: const_expr { dt "const_expr2" (); $1 }
 
 struct_decl_list_gcc:
@@ -1615,9 +1615,9 @@ cpp_directive:
 
  /*
  (* The TOParDefine is introduced to avoid ambiguity with previous rules.
-  * A TOParDefine is a TOPar that was just next to the ident.
+  * A TOParDefine is a TOParen that was just next to the ident.
   *)*/
- | TDefine TIdentDefine TOParDefine param_define_list TCPar define_val TDefEOL
+ | TDefine TIdentDefine TOParDefine param_define_list TCParen define_val TDefEOL
      { Define
          ((fst $2, [$1; snd $2;$7]),
            (DefineFunc ($4, [$3;$5]), $6))
@@ -1677,7 +1677,7 @@ define_val:
     { DefineInit (InitList (List.rev $2), [$1;$4]++$3++$5)  }
 
  /*(* note: had a conflict before when were putting TInt instead of expr *)*/
- | Tdo statement Twhile TOPar expr TCPar
+ | Tdo statement Twhile TOParen expr TCParen
      {
        (* TOREPUT
        if fst $5 <> "0"
@@ -1686,8 +1686,8 @@ define_val:
        DefineDoWhileZero (($2,$5),   [$1;$3;$4;$6])
      }
 
- | Tasm TOPar asmbody TCPar              { DefineTodo }
- | Tasm Tvolatile TOPar asmbody TCPar    { DefineTodo }
+ | Tasm TOParen asmbody TCParen              { DefineTodo }
+ | Tasm Tvolatile TOParen asmbody TCParen    { DefineTodo }
 
  /*(* aliases macro *)*/
  | TMacroAttr { DefineTodo }
@@ -1739,18 +1739,18 @@ cpp_other:
     * the rule are slightly different, they cant be statement and so expr
     * at the top, only decl or function definition.
     *)*/
- | identifier TOPar argument_list TCPar TPtVirg
+ | identifier TOParen argument_list TCParen TSemi
      {
        Declaration (MacroDecl ((fst $1, $3), [snd $1;$2;$4;$5;fakeInfo()]))
        (* old: MacroTop (fst $1, $3,    [snd $1;$2;$4;$5])  *)
      }
 
  /*(* TCParEOL to fix the end-of-stream bug of ocamlyacc *)*/
- | identifier TOPar argument_list TCParEOL
+ | identifier TOParen argument_list TCParEOL
      { MacroTop (fst $1, $3,    [snd $1;$2;$4;fakeInfo()]) }
 
   /*(* ex: EXPORT_NO_SYMBOLS; *)*/
- | identifier TPtVirg { EmptyDef [snd $1;$2] }
+ | identifier TSemi { EmptyDef [snd $1;$2] }
 
 
 
@@ -1775,14 +1775,14 @@ celem:
      { IfdefTop $1 }
 
  /*(* can have asm declaration at toplevel *)*/
- | Tasm TOPar asmbody TCPar TPtVirg             { EmptyDef [$1;$2;$4;$5] }
+ | Tasm TOParen asmbody TCParen TSemi             { EmptyDef [$1;$2;$4;$5] }
 
  /*
  (* in ~/kernels/src/linux-2.5.2/drivers/isdn/hisax/isdnl3.c sometimes
   * the function ends with }; instead of just }
   * can also remove this rule and report "parse error" pb to morton
   *)*/
- | TPtVirg    { EmptyDef [$1] }
+ | TSemi    { EmptyDef [$1] }
 
 
  | EOF        { FinalDef $1 }
@@ -1809,12 +1809,12 @@ tcbrace_struct: TCBrace { LP.pop_context (); $1 }
 
 
 
-topar: TOPar
+topar: TOParen
      { LP.new_scope ();et "topar" ();
        LP.push_context LP.InParameter;
        $1
      }
-tcpar: TCPar
+tcpar: TCParen
      { LP.del_scope ();dt "tcpar" ();
        LP.pop_context ();
        $1
@@ -1951,7 +1951,7 @@ comma_opt:
 
 /*(*
 gcc_opt_virg:
- | TPtVirg { }
+ | TSemi { }
  |  { }
 *)*/
 
@@ -1961,7 +1961,7 @@ gcc_opt_expr:
 
 /*(*
 opt_ptvirg:
- | TPtVirg { [$1] }
+ | TSemi { [$1] }
  | { [] }
 *)*/
 

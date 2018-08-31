@@ -326,7 +326,7 @@ let rec apply_macro_defs
                  *)
 
                 (match xs with
-                | PToken ({tok = TPtVirg _} as id2)::_ ->
+                | PToken ({tok = TSemi _} as id2)::_ ->
                     pr2_once
                       ("macro stmt with trailing ';', passing also ';' for: "^
                        s);
@@ -483,7 +483,7 @@ let rec define_ident acc xs =
   | TDefine ii::xs ->
       let acc = TDefine ii :: acc in
       (match xs with
-      | TCommentSpace i1::TIdent (s,i2)::TOPar (i3)::xs ->
+      | TCommentSpace i1::TIdent (s,i2)::TOParen (i3)::xs ->
           (* Change also the kind of TIdent to avoid bad interaction
            * with other parsing_hack tricks. For instant if keep TIdent then
            * the stringication algo can believe the TIdent is a string-macro.
@@ -564,7 +564,7 @@ let rec define_parse xs =
   | [] -> []
   | TDefine i1::TIdentDefine (s,i2)::TOParDefine i3::xs ->
       let (tokparams, _, xs) =
-        xs |> Common2.split_when (function TCPar _ -> true | _ -> false) in
+        xs |> Common2.split_when (function TCParen _ -> true | _ -> false) in
       let (body, _, xs) =
         xs |> Common2.split_when (function TDefEOL _ -> true | _ -> false) in
       let params =
