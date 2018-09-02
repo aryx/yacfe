@@ -224,31 +224,11 @@ ocamlversion:
 	@echo $(OCAMLVERSION)
 
 
-
-
 distclean:: clean
 	set -e; for i in $(MAKESUBDIRS); do $(MAKE) -C $$i $@; done
 	rm -f .depend
 	rm -f Makefile.config
 	rm -f TAGS
-
-#	find -name ".#*1.*" | xargs rm -f
-
-##############################################################################
-# Pad specific rules
-##############################################################################
-
-
-WEBSITE=/home/pad/mobile/homepage/software/project-yacfe
-
-website:
-	cp $(TMP)/$(PACKAGE).tgz                $(WEBSITE)
-
-#TXT=$(wildcard *.txt)
-syncwiki:
-#	unison ~/public_html/wiki/wiki-LFS/data/pages/ docs/wiki/
-#	set -e; for i in $(TXT); do unison $$i docs/wiki/$$i; done
-
 
 ##############################################################################
 # Developer rules
@@ -289,13 +269,6 @@ testparsing4:
 
 #	./$(TARGET) -D standard.h -parse_c -dir parsing_c/tests
 
-
-
-cp_4mpi:
-	echo no copy needed yet
-
-test_mpi: opt yacfe.opt cp_4mpi
-	time mpirun -p4pg env-machines-onlyme.pg ./yacfe.opt -parse_all /home/pad/software-src/devel/sparse-git
 
 ##############################################################################
 # Generic ocaml rules
